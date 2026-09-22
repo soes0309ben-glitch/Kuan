@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
-from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.responses import FileResponse
 
 from app.analytics import track_page_view
 from app.config import get_settings
@@ -30,7 +30,10 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
-    return RedirectResponse("/static/img/favicon.svg")
+    # Served directly (not a redirect) — some browsers cache a redirect's
+    # target oddly for this literal path, and .ico is the most universally
+    # recognized format for it regardless of SVG favicon support.
+    return FileResponse("app/static/img/favicon.ico", media_type="image/x-icon")
 
 
 app.include_router(pages.router, dependencies=[Depends(track_page_view)])
