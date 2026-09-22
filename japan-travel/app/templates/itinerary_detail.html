@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}{{ itinerary.title }}｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  {% if just_unlocked %}
+  <div class="alert success">解鎖成功！以下是完整的每日行程、交通與住宿建議。</div>
+  {% elif canceled %}
+  <div class="alert warn">付款已取消，你可以隨時重新選擇住宿等級解鎖。</div>
+  {% endif %}
+
+  <div class="badges" style="margin-bottom:10px">
+    <span class="badge">{{ DURATION_LABELS.get(itinerary.duration, itinerary.duration) }}</span>
+    <span class="badge">{{ REGION_LABELS.get(itinerary.region, itinerary.region) }}</span>
+    {% if has_access %}<span class="badge unlocked">已解鎖</span>{% else %}<span class="badge locked">未解鎖</span>{% endif %}
+  </div>
+  <h1>{{ itinerary.title }}</h1>
+  <p>{{ itinerary.summary }}</p>
+
+  {% if flight_prices %}
+  <div class="flight-price-box">
+    <h3 style="margin-top:0">✈️ 來回機票參考價格（台灣出發・{{ flight_prices.airport }}）</h3>
+    <div class="flight-band-grid">
+      {% for band in flight_prices.bands %}
+      <div class="flight-band{% if band.key == flight_prices.current_band %} current{% endif %}">
+        <div class="flight-band-label">{{ band.label }}{% if band.key == flight_prices.current_band %}<span class="badge" style="margin-left:6px">現在</span>{% endif %}</div>
+        <div class="flight-band-price">NT$ {{ "{:,}".format(band.low) }} - {{ "{:,}".format(band.high) }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <p style="font-size:0.8rem;color:var(--color-ink-soft);margin-bottom:0">＊僅為歷史區間概估的參考價格，非即時比價，實際票價依訂票時間、航空公司與艙等變動，出發前請自行至航空公司或比價網站查詢。</p>
+  </div>
+  {% endif %}
+
+  <h2>每日行程</h2>
+  {% for day in itinerary.days %}
+    {% set day_unlocked = has_access or day.day == 1 %}
+    <div class="day-block{% if not day_unlocked %} locked{% endif %}">
+      <h3>Day {{ day.day }}｜{{ day.title }}</h3>
+      <div class="card-meta" style="margin-bottom:10px">📍 住宿地點：{{ REGION_LABELS.get(itinerary.region, itinerary.region) }}</div>
+      {% if day_unlocked %}
+        <p>{{ day.activities }}</p>
+        <p><strong>交通：</strong>{{ day.transport_notes }}</p>
+        <p><strong>當日預估花費：</strong>約 {{ day.daily_cost_estimate_jpy }} 円（不含住宿）</p>
+        {% if day.attraction_ids %}
+        <div class="card-grid">
+          {% for aid in day.attraction_ids %}
+            {% set a = day_attractions.get(aid) %}
+            {% if a %}
+            <div class="card" data-id="{{ a.id }}">
+              <div class="thumb"><img src="{{ photo_url(a.image_query) }}" alt="{{ a.name_zh }}" loading="lazy"></div>
+              <div class="card-body">
+                <h3>{{ a.name_zh }}</h3>
+                <p class="card-desc">{{ a.description }}</p>
+                <div class="card-actions">
+                  <button class="icon-btn fav-btn" data-action="fav">♡ 收藏</button>
+                  <button class="icon-btn" data-action="add">+ 加入行程</button>
+                  <a class="icon-btn" href="{{ maps_url(a) }}" target="_blank" rel="noopener">📍 地圖</a>
+                  {% if a.official_url %}<a class="icon-btn" href="{{ a.official_url }}" target="_blank" rel="noopener">🔗 官方網站</a>{% endif %}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% else %}
+        <p>解鎖後即可查看第 {{ day.day }} 天完整行程、交通建議與景點清單。</p>
+        <div class="lock-overlay">🔒 解鎖後可見</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  {% if has_access %}
+  <h2>自駕與交通建議</h2>
+  <p><strong>{% if itinerary.self_drive_route.recommended %}建議自駕{% else %}建議搭乘大眾運輸{% endif %}：</strong>{{ itinerary.self_drive_route.route_note }}</p>
+  <h2>行前打包提醒</h2>
+  <p>{{ itinerary.packing_notes }}</p>
+  {% else %}
+  <div class="day-block locked" style="min-height:120px">
+    <h3>自駕路線建議與行前打包清單</h3>
+    <p class="lock-overlay">🔒 解鎖後可見</p>
+  </div>
+  {% endif %}
+
+  <h2>選擇住宿等級解鎖完整規劃書</h2>
+  {% if has_access %}
+  <div class="alert success">你已解鎖這個行程，感謝購買！</div>
+  {% else %}
+  <p style="color:var(--color-ink-soft);font-size:0.88rem">住宿等級只影響價格與住宿建議風格，解鎖後三種等級都能查看完整每日行程內容。</p>
+  <div class="tier-grid">
+    {% for tier, info in itinerary.accommodation_tiers.items() %}
+    <div class="tier-card">
+      <h4>{{ TIER_LABELS.get(tier, tier) }}</h4>
+      <div class="hint">{{ info.style_hint }}（約 {{ info.price_per_night_jpy }} 円／晚）</div>
+      <div class="price">NT$ {{ itinerary.unlock_price_twd[tier] }}</div>
+      <form action="/itineraries/{{ itinerary.id }}/checkout" method="post">
+        <input type="hidden" name="tier" value="{{ tier }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+        <button type="submit" class="btn">解鎖此方案</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>常見問題</h2>
+  <div class="day-block">
+    <p><strong>這份行程適合旅遊新手嗎？</strong><br>適合。每天都已經安排好景點順序與交通方式，照著走就好，不需要自己一項一項查資料。</p>
+    <p><strong>天數安排會不會太趕？</strong><br>行程以「每天 2–4 個重點＋合理交通時間」抓配置，若想放慢步調，也可以直接跳過某天的次要景點，把時間留給喜歡的地方。</p>
+    <p><strong>住宿等級怎麼選？</strong><br>經濟型適合小資背包客、舒適型適合一般家庭與情侶、豪華型適合想在住宿本身就享受旅行氣氛的旅人；三種等級解鎖後看到的每日行程內容完全相同，差別只在住宿風格與報價。</p>
+    <p><strong>可以自己微調行程嗎？</strong><br>可以，解鎖後的每日行程與景點都能個別加入你在探索頁收藏的「每日行程」清單，依自己的節奏調整順序或增減景點。</p>
+  </div>
+
+  <p style="margin-top:20px">
+    <a class="see-all" href="/itineraries?region={{ itinerary.region }}">想比較{{ REGION_LABELS.get(itinerary.region, itinerary.region) }}的其他天數方案？點此查看 →</a>
+  </p>
+</section>
+{% endblock %}

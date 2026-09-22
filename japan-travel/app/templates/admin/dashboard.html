@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}管理後台｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="section-title">
+    <h2>管理後台</h2>
+  </div>
+
+  <div class="stat-tiles">
+    <div class="stat-tile">
+      <div class="stat-value">{{ total_users }}</div>
+      <div class="stat-label">總會員數</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">{{ total_page_views }}</div>
+      <div class="stat-label">總瀏覽頁數</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">{{ total_orders }}</div>
+      <div class="stat-label">已付款訂單數</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">NT$ {{ "{:,}".format(total_revenue) }}</div>
+      <div class="stat-label">累積營收</div>
+    </div>
+  </div>
+
+  <h3>最近 {{ trend_days }} 天趨勢</h3>
+  <div class="trend-chart">
+    {% for d in trend %}
+    <div class="trend-col" title="{{ d.day }}：{{ d.views }} 次瀏覽・{{ d.signups }} 位新會員">
+      <div class="trend-bar-track">
+        <div class="trend-bar views" style="height: {{ d.views_pct }}%"></div>
+        {% if d.signups > 0 %}<div class="trend-signup-dot"></div>{% endif %}
+      </div>
+      <div class="trend-day">{{ d.day }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="trend-legend">
+    <span><span class="legend-swatch views"></span> 每日瀏覽頁數（長條）</span>
+    <span><span class="legend-swatch signup"></span> 當天有新會員註冊</span>
+  </div>
+
+  <h3>各方案銷售排行</h3>
+  {% if best_sellers %}
+  <table class="admin-table">
+    <thead><tr><th>行程</th><th>住宿等級</th><th>訂單數</th><th>營收</th></tr></thead>
+    <tbody>
+      {% for row in best_sellers %}
+      <tr>
+        <td>{{ row.title }}</td>
+        <td>{{ row.tier_label }}</td>
+        <td>{{ row.orders }}</td>
+        <td>NT$ {{ "{:,}".format(row.revenue) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">目前還沒有任何已付款訂單。</div>
+  {% endif %}
+
+  <h3>最近訂單</h3>
+  {% if recent_purchases %}
+  <table class="admin-table">
+    <thead><tr><th>時間</th><th>行程</th><th>方案</th><th>金額</th></tr></thead>
+    <tbody>
+      {% for p in recent_purchases %}
+      <tr>
+        <td>{{ p.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+        <td>{{ itineraries_by_id.get(p.itinerary_id, {}).get("title", p.itinerary_id) }}</td>
+        <td>{{ TIER_LABELS.get(p.tier, p.tier) }}</td>
+        <td>NT$ {{ "{:,}".format(p.amount_twd) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">目前還沒有任何訂單紀錄。</div>
+  {% endif %}
+</section>
+{% endblock %}

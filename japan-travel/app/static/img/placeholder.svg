@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="533" viewBox="0 0 800 533">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7e7d4"/>
+      <stop offset="100%" stop-color="#f0c9a0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="533" fill="url(#sky)"/>
+  <circle cx="640" cy="120" r="60" fill="#e2543f" opacity="0.85"/>
+  <path d="M0 420 L180 220 L300 340 L420 160 L560 380 L680 260 L800 420 L800 533 L0 533 Z" fill="#8a6a52" opacity="0.35"/>
+  <path d="M0 470 L220 300 L380 430 L540 260 L700 420 L800 350 L800 533 L0 533 Z" fill="#5c4433" opacity="0.55"/>
+  <g stroke="#b23a2e" stroke-width="10" fill="none" opacity="0.7">
+    <line x1="360" y1="440" x2="360" y2="360"/>
+    <line x1="440" y1="440" x2="440" y2="360"/>
+    <line x1="340" y1="370" x2="460" y2="370"/>
+    <line x1="330" y1="390" x2="470" y2="390"/>
+  </g>
+  <text x="400" y="500" font-family="'Noto Serif TC', serif" font-size="20" fill="#5c4433" text-anchor="middle" opacity="0.7">照片準備中</text>
+</svg>

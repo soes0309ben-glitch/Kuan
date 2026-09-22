@@ -1,0 +1,2451 @@
+[
+  {
+    "id": "sapporo-clock-tower",
+    "name_zh": "札幌市鐘樓",
+    "name_ja": "札幌市時計台",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "attraction",
+    "tags": [
+      "定番",
+      "歷史建築",
+      "免費景點"
+    ],
+    "description": "北海道開拓時代留下的地標建築，外觀樸實卻是札幌市的精神象徵，鐘樓內部設有小型展示區，介紹開拓史與報時鐘機構造，順遊大通公園只需步行幾分鐘。",
+    "image_query": "Sapporo Clock Tower Hokkaido",
+    "official_url": "https://sapporoshi-tokeidai.jp/",
+    "access": {
+      "from": "JR札幌駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市中心步行即達，自駕不便且停車位少，建議搭電車或步行。",
+    "visit_duration_min": 30,
+    "entry_fee_jpy": 200,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "otaru-canal",
+    "name_zh": "小樽運河",
+    "name_ja": "小樽運河",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "attraction",
+    "tags": [
+      "運河",
+      "浪漫夜景",
+      "歷史街區"
+    ],
+    "description": "石造倉庫群沿運河而立，入夜後煤氣燈點亮水面，是北海道最具代表性的浪漫散策路線，周邊還有玻璃工藝品店與壽司街可順道探訪。",
+    "image_query": "Otaru Canal night lights Hokkaido",
+    "official_url": "https://otaru.gr.jp/shop/otarucanal",
+    "access": {
+      "from": "JR小樽駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "可自駕前往，運河周邊付費停車場充足，冬季注意路面結冰。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 0,
+    "best_season": "冬季雪燈之路期間最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "furano-biei-flower-fields",
+    "name_zh": "富良野・美瑛花田",
+    "name_ja": "富良野・美瑛の花畑",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "attraction",
+    "tags": [
+      "花海",
+      "夏季限定",
+      "拍照聖地"
+    ],
+    "description": "七、八月薰衣草花田染紫整片丘陵，美瑛的「拼布之路」則以起伏麥田與獨立樹聞名，是北海道夏季最夢幻的兜風路線。",
+    "image_query": "Furano lavender fields Biei hills Hokkaido",
+    "official_url": null,
+    "access": {
+      "from": "JR富良野駅",
+      "method": "巴士接駁／租車",
+      "duration_min": 40,
+      "cost_jpy": 700
+    },
+    "self_drive_note": "強烈建議自駕，花田分散且班車稀少，租車自駕最能自由停靠拍照。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "6月下旬至8月上旬薰衣草季",
+    "is_remote_island": false
+  },
+  {
+    "id": "hakodate-mountain-night-view",
+    "name_zh": "函館山夜景",
+    "name_ja": "函館山の夜景",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "attraction",
+    "tags": [
+      "世界三大夜景",
+      "纜車"
+    ],
+    "description": "搭乘纜車登上標高334公尺的函館山頂，俯瞰兩側海灣夾著市街燈火的獨特扇形夜景，被列為世界三大夜景之一，日落前上山可同時欣賞夕陽與夜色轉換。",
+    "image_query": "Mount Hakodate night view Japan",
+    "official_url": "https://334.co.jp/",
+    "access": {
+      "from": "函館市電十字街站",
+      "method": "纜車",
+      "duration_min": 10,
+      "cost_jpy": 1500
+    },
+    "self_drive_note": "山頂道路夜間管制，建議搭纜車，自駕僅能開到山腰。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 0,
+    "best_season": "秋冬空氣乾冷時能見度最佳",
+    "is_remote_island": false
+  },
+  {
+    "id": "asahiyama-zoo",
+    "name_zh": "旭山動物園",
+    "name_ja": "旭山動物園",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "attraction",
+    "tags": [
+      "動物園",
+      "親子景點"
+    ],
+    "description": "以「行動展示」聞名全日本的動物園，企鵝散步、北極熊跳水缸、豹貓空中步道讓遊客近距離觀察動物的自然行為，是北海道親子旅遊首選。",
+    "image_query": "Asahiyama Zoo penguins Hokkaido",
+    "official_url": "https://www.city.asahikawa.hokkaido.jp/asahiyamazoo/",
+    "access": {
+      "from": "JR旭川駅",
+      "method": "巴士",
+      "duration_min": 40,
+      "cost_jpy": 450
+    },
+    "self_drive_note": "自駕方便，園區備有大型停車場，冬季企鵝散步活動更是必看。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 1000,
+    "best_season": "冬季企鵝散步限定活動",
+    "is_remote_island": false
+  },
+  {
+    "id": "rebun-rishiri-islands",
+    "name_zh": "利尻・禮文島",
+    "name_ja": "利尻礼文島",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "健行",
+      "高山植物"
+    ],
+    "description": "浮在日本海最北端的姐妹島，利尻富士的圓錐山形與禮文島斷崖上盛開的高山野花，是熱愛健行與秘境海島的旅人心中的夢幻之地，需由稚內搭渡輪前往。",
+    "image_query": "Rishiri Island Mount Rishiri Fuji Japan",
+    "official_url": "https://www.env.go.jp/park/rishiri/",
+    "access": {
+      "from": "稚內港",
+      "method": "渡輪",
+      "duration_min": 100,
+      "cost_jpy": 2810
+    },
+    "self_drive_note": "島上可租車環島，道路平緩景色壯闊，非常適合自駕遊島一圈。",
+    "visit_duration_min": 240,
+    "entry_fee_jpy": 0,
+    "best_season": "6-9月無雪期最適合健行",
+    "is_remote_island": true
+  },
+  {
+    "id": "sapporo-ramen-alley",
+    "name_zh": "札幌拉麵橫丁",
+    "name_ja": "札幌ラーメン橫丁",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "food",
+    "tags": [
+      "拉麵",
+      "味噌拉麵",
+      "巷弄美食"
+    ],
+    "description": "狹窄巷弄裡擠了十多間拉麵老店，濃郁味噌湯頭配奶油玉米與奶油塊是北海道限定吃法，寒冷夜晚來一碗格外暖胃。",
+    "image_query": "Sapporo ramen alley miso ramen bowl",
+    "official_url": "https://www.ganso-yokocho.com/",
+    "access": {
+      "from": "薄野駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區內用路邊停車不易，建議搭地鐵前往。",
+    "visit_duration_min": 45,
+    "entry_fee_jpy": 1000,
+    "best_season": "全年皆宜，冬季最對味",
+    "is_remote_island": false
+  },
+  {
+    "id": "hakodate-morning-market",
+    "name_zh": "函館朝市",
+    "name_ja": "函館朝市",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "food",
+    "tags": [
+      "海鮮丼",
+      "市場美食"
+    ],
+    "description": "清晨開市的海鮮市場，可現場自己「釣」活烏賊做成刺身，或直接點一碗滿載海膽、鮭魚卵的豪華海鮮丼，是函館旅人必訪的早餐地點。",
+    "image_query": "Hakodate morning market seafood bowl",
+    "official_url": "https://www.hakodate-asaichi.com/",
+    "access": {
+      "from": "JR函館駅",
+      "method": "徒步",
+      "duration_min": 3,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市場周邊有付費停車場，自駕前來相當方便。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 2500,
+    "best_season": "全年皆宜，清晨最新鮮",
+    "is_remote_island": false
+  },
+  {
+    "id": "shiretoko-national-park",
+    "name_zh": "知床國立公園",
+    "name_ja": "知床国立公園",
+    "region": "hokkaido",
+    "prefecture": "北海道",
+    "category": "attraction",
+    "tags": [
+      "世界自然遺產",
+      "野生動物",
+      "秘境"
+    ],
+    "description": "被列為世界自然遺產的原始半島，五湖健行步道與知床峠展望台可遠眺國後島，夏季能搭觀光船近距離觀察棕熊與海豚。",
+    "image_query": "Shiretoko National Park Hokkaido wilderness",
+    "official_url": "https://www.env.go.jp/park/shiretoko/",
+    "access": {
+      "from": "女滿別機場",
+      "method": "租車",
+      "duration_min": 120,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "必須自駕或參加巴士團，山路景色壯闊但冬季部分路段封閉。",
+    "visit_duration_min": 240,
+    "entry_fee_jpy": 250,
+    "best_season": "6-10月最適合造訪",
+    "is_remote_island": false
+  },
+  {
+    "id": "matsushima-bay",
+    "name_zh": "松島",
+    "name_ja": "松島",
+    "region": "tohoku",
+    "prefecture": "宮城縣",
+    "category": "attraction",
+    "tags": [
+      "日本三景",
+      "遊船"
+    ],
+    "description": "灣內兩百多座奇岩小島點綴碧海，被譽為日本三景之一，搭乘觀光遊覽船穿梭島嶼之間，沿途海鷗會靠近船邊討食，景色如水墨畫。",
+    "image_query": "Matsushima Bay islands Japan scenic",
+    "official_url": "https://www.matsushima-kanko.com/",
+    "access": {
+      "from": "JR松島海岸駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "可自駕前往，沿岸道路平緩，停車場鄰近碼頭。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 1500,
+    "best_season": "四季皆美，賞楓季尤佳",
+    "is_remote_island": false
+  },
+  {
+    "id": "aomori-nebuta-museum",
+    "name_zh": "青森睡魔祭之家",
+    "name_ja": "ねぶたの家 ワ・ラッセ",
+    "region": "tohoku",
+    "prefecture": "青森縣",
+    "category": "attraction",
+    "tags": [
+      "祭典文化",
+      "巨型燈籠"
+    ],
+    "description": "常設展示睡魔祭巨型燈籠山車的博物館，鮮豔的武者彩繪與夜間祭典太鼓表演重現，即使非祭典期間造訪也能感受青森最熱血的夏日盛典。",
+    "image_query": "Aomori Nebuta Festival lantern floats",
+    "official_url": "https://www.nebuta.jp/warasse/",
+    "access": {
+      "from": "JR青森駅",
+      "method": "徒步",
+      "duration_min": 1,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "車站旁即有停車場，自駕與搭車都方便。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 620,
+    "best_season": "8月睡魔祭期間最熱鬧",
+    "is_remote_island": false
+  },
+  {
+    "id": "yamadera-temple",
+    "name_zh": "山寺（立石寺）",
+    "name_ja": "山寺（立石寺）",
+    "region": "tohoku",
+    "prefecture": "山形縣",
+    "category": "attraction",
+    "tags": [
+      "古寺",
+      "登山參拜",
+      "絕景"
+    ],
+    "description": "沿著山壁鑿建的千年古剎，需攀登逾千級石階才能抵達山頂的五大堂展望台，俯瞰山形盆地的視野讓人明白松尾芭蕉為何在此留下俳句。",
+    "image_query": "Yamadera temple mountain steps Japan",
+    "official_url": "https://rissyakuji.jp/",
+    "access": {
+      "from": "JR山寺駅",
+      "method": "徒步",
+      "duration_min": 15,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "山腳有停車場，自駕方便，但參拜本身需徒步登山。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 300,
+    "best_season": "新綠與賞楓季節最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "hirosaki-castle-park",
+    "name_zh": "弘前城公園",
+    "name_ja": "弘前城公園",
+    "region": "tohoku",
+    "prefecture": "青森縣",
+    "category": "attraction",
+    "tags": [
+      "賞櫻名所",
+      "古城"
+    ],
+    "description": "東北賞櫻第一名所，春季兩千多株櫻花將護城河染成粉色隧道，天守閣雖規模不大卻保留江戶時期原貌，秋季紅葉同樣壯觀。",
+    "image_query": "Hirosaki Castle cherry blossoms Japan",
+    "official_url": "https://www.hirosakipark.jp/",
+    "access": {
+      "from": "JR弘前駅",
+      "method": "巴士",
+      "duration_min": 15,
+      "cost_jpy": 220
+    },
+    "self_drive_note": "公園周邊設有付費停車場，自駕賞櫻很方便，但花季人潮多需提早到。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 320,
+    "best_season": "4月下旬櫻花季",
+    "is_remote_island": false
+  },
+  {
+    "id": "ginzan-onsen",
+    "name_zh": "銀山溫泉",
+    "name_ja": "銀山溫泉",
+    "region": "tohoku",
+    "prefecture": "山形縣",
+    "category": "attraction",
+    "tags": [
+      "溫泉街",
+      "大正浪漫",
+      "雪景"
+    ],
+    "description": "沿溪而建的木造旅館群保留大正時期風貌，夜晚瓦斯燈亮起搭配飄雪，彷彿走入神隱少女場景，是東北最具人氣的溫泉街之一。",
+    "image_query": "Ginzan Onsen snow evening Japan",
+    "official_url": "https://www.ginzanonsen.jp/",
+    "access": {
+      "from": "JR大石田駅",
+      "method": "巴士",
+      "duration_min": 40,
+      "cost_jpy": 900
+    },
+    "self_drive_note": "溫泉街內禁止車輛進入，需停在外圍停車場再步行，自駕仍屬便利選項。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 0,
+    "best_season": "12-2月雪景最夢幻",
+    "is_remote_island": false
+  },
+  {
+    "id": "sendai-gyutan-street",
+    "name_zh": "仙台牛舌通",
+    "name_ja": "仙台牛タン通り",
+    "region": "tohoku",
+    "prefecture": "宮城縣",
+    "category": "food",
+    "tags": [
+      "牛舌定食",
+      "車站美食"
+    ],
+    "description": "仙台車站內外聚集多家牛舌專賣店，炭烤牛舌搭配麥飯與牛尾湯是經典組合，肉質厚切彈牙且油脂分布均勻，是東北最具代表性的鄉土美食。",
+    "image_query": "Sendai grilled beef tongue set meal",
+    "official_url": "https://www.livit.jregroup.ne.jp/gyutan-sushistreet/",
+    "access": {
+      "from": "JR仙台駅",
+      "method": "徒步",
+      "duration_min": 2,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "車站共構商場用餐最方便，市區停車費用較高。",
+    "visit_duration_min": 50,
+    "entry_fee_jpy": 1600,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "sado-island",
+    "name_zh": "佐渡島",
+    "name_ja": "佐渡島",
+    "region": "tohoku",
+    "prefecture": "新潟縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "金山遺跡",
+      "朱鷺"
+    ],
+    "description": "日本海最大離島，曾因金礦繁華一時的佐渡金山遺跡可深入坑道參觀，朱鷺森公園則能近距離觀賞復育有成的國寶級朱鷺，租車環島是最佳探索方式。",
+    "image_query": "Sado Island gold mine coastline Japan",
+    "official_url": "https://www.visitsado.com/",
+    "access": {
+      "from": "新潟港",
+      "method": "渡輪",
+      "duration_min": 150,
+      "cost_jpy": 7070
+    },
+    "self_drive_note": "島上大眾運輸班次稀少，強烈建議搭渡輪時順帶租車環島。",
+    "visit_duration_min": 240,
+    "entry_fee_jpy": 900,
+    "best_season": "4-10月氣候最宜人",
+    "is_remote_island": true
+  },
+  {
+    "id": "asakusa-sensoji",
+    "name_zh": "淺草寺・雷門",
+    "name_ja": "浅草寺・雷門",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "定番",
+      "古寺",
+      "仲見世通"
+    ],
+    "description": "東京最古老的寺院，掛著巨大紅燈籠的雷門是必拍地標，穿過仲見世通兩側林立人形燒、雷米果等傳統小吃店，直達本堂參拜五重塔。",
+    "image_query": "Senso-ji Temple Kaminarimon gate Asakusa",
+    "official_url": "https://www.senso-ji.jp/",
+    "access": {
+      "from": "淺草駅",
+      "method": "徒步",
+      "duration_min": 3,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區道路狹窄且停車費高昂，強烈建議搭地鐵前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜，早晨人潮較少",
+    "is_remote_island": false
+  },
+  {
+    "id": "shibuya-crossing",
+    "name_zh": "澀谷十字路口",
+    "name_ja": "渋谷スクランブル交差点",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "定番",
+      "城市地標",
+      "夜景"
+    ],
+    "description": "全球最繁忙的行人穿越道之一，綠燈亮起瞬間數百人同時穿越的畫面已成東京代名詞，可到旁邊星巴克或SHIBUYA SKY俯瞰整個路口盛況。",
+    "image_query": "Shibuya Crossing Tokyo night",
+    "official_url": "https://www.gotokyo.org/jp/spot/78/index.html",
+    "access": {
+      "from": "澀谷駅",
+      "method": "徒步",
+      "duration_min": 1,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市中心停車一位難求，務必搭電車前往。",
+    "visit_duration_min": 30,
+    "entry_fee_jpy": 0,
+    "best_season": "傍晚至夜間人潮最壯觀",
+    "is_remote_island": false
+  },
+  {
+    "id": "shinjuku-gyoen",
+    "name_zh": "新宿御苑",
+    "name_ja": "新宿御苑",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "賞櫻",
+      "日式庭園",
+      "都會綠洲"
+    ],
+    "description": "融合日式、法式、英式三種庭園風格的廣大公園，春季千餘株櫻花齊放是東京都內數一數二的賞櫻名所，平日午後也是都市人放鬆野餐的首選。",
+    "image_query": "Shinjuku Gyoen cherry blossoms Tokyo",
+    "official_url": "https://www.env.go.jp/garden/shinjukugyoen",
+    "access": {
+      "from": "新宿駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "鄰近設有停車場但假日一位難求，建議搭電車。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 500,
+    "best_season": "3月下旬至4月上旬櫻花季",
+    "is_remote_island": false
+  },
+  {
+    "id": "akihabara-electric-town",
+    "name_zh": "秋葉原電器街",
+    "name_ja": "秋葉原",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "動漫",
+      "電器",
+      "次文化"
+    ],
+    "description": "從電器行街發展成御宅族文化聖地，動漫周邊、電玩、女僕咖啡廳林立，扭蛋機與中古手辦店讓人一逛就是大半天。",
+    "image_query": "Akihabara Electric Town Tokyo anime",
+    "official_url": "https://www.gotokyo.org/jp/destinations/central-tokyo/akihabara/index.html",
+    "access": {
+      "from": "秋葉原駅",
+      "method": "徒步",
+      "duration_min": 2,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區停車不易，搭電車最方便。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "teamlab-planets",
+    "name_zh": "teamLab Planets",
+    "name_ja": "チームラボプラネッツ",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "數位藝術",
+      "沉浸式體驗"
+    ],
+    "description": "赤腳走入及膝水中欣賞光影投射的錦鯉群、無限鏡屋與花之森，是東京最受歡迎的沉浸式數位藝術展，建議提早預約避免撲空。",
+    "image_query": "teamLab Planets digital art Tokyo",
+    "official_url": "https://www.teamlab.art/e/planets/",
+    "access": {
+      "from": "豐洲駅",
+      "method": "徒步",
+      "duration_min": 8,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "場館周邊停車位有限，建議搭電車前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 3800,
+    "best_season": "全年皆宜，建議線上預約",
+    "is_remote_island": false
+  },
+  {
+    "id": "tsukiji-toyosu-market",
+    "name_zh": "築地場外市場・豐洲市場",
+    "name_ja": "築地場外市場・豊洲市場",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "food",
+    "tags": [
+      "海鮮丼",
+      "壽司早餐",
+      "市場美食"
+    ],
+    "description": "豐洲市場保留搬遷前的競標文化與批發活力，場外美食街則能吃到現切鮪魚壽司、玉子燒與海鮮丼，是東京老饕公認的美食朝聖地。",
+    "image_query": "Tsukiji Toyosu fish market sushi breakfast",
+    "official_url": "https://www.toyosu-market.or.jp/",
+    "access": {
+      "from": "築地駅／市場前駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市場周邊停車空間有限且清晨壅擠，建議搭電車前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 2000,
+    "best_season": "清晨營業，越早越新鮮",
+    "is_remote_island": false
+  },
+  {
+    "id": "kamakura-great-buddha",
+    "name_zh": "鎌倉大佛",
+    "name_ja": "鎌倉大仏",
+    "region": "kanto",
+    "prefecture": "神奈川縣",
+    "category": "attraction",
+    "tags": [
+      "古都",
+      "大佛",
+      "海濱"
+    ],
+    "description": "高達11公尺的露天青銅大佛坐鎮高德院超過七百年，內部中空可付費入內參觀鑄造結構，周邊江之電沿海岸線行駛，適合安排一日輕旅行。",
+    "image_query": "Kamakura Great Buddha Japan",
+    "official_url": "https://www.kotoku-in.jp/",
+    "access": {
+      "from": "長谷駅",
+      "method": "徒步",
+      "duration_min": 7,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "鎌倉市區道路狹窄假日壅塞，建議搭江之電或巴士前往。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 300,
+    "best_season": "全年皆宜，秋季賞楓佳",
+    "is_remote_island": false
+  },
+  {
+    "id": "nikko-toshogu-shrine",
+    "name_zh": "日光東照宮",
+    "name_ja": "日光東照宮",
+    "region": "kanto",
+    "prefecture": "栃木縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "神社",
+      "精雕藝術"
+    ],
+    "description": "供奉德川家康的絢爛神社群，「見猿、聞猿、言猿」三猿雕刻與正門的睡貓木雕工藝精細，被列為世界文化遺產，周邊華嚴瀑布與中禪寺湖也值得順遊。",
+    "image_query": "Nikko Toshogu Shrine carvings Japan",
+    "official_url": "https://toshogu.jp/",
+    "access": {
+      "from": "JR日光駅",
+      "method": "巴士",
+      "duration_min": 10,
+      "cost_jpy": 310
+    },
+    "self_drive_note": "自駕方便，山區道路蜿蜒但風景優美，冬季需備雪胎。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 1300,
+    "best_season": "秋季紅葉季節最壯觀",
+    "is_remote_island": false
+  },
+  {
+    "id": "hakone-owakudani",
+    "name_zh": "箱根大涌谷",
+    "name_ja": "箱根大涌谷",
+    "region": "kanto",
+    "prefecture": "神奈川縣",
+    "category": "attraction",
+    "tags": [
+      "溫泉勝地",
+      "火山地形",
+      "富士山景"
+    ],
+    "description": "搭乘空中纜車俯瞰終年冒著硫磺白煙的火山谷地，晴天時可遠眠富士山，當地黑玉子傳說吃一顆能延壽七年，是箱根一日遊經典路線。",
+    "image_query": "Hakone Owakudani volcanic valley Fuji view",
+    "official_url": "https://www.hakone.or.jp/6318",
+    "access": {
+      "from": "強羅駅",
+      "method": "纜車轉空中纜車",
+      "duration_min": 40,
+      "cost_jpy": 2500
+    },
+    "self_drive_note": "箱根山路彎道多，自駕需注意路況，搭箱根周遊券交通工具更省心。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 0,
+    "best_season": "秋季紅葉、晴朗冬日視野最佳",
+    "is_remote_island": false
+  },
+  {
+    "id": "yokohama-minato-mirai",
+    "name_zh": "橫濱港未來21",
+    "name_ja": "横浜みなとみらい21",
+    "region": "kanto",
+    "prefecture": "神奈川縣",
+    "category": "attraction",
+    "tags": [
+      "港灣夜景",
+      "摩天輪",
+      "購物"
+    ],
+    "description": "摩天輪、紅磚倉庫與跨海大橋交織出東京近郊最浪漫的港灣夜景，白天可漫步紅磚倉庫商場購物，傍晚沿海濱步道散步等待華燈初上。",
+    "image_query": "Yokohama Minato Mirai night view Ferris wheel",
+    "official_url": "https://minatomirai21.com/",
+    "access": {
+      "from": "港未來駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "港區設有大型停車場，自駕相當方便。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜，傍晚時分最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "odaiba-tokyo-bay",
+    "name_zh": "台場・東京灣",
+    "name_ja": "お台場",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "彩虹大橋",
+      "購物",
+      "親子景點"
+    ],
+    "description": "人工島上有巨型鋼彈立像、海濱公園眺望彩虹大橋與晴空塔連成一線的夜景，加上大型購物中心與科學未來館，適合安排親子悠閒半日遊。",
+    "image_query": "Odaiba Rainbow Bridge Tokyo Bay night",
+    "official_url": "https://www.gotokyo.org/jp/destinations/southern-tokyo/odaiba/index.html",
+    "access": {
+      "from": "台場海濱公園駅",
+      "method": "單軌電車",
+      "duration_min": 15,
+      "cost_jpy": 330
+    },
+    "self_drive_note": "彩虹大橋設有可自駕的車道，海濱公園旁停車場齊全。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 0,
+    "best_season": "傍晚夜景最迷人",
+    "is_remote_island": false
+  },
+  {
+    "id": "mount-takao",
+    "name_zh": "高尾山",
+    "name_ja": "高尾山",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "都會近郊健行",
+      "纜車",
+      "賞楓"
+    ],
+    "description": "距東京市區僅一小時車程的健行勝地，搭纜車省去一半腳程後仍有多條登山步道可選，山頂晴天時能遠眺富士山，是東京人假日踏青首選。",
+    "image_query": "Mount Takao hiking trail Tokyo",
+    "official_url": "https://www.takaosan.or.jp/",
+    "access": {
+      "from": "高尾山口駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 490
+    },
+    "self_drive_note": "山腳設有付費停車場，自駕方便，假日建議提早出發。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "秋季紅葉季節人潮最多",
+    "is_remote_island": false
+  },
+  {
+    "id": "ueno-park-museums",
+    "name_zh": "上野公園・博物館群",
+    "name_ja": "上野公園",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "賞櫻",
+      "博物館",
+      "動物園"
+    ],
+    "description": "東京國立博物館、上野動物園與不忍池比鄰而居，春季近千株櫻花齊放時公園化身賞花野餐勝地，一天走完可同時飽覽藝文與自然。",
+    "image_query": "Ueno Park cherry blossoms museum Tokyo",
+    "official_url": "https://www.kensetsu.metro.tokyo.lg.jp/jimusho/toubuk/ueno",
+    "access": {
+      "from": "上野駅",
+      "method": "徒步",
+      "duration_min": 2,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區停車費昂貴，建議搭電車前往。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "3月下旬賞櫻季最熱鬧",
+    "is_remote_island": false
+  },
+  {
+    "id": "mount-fuji-kawaguchiko",
+    "name_zh": "富士山・河口湖",
+    "name_ja": "富士山・河口湖",
+    "region": "chubu",
+    "prefecture": "山梨縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "湖景倒影",
+      "定番"
+    ],
+    "description": "無風晴朗的清晨，河口湖面能倒映出完整的富士山身影，環湖可搭巴士或租車繞行，沿途薰衣草花田與湖畔溫泉旅館是眺望富士山的最佳基地。",
+    "image_query": "Mount Fuji reflection Kawaguchiko lake",
+    "official_url": "https://www.town.fujikawaguchiko.lg.jp/",
+    "access": {
+      "from": "河口湖駅",
+      "method": "巴士",
+      "duration_min": 20,
+      "cost_jpy": 500
+    },
+    "self_drive_note": "環湖自駕彈性最大，各展望點停車場齊全，冬季山區道路需注意結冰。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "11-2月空氣清澈易見富士山全貌",
+    "is_remote_island": false
+  },
+  {
+    "id": "shirakawago-village",
+    "name_zh": "白川鄉合掌村",
+    "name_ja": "白川郷",
+    "region": "chubu",
+    "prefecture": "岐阜縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "合掌造",
+      "雪景"
+    ],
+    "description": "茅草屋頂的合掌造聚落保留江戶時期農村風貌，冬季點燈活動讓整座山村宛如童話雪國，登上展望台可將合掌屋群盡收眼底。",
+    "image_query": "Shirakawago village gassho houses snow",
+    "official_url": "https://shirakawa-go.gr.jp/",
+    "access": {
+      "from": "高山巴士中心",
+      "method": "高速巴士",
+      "duration_min": 50,
+      "cost_jpy": 3000
+    },
+    "self_drive_note": "山區道路冬季易積雪，建議搭巴士前往；若自駕需備雪胎與防滑鏈。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 400,
+    "best_season": "1-2月點燈期間最夢幻",
+    "is_remote_island": false
+  },
+  {
+    "id": "takayama-old-town",
+    "name_zh": "高山老街",
+    "name_ja": "高山陣屋・古い町並",
+    "region": "chubu",
+    "prefecture": "岐阜縣",
+    "category": "attraction",
+    "tags": [
+      "江戶老街",
+      "地酒",
+      "早市"
+    ],
+    "description": "保留江戶時期商家建築的三町老街，飛驒牛握壽司與多家百年酒藏林立，清晨的宮川朝市則販售當地新鮮蔬果與手工藝品，古樸氛圍濃厚。",
+    "image_query": "Takayama old town Edo period street",
+    "official_url": "https://www.hidatakayama.or.jp/",
+    "access": {
+      "from": "JR高山駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "老街周邊設有停車場，自駕與搭車皆方便。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 0,
+    "best_season": "春秋氣候宜人",
+    "is_remote_island": false
+  },
+  {
+    "id": "kanazawa-kenrokuen",
+    "name_zh": "金澤兼六園",
+    "name_ja": "金沢兼六園",
+    "region": "chubu",
+    "prefecture": "石川縣",
+    "category": "attraction",
+    "tags": [
+      "日本三名園",
+      "日式庭園"
+    ],
+    "description": "被列為日本三大名園之一的迴遊式庭園，冬季雪吊技法保護松樹枝幹的景象是攝影師最愛，鄰近的金澤城公園與近江町市場都適合安排順遊。",
+    "image_query": "Kenrokuen Garden Kanazawa snow",
+    "official_url": "https://www.pref.ishikawa.jp/siro-niwa/kenrokuen/",
+    "access": {
+      "from": "JR金澤駅",
+      "method": "巴士",
+      "duration_min": 15,
+      "cost_jpy": 210
+    },
+    "self_drive_note": "市區設有停車場，自駕方便，庭園周邊道路平緩好開。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 320,
+    "best_season": "冬季雪吊、春季櫻花皆美",
+    "is_remote_island": false
+  },
+  {
+    "id": "kamikochi-valley",
+    "name_zh": "上高地",
+    "name_ja": "上高地",
+    "region": "chubu",
+    "prefecture": "長野縣",
+    "category": "attraction",
+    "tags": [
+      "高山秘境",
+      "健行",
+      "河童橋"
+    ],
+    "description": "群山環抱下的高原溪谷，梓川清澈見底倒映穗高連峰，河童橋是最具代表性的拍照點，沿河岸步道健行是夏季避暑的絕佳選擇。",
+    "image_query": "Kamikochi valley Kappa bridge Japan Alps",
+    "official_url": "https://www.kamikochi.or.jp/",
+    "access": {
+      "from": "松本巴士總站",
+      "method": "巴士",
+      "duration_min": 65,
+      "cost_jpy": 2500
+    },
+    "self_drive_note": "上高地全年禁止私家車進入，必須換乘接駁巴士或計程車。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "4月下旬至11月中旬開放期間",
+    "is_remote_island": false
+  },
+  {
+    "id": "matsumoto-castle",
+    "name_zh": "松本城",
+    "name_ja": "松本城",
+    "region": "chubu",
+    "prefecture": "長野縣",
+    "category": "attraction",
+    "tags": [
+      "國寶古城",
+      "黑色天守"
+    ],
+    "description": "日本現存最古老的木造天守之一，黑色外牆搭配白色細節被稱為「烏城」，倒映在護城河中的身影配上北阿爾卑斯山脈背景格外壯觀。",
+    "image_query": "Matsumoto Castle black crow castle Japan",
+    "official_url": "https://www.matsumoto-castle.jp/",
+    "access": {
+      "from": "JR松本駅",
+      "method": "徒步",
+      "duration_min": 15,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區停車場充足，自駕相當方便。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 700,
+    "best_season": "冬季雪山背景最上鏡",
+    "is_remote_island": false
+  },
+  {
+    "id": "nagoya-castle",
+    "name_zh": "名古屋城",
+    "name_ja": "名古屋城",
+    "region": "chubu",
+    "prefecture": "愛知縣",
+    "category": "attraction",
+    "tags": [
+      "古城",
+      "金鯱",
+      "歷史建築"
+    ],
+    "description": "屋頂上金光閃閃的金鯱是名古屋地標，本丸御殿重建工程細膩重現江戶時期障壁畫，是中部地區規模最大的城郭景點。",
+    "image_query": "Nagoya Castle golden shachihoko Japan",
+    "official_url": "https://www.nagoyajo.city.nagoya.jp/",
+    "access": {
+      "from": "名古屋駅",
+      "method": "地鐵",
+      "duration_min": 15,
+      "cost_jpy": 240
+    },
+    "self_drive_note": "城區周邊設有大型停車場，自駕方便。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 500,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "hida-beef-takayama",
+    "name_zh": "飛驒牛握壽司",
+    "name_ja": "飛騨牛にぎり寿司",
+    "region": "chubu",
+    "prefecture": "岐阜縣",
+    "category": "food",
+    "tags": [
+      "和牛",
+      "街頭小吃"
+    ],
+    "description": "高山老街攤販現烤的飛驒牛握壽司，入口即化的油脂與微焦醬香是排隊也值得的銅板美食，逛老街時邊走邊吃剛剛好。",
+    "image_query": "Hida beef nigiri sushi street food Takayama",
+    "official_url": null,
+    "access": {
+      "from": "高山老街内",
+      "method": "徒步",
+      "duration_min": 1,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "老街周邊停車場方便，自駕遊逛無虞。",
+    "visit_duration_min": 20,
+    "entry_fee_jpy": 500,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "shizuoka-unagi",
+    "name_zh": "濱名湖鰻魚飯",
+    "name_ja": "浜名湖うなぎ",
+    "region": "chubu",
+    "prefecture": "靜岡縣",
+    "category": "food",
+    "tags": [
+      "鰻魚飯",
+      "鄉土料理"
+    ],
+    "description": "濱名湖自古以養殖鰻魚聞名，炭火炙烤的蒲燒鰻魚淋上濃郁醬汁鋪在白飯上，外皮微焦內裡軟嫩，是東海道旅途中不可錯過的一餐。",
+    "image_query": "Hamanako eel unagi rice bowl Japan",
+    "official_url": "https://www.hamanako-eel.jp/",
+    "access": {
+      "from": "JR濱松駅",
+      "method": "巴士",
+      "duration_min": 20,
+      "cost_jpy": 600
+    },
+    "self_drive_note": "自駕前往湖畔餐廳相當方便，多數店家備有停車場。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 2800,
+    "best_season": "夏季土用丑日前後最盛行",
+    "is_remote_island": false
+  },
+  {
+    "id": "izu-peninsula-coast",
+    "name_zh": "伊豆半島海岸",
+    "name_ja": "伊豆半島",
+    "region": "chubu",
+    "prefecture": "靜岡縣",
+    "category": "attraction",
+    "tags": [
+      "海岸線兜風",
+      "溫泉",
+      "秘境海灘"
+    ],
+    "description": "沿著伊豆半島海岸公路兜風，斷崖峭壁與湛藍海景交織，沿途城崎海岸吊橋與下田海灘都值得停留，晚上再泡個能眺望大海的露天溫泉。",
+    "image_query": "Izu Peninsula coastline drive Japan",
+    "official_url": "https://izugeopark.org/",
+    "access": {
+      "from": "熱海駅",
+      "method": "租車",
+      "duration_min": 30,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "伊豆半島大眾運輸班次少，強烈建議租車自駕沿海岸線遊覽。",
+    "visit_duration_min": 240,
+    "entry_fee_jpy": 0,
+    "best_season": "夏季海灘、冬季溫泉皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "fushimi-inari-shrine",
+    "name_zh": "伏見稻荷大社",
+    "name_ja": "伏見稲荷大社",
+    "region": "kansai",
+    "prefecture": "京都府",
+    "category": "attraction",
+    "tags": [
+      "千本鳥居",
+      "定番",
+      "免費景點"
+    ],
+    "description": "上千座朱紅鳥居沿山徑層層排列直達山頂，是京都最具代表性的畫面之一，全程開放且免費參觀，清晨造訪能避開人潮拍到空景。",
+    "image_query": "Fushimi Inari torii gates Kyoto",
+    "official_url": "https://inari.jp/",
+    "access": {
+      "from": "JR稻荷駅",
+      "method": "徒步",
+      "duration_min": 1,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "周邊停車位稀少，強烈建議搭電車前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 0,
+    "best_season": "清晨或平日人潮較少",
+    "is_remote_island": false
+  },
+  {
+    "id": "kiyomizudera-temple",
+    "name_zh": "清水寺",
+    "name_ja": "清水寺",
+    "region": "kansai",
+    "prefecture": "京都府",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "舞台造",
+      "古都象徵"
+    ],
+    "description": "懸空木造舞台不用一根釘子建成，是京都最具代表性的世界遺產寺院之一，春櫻秋楓時節與周邊二年坂、三年坂石板老街一同造訪最為經典。",
+    "image_query": "Kiyomizu-dera temple wooden stage Kyoto",
+    "official_url": "https://www.kiyomizudera.or.jp/",
+    "access": {
+      "from": "京都駅",
+      "method": "巴士",
+      "duration_min": 20,
+      "cost_jpy": 230
+    },
+    "self_drive_note": "清水寺周邊道路狹窄且禁止停車，務必搭巴士或步行前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 400,
+    "best_season": "春櫻秋楓季節、夜間點燈期間最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "arashiyama-bamboo-grove",
+    "name_zh": "嵐山竹林",
+    "name_ja": "嵐山の竹林",
+    "region": "kansai",
+    "prefecture": "京都府",
+    "category": "attraction",
+    "tags": [
+      "竹林小徑",
+      "定番",
+      "渡月橋"
+    ],
+    "description": "陽光穿透高聳竹林灑落斑駁光影的小徑，是京都最具詩意的散策路線，鄰近渡月橋與天龍寺，適合安排半日悠閒漫遊。",
+    "image_query": "Arashiyama bamboo grove Kyoto",
+    "official_url": "https://ja.kyoto.travel/tourism/single01.php?category_id=8&tourism_id=2683",
+    "access": {
+      "from": "嵐山駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "周邊停車位有限且假日壅塞，建議搭電車前往。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 0,
+    "best_season": "清晨人潮最少，秋季紅葉極美",
+    "is_remote_island": false
+  },
+  {
+    "id": "gion-geisha-district",
+    "name_zh": "祇園花見小路",
+    "name_ja": "祇園花見小路",
+    "region": "kansai",
+    "prefecture": "京都府",
+    "category": "attraction",
+    "tags": [
+      "藝伎文化",
+      "古街"
+    ],
+    "description": "石板路兩側是江戶風情的茶屋與町家建築，運氣好能巧遇趕場的藝伎或舞伎身影，夜幕低垂時燈籠亮起更添古都韻味。",
+    "image_query": "Gion Hanamikoji street geisha district Kyoto",
+    "official_url": "https://www.gion.or.jp/",
+    "access": {
+      "from": "祇園四条駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "花見小路周邊停車不便，建議搭電車前往並保持安靜尊重居民。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 0,
+    "best_season": "傍晚時分氛圍最佳",
+    "is_remote_island": false
+  },
+  {
+    "id": "osaka-dotonbori",
+    "name_zh": "道頓堀",
+    "name_ja": "道頓堀",
+    "region": "kansai",
+    "prefecture": "大阪府",
+    "category": "attraction",
+    "tags": [
+      "定番",
+      "霓虹夜景",
+      "美食街"
+    ],
+    "description": "固力果跑跑人招牌與運河兩岸的巨型立體招牌是大阪最鮮明的畫面，章魚燒、大阪燒與炸串店家林立，是體驗庶民美食活力的最佳去處。",
+    "image_query": "Dotonbori Osaka Glico sign night",
+    "official_url": "https://osaka-info.jp/spot/dotonbori/",
+    "access": {
+      "from": "難波駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區停車費昂貴，建議搭地鐵前往。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 0,
+    "best_season": "夜晚霓虹最迷人",
+    "is_remote_island": false
+  },
+  {
+    "id": "osaka-castle",
+    "name_zh": "大阪城",
+    "name_ja": "大阪城",
+    "region": "kansai",
+    "prefecture": "大阪府",
+    "category": "attraction",
+    "tags": [
+      "古城",
+      "賞櫻",
+      "歷史地標"
+    ],
+    "description": "豐臣秀吉建造的天守閣是大阪精神象徵，內部設有歷史資料展示與展望台，周邊西之丸庭園春季櫻花與天守閣相映成畫。",
+    "image_query": "Osaka Castle cherry blossoms Japan",
+    "official_url": "https://www.osakacastlepark.jp/?lang=ja",
+    "access": {
+      "from": "大阪城公園駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "公園周邊設有停車場，自駕方便。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 600,
+    "best_season": "3月下旬賞櫻季最熱鬧",
+    "is_remote_island": false
+  },
+  {
+    "id": "universal-studios-japan",
+    "name_zh": "日本環球影城",
+    "name_ja": "ユニバーサル・スタジオ・ジャパン",
+    "region": "kansai",
+    "prefecture": "大阪府",
+    "category": "attraction",
+    "tags": [
+      "主題樂園",
+      "哈利波特園區"
+    ],
+    "description": "哈利波特魔法世界與超級任天堂世界是最受歡迎的兩大園區，建議提早購買特快通行證避開排隊人潮，安排一整天暢玩才不虛此行。",
+    "image_query": "Universal Studios Japan Osaka theme park",
+    "official_url": "https://www.usj.co.jp/",
+    "access": {
+      "from": "JR環球城駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "樂園設有大型收費停車場，自駕與搭電車皆方便。",
+    "visit_duration_min": 480,
+    "entry_fee_jpy": 8600,
+    "best_season": "避開日本連假人潮較少",
+    "is_remote_island": false
+  },
+  {
+    "id": "nara-park-todaiji",
+    "name_zh": "奈良公園・東大寺",
+    "name_ja": "奈良公園・東大寺",
+    "region": "kansai",
+    "prefecture": "奈良縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "鹿群",
+      "大佛"
+    ],
+    "description": "上千頭野生放養的梅花鹿在公園自由漫步，買份鹿仙貝就會被溫柔包圍，東大寺內供奉的大佛殿是世界最大木造建築之一，氣勢震撼。",
+    "image_query": "Nara Park deer Todaiji temple Buddha",
+    "official_url": "https://www.todaiji.or.jp/",
+    "access": {
+      "from": "JR奈良駅",
+      "method": "巴士",
+      "duration_min": 10,
+      "cost_jpy": 210
+    },
+    "self_drive_note": "公園周邊停車場眾多，自駕方便，但假日一位難求。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 600,
+    "best_season": "全年皆宜，秋季紅葉加分",
+    "is_remote_island": false
+  },
+  {
+    "id": "himeji-castle",
+    "name_zh": "姬路城",
+    "name_ja": "姫路城",
+    "region": "kansai",
+    "prefecture": "兵庫縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "白鷺城",
+      "國寶"
+    ],
+    "description": "純白優雅的外觀有「白鷺城」美稱，是日本現存規模最大且保存最完整的木造城郭，被列為世界文化遺產，內部迷宮式防禦構造相當有趣。",
+    "image_query": "Himeji Castle white heron castle Japan",
+    "official_url": "https://www.city.himeji.lg.jp/castle/",
+    "access": {
+      "from": "JR姬路駅",
+      "method": "徒步",
+      "duration_min": 15,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "車站到城堡有寬敞步行大道，自駕停車場也在附近。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 1000,
+    "best_season": "春季櫻花季節最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "kobe-harborland",
+    "name_zh": "神戶港灣・北野異人館",
+    "name_ja": "神戸ハーバーランド・北野異人館",
+    "region": "kansai",
+    "prefecture": "兵庫縣",
+    "category": "attraction",
+    "tags": [
+      "港灣夜景",
+      "異國建築"
+    ],
+    "description": "神戶港塔與摩天輪構成的港灣夜景浪漫迷人，山手的北野異人館街則保留明治時期洋人居留地的異國風洋房，適合半日悠閒漫遊。",
+    "image_query": "Kobe Harborland port tower night view",
+    "official_url": "https://www.kobeijinkan.com/",
+    "access": {
+      "from": "神戶駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "港區與異人館周邊皆有停車場，自駕方便。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 0,
+    "best_season": "傍晚至夜間港灣夜景最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "osaka-takoyaki-kuromon",
+    "name_zh": "黑門市場・章魚燒",
+    "name_ja": "黒門市場・たこ焼き",
+    "region": "kansai",
+    "prefecture": "大阪府",
+    "category": "food",
+    "tags": [
+      "章魚燒",
+      "市場美食"
+    ],
+    "description": "外酥內爆漿的章魚燒是大阪庶民美食代表，黑門市場則有現烤海鮮、河豚料理與水果攤，邊逛邊吃是體驗「食いだおれ」大阪最道地的方式。",
+    "image_query": "Osaka takoyaki street food Kuromon market",
+    "official_url": "https://kuromon.com/jp/",
+    "access": {
+      "from": "日本橋駅",
+      "method": "徒步",
+      "duration_min": 3,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市場周邊停車不便，建議搭地鐵前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 1000,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "kyoto-nishiki-market",
+    "name_zh": "京都錦市場",
+    "name_ja": "京都錦市場",
+    "region": "kansai",
+    "prefecture": "京都府",
+    "category": "food",
+    "tags": [
+      "京都廚房",
+      "漬物",
+      "街頭小吃"
+    ],
+    "description": "有「京都廚房」之稱的百年商店街，生麩、豆乳甜甜圈、醃漬小菜與新鮮海產一應俱全，適合邊走邊吃感受京都職人手藝與飲食文化。",
+    "image_query": "Kyoto Nishiki Market street food",
+    "official_url": "https://www.kyoto-nishiki.or.jp/",
+    "access": {
+      "from": "四条駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市場為徒步商店街，周邊停車不便，建議搭電車前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 1200,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "wakayama-shirahama-beach",
+    "name_zh": "白濱溫泉海灘",
+    "name_ja": "白浜温泉",
+    "region": "kansai",
+    "prefecture": "和歌山縣",
+    "category": "attraction",
+    "tags": [
+      "白沙灘",
+      "溫泉",
+      "海景"
+    ],
+    "description": "潔白細沙與湛藍海水媲美南國海灘，緊鄰多家能泡露天溫泉眺望夕陽的旅館，是關西人夏季度假與海景溫泉的熱門去處。",
+    "image_query": "Shirahama beach Wakayama white sand",
+    "official_url": "https://www.nankishirahama.jp/",
+    "access": {
+      "from": "JR白濱駅",
+      "method": "巴士",
+      "duration_min": 15,
+      "cost_jpy": 330
+    },
+    "self_drive_note": "和歌山鐵路班次較少，強烈建議自駕遊覽沿海景點更有彈性。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "7-8月海水浴季節",
+    "is_remote_island": false
+  },
+  {
+    "id": "miyajima-itsukushima",
+    "name_zh": "宮島・嚴島神社",
+    "name_ja": "宮島・厳島神社",
+    "region": "chugoku",
+    "prefecture": "廣島縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "海上鳥居",
+      "定番"
+    ],
+    "description": "矗立海中的朱紅大鳥居隨漲退潮呈現不同風貌，滿潮時彷彿浮於海面，退潮時則可徒步走近觸摸，島上野生鹿群與烤牡蠣、紅葉饅頭同樣吸引人。",
+    "image_query": "Itsukushima Shrine floating torii Miyajima",
+    "official_url": "https://www.itsukushimajinja.jp/",
+    "access": {
+      "from": "宮島口駅",
+      "method": "渡輪",
+      "duration_min": 10,
+      "cost_jpy": 200
+    },
+    "self_drive_note": "島上車輛管制嚴格，建議停車於宮島口再搭渡輪上島。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 300,
+    "best_season": "滿潮時段最壯觀，可查潮汐表安排",
+    "is_remote_island": false
+  },
+  {
+    "id": "hiroshima-peace-memorial",
+    "name_zh": "廣島和平紀念公園",
+    "name_ja": "広島平和記念公園",
+    "region": "chugoku",
+    "prefecture": "廣島縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "歷史反思"
+    ],
+    "description": "原爆圓頂館與和平紀念資料館訴說著1945年那段沉重歷史，公園內的和平之鐘與千羽鶴像提醒世人珍惜和平，是深具意義的必訪景點。",
+    "image_query": "Hiroshima Peace Memorial Park Dome",
+    "official_url": "https://www.city.hiroshima.lg.jp/living/park-green/1005983/1026353/1003127.html",
+    "access": {
+      "from": "原爆ドーム前駅",
+      "method": "徒步",
+      "duration_min": 1,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區有停車場但建議搭路面電車前往較為便利。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 200,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "kurashiki-bikan-district",
+    "name_zh": "倉敷美觀地區",
+    "name_ja": "倉敷美観地区",
+    "region": "chugoku",
+    "prefecture": "岡山縣",
+    "category": "attraction",
+    "tags": [
+      "白壁老街",
+      "運河風情"
+    ],
+    "description": "江戶時期商家倉庫沿運河而建，白牆黑瓦與垂柳倒影構成懷舊畫面，街區內咖啡館與玻璃工藝品店林立，適合悠閒散步一整個下午。",
+    "image_query": "Kurashiki Bikan historical quarter canal",
+    "official_url": "https://www.kurashiki-tabi.jp/",
+    "access": {
+      "from": "JR倉敷駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "街區周邊設有停車場，自駕方便。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "tottori-sand-dunes",
+    "name_zh": "鳥取砂丘",
+    "name_ja": "鳥取砂丘",
+    "region": "chugoku",
+    "prefecture": "鳥取縣",
+    "category": "attraction",
+    "tags": [
+      "日本最大砂丘",
+      "駱駝體驗"
+    ],
+    "description": "南北2.4公里的巨大海岸砂丘，風吹形成的「風紋」與「砂簾」是自然奇景，可體驗滑沙或騎乘駱駝漫步，登上砂丘頂遠眺日本海景色壯闊。",
+    "image_query": "Tottori Sand Dunes Japan desert coast",
+    "official_url": "https://www.torican.jp/sakyu/",
+    "access": {
+      "from": "JR鳥取駅",
+      "method": "巴士",
+      "duration_min": 25,
+      "cost_jpy": 420
+    },
+    "self_drive_note": "自駕方便，砂丘旁設有大型停車場。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 0,
+    "best_season": "傍晚夕陽時分最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "okayama-korakuen-garden",
+    "name_zh": "岡山後樂園",
+    "name_ja": "岡山後楽園",
+    "region": "chugoku",
+    "prefecture": "岡山縣",
+    "category": "attraction",
+    "tags": [
+      "日本三名園",
+      "日式庭園"
+    ],
+    "description": "與兼六園、偕樂園並列日本三大名園，開闊草坪與借景岡山城天守閣的構圖是其最大特色，四季花卉輪番綻放各有風情。",
+    "image_query": "Okayama Korakuen Garden Japan",
+    "official_url": "https://okayama-korakuen.jp/",
+    "access": {
+      "from": "JR岡山駅",
+      "method": "巴士",
+      "duration_min": 20,
+      "cost_jpy": 140
+    },
+    "self_drive_note": "公園周邊有停車場，自駕方便。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 410,
+    "best_season": "春秋兩季景致最豐富",
+    "is_remote_island": false
+  },
+  {
+    "id": "izumo-taisha-shrine",
+    "name_zh": "出雲大社",
+    "name_ja": "出雲大社",
+    "region": "chugoku",
+    "prefecture": "島根縣",
+    "category": "attraction",
+    "tags": [
+      "結緣聖地",
+      "古老神社"
+    ],
+    "description": "日本最古老的神社之一，以「結良緣」聞名，巨大的注連繩懸掛於神樂殿前氣勢磅礡，每年農曆十月全國神明齊聚於此的傳說更添神秘色彩。",
+    "image_query": "Izumo Taisha Shrine giant shimenawa Japan",
+    "official_url": "https://izumooyashiro.or.jp/",
+    "access": {
+      "from": "出雲大社前駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "神社備有大型停車場，山陰地區大眾運輸較少，建議自駕前往。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "hiroshima-okonomiyaki",
+    "name_zh": "廣島風お好み燒",
+    "name_ja": "広島風お好み焼き",
+    "region": "chugoku",
+    "prefecture": "廣島縣",
+    "category": "food",
+    "tags": [
+      "層疊煎餅",
+      "鐵板美食"
+    ],
+    "description": "與大阪燒不同，廣島燒將高麗菜、豬肉、麵條與蛋層層堆疊在鐵板上煎烤，濃郁醬汁包裹酥脆麵條，是當地人從小吃到大的靈魂料理。",
+    "image_query": "Hiroshima style okonomiyaki layered pancake",
+    "official_url": null,
+    "access": {
+      "from": "廣島駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區停車費較高，建議搭路面電車前往。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 1200,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "naoshima-art-island",
+    "name_zh": "直島藝術之島",
+    "name_ja": "直島",
+    "region": "shikoku",
+    "prefecture": "香川縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "現代藝術",
+      "地中美術館"
+    ],
+    "description": "草間彌生的黃色大南瓜矗立海邊碼頭，地中美術館與家プロジェクト將整座島嶼變成戶外藝廊，是全球藝術愛好者朝聖的瀨戶內海小島。",
+    "image_query": "Naoshima yellow pumpkin art island Japan",
+    "official_url": "https://benesse-artsite.jp/",
+    "access": {
+      "from": "宇野港",
+      "method": "渡輪",
+      "duration_min": 20,
+      "cost_jpy": 300
+    },
+    "self_drive_note": "島上可租借自行車或電動車代步，班船時刻需事先查好以免錯過末班船。",
+    "visit_duration_min": 240,
+    "entry_fee_jpy": 0,
+    "best_season": "瀨戶內國際藝術祭期間最熱鬧",
+    "is_remote_island": true
+  },
+  {
+    "id": "dogo-onsen",
+    "name_zh": "道後溫泉",
+    "name_ja": "道後温泉",
+    "region": "shikoku",
+    "prefecture": "愛媛縣",
+    "category": "attraction",
+    "tags": [
+      "千年溫泉",
+      "神隱少女原型"
+    ],
+    "description": "相傳是《神隱少女》湯屋原型的木造溫泉本館已有三千年歷史，穿著浴衣漫步溫泉街、品嚐坊っちゃん糰子，是四國最具代表性的溫泉體驗。",
+    "image_query": "Dogo Onsen wooden bathhouse Japan",
+    "official_url": "https://dogo.jp/",
+    "access": {
+      "from": "道後溫泉駅",
+      "method": "路面電車",
+      "duration_min": 20,
+      "cost_jpy": 180
+    },
+    "self_drive_note": "松山市區道路平緩，自駕與電車皆方便，溫泉街周邊有停車場。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 700,
+    "best_season": "全年皆宜，冬季泡湯最舒適",
+    "is_remote_island": false
+  },
+  {
+    "id": "kotohira-shrine",
+    "name_zh": "金刀比羅宮",
+    "name_ja": "金刀比羅宮",
+    "region": "shikoku",
+    "prefecture": "香川縣",
+    "category": "attraction",
+    "tags": [
+      "參拜石階",
+      "海神信仰"
+    ],
+    "description": "得爬上1368級石階才能抵達的「海の神さま」，沿途小吃攤與紀念品店讓爬階過程不無聊，登頂後瀨戶內海風光是最好的獎賞。",
+    "image_query": "Kotohira Shrine stone steps Shikoku",
+    "official_url": "https://www.konpira.or.jp/",
+    "access": {
+      "from": "JR琴平駅",
+      "method": "徒步",
+      "duration_min": 15,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "參道入口周邊設有停車場，自駕方便，但參拜本身需徒步登山。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 0,
+    "best_season": "春秋氣候涼爽時較好爬",
+    "is_remote_island": false
+  },
+  {
+    "id": "iya-valley-vine-bridge",
+    "name_zh": "祖谷溪・葛藤橋",
+    "name_ja": "祖谷渓・かずら橋",
+    "region": "shikoku",
+    "prefecture": "德島縣",
+    "category": "attraction",
+    "tags": [
+      "秘境溪谷",
+      "藤蔓吊橋"
+    ],
+    "description": "以天然藤蔓編成的吊橋橫跨溪谷，走在上頭腳下溪水清晰可見，四國三大秘境之一的祖谷溪蜿蜒山路與溫泉旅館讓人徹底遠離塵囂。",
+    "image_query": "Iya Valley vine bridge Shikoku Japan",
+    "official_url": "https://miyoshi-tourism.jp/spot/46/",
+    "access": {
+      "from": "JR大歩危駅",
+      "method": "巴士",
+      "duration_min": 40,
+      "cost_jpy": 1000
+    },
+    "self_drive_note": "山區道路狹窄彎曲，強烈建議自駕但需謹慎駕駛，沒有駕駛經驗建議搭巴士。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 550,
+    "best_season": "新綠與賞楓季節最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "takamatsu-udon",
+    "name_zh": "讚岐烏龍麵",
+    "name_ja": "讃岐うどん",
+    "region": "shikoku",
+    "prefecture": "香川縣",
+    "category": "food",
+    "tags": [
+      "Q彈麵條",
+      "自助式食堂"
+    ],
+    "description": "香川縣以「烏龍麵王國」自居，麵條扎實彈牙，自助式食堂可自己選擇配料與湯頭，一碗銅板價卻讓人一試成主顧，值得安排一場巡店之旅。",
+    "image_query": "Sanuki udon noodles Kagawa Japan",
+    "official_url": null,
+    "access": {
+      "from": "JR高松駅",
+      "method": "巴士／租車",
+      "duration_min": 15,
+      "cost_jpy": 300
+    },
+    "self_drive_note": "烏龍麵店多分散在郊區，自駕巡店最有效率也最道地。",
+    "visit_duration_min": 40,
+    "entry_fee_jpy": 500,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "fukuoka-hakata-yatai",
+    "name_zh": "福岡博多屋台",
+    "name_ja": "福岡博多屋台",
+    "region": "kyushu",
+    "prefecture": "福岡縣",
+    "category": "food",
+    "tags": [
+      "路邊攤",
+      "豚骨拉麵",
+      "居酒屋氛圍"
+    ],
+    "description": "夜幕低垂後中洲一帶的屋台紅燈籠陸續亮起，坐在小攤前吃著豚骨拉麵、餃子配一杯啤酒，是體驗福岡在地人夜生活最道地的方式。",
+    "image_query": "Fukuoka Hakata yatai food stalls night",
+    "official_url": "https://yokanavi.com/spots/yatai",
+    "access": {
+      "from": "中洲川端駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區停車費較高，建議搭地鐵前往享用屋台。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 1500,
+    "best_season": "傍晚後至深夜最熱鬧",
+    "is_remote_island": false
+  },
+  {
+    "id": "beppu-hells-tour",
+    "name_zh": "別府地獄溫泉巡禮",
+    "name_ja": "別府地獄めぐり",
+    "region": "kyushu",
+    "prefecture": "大分縣",
+    "category": "attraction",
+    "tags": [
+      "地獄溫泉",
+      "溫泉聖地"
+    ],
+    "description": "血の池地獄的赤紅泉水與海地獄的鈷藍色澤是別府最具視覺震撼的溫泉景觀，雖不能下水但可購買套票一次逛完七大地獄溫泉。",
+    "image_query": "Beppu hells hot spring red pond Japan",
+    "official_url": "https://www.beppu-jigoku.com/",
+    "access": {
+      "from": "JR別府駅",
+      "method": "巴士",
+      "duration_min": 15,
+      "cost_jpy": 150
+    },
+    "self_drive_note": "地獄景點分散市郊，強烈建議自駕或參加周遊巴士行程。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 2200,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "yufuin-onsen-town",
+    "name_zh": "由布院溫泉小鎮",
+    "name_ja": "湯布院",
+    "region": "kyushu",
+    "prefecture": "大分縣",
+    "category": "attraction",
+    "tags": [
+      "溫泉小鎮",
+      "由布岳景色"
+    ],
+    "description": "由布岳山腳下的溫泉小鎮，金鱗湖畔晨霧繚繞如夢似幻，湯之坪街道兩旁工藝品店與甜點店林立，是九州最受歡迎的溫泉度假地之一。",
+    "image_query": "Yufuin onsen town Mount Yufu Japan",
+    "official_url": "https://yufuin.gr.jp/",
+    "access": {
+      "from": "JR由布院駅",
+      "method": "徒步",
+      "duration_min": 15,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "小鎮周邊有停車場，自駕方便，但市區道路假日易壅塞。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "清晨金鱗湖霧氣最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "kumamoto-castle",
+    "name_zh": "熊本城",
+    "name_ja": "熊本城",
+    "region": "kyushu",
+    "prefecture": "熊本縣",
+    "category": "attraction",
+    "tags": [
+      "古城",
+      "地震復原"
+    ],
+    "description": "以堅固「武者返し」石牆聞名的名城，歷經2016年熊本地震損毀後持續修復重建，天守閣內展示地震復原過程，見證城市韌性與歷史交織。",
+    "image_query": "Kumamoto Castle Japan restoration",
+    "official_url": "https://castle.kumamoto-guide.jp/",
+    "access": {
+      "from": "熊本城・市役所前駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 500
+    },
+    "self_drive_note": "市區設有停車場，自駕方便。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 800,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "nagasaki-glover-garden",
+    "name_zh": "長崎哥拉巴園・夜景",
+    "name_ja": "長崎グラバー園・夜景",
+    "region": "kyushu",
+    "prefecture": "長崎縣",
+    "category": "attraction",
+    "tags": [
+      "異國風情",
+      "世界三大夜景"
+    ],
+    "description": "明治時期洋商宅邸群保留濃厚異國風情，登上稻佐山纜車俯瞰的千萬夜景被列為世界新三大夜景，白天逛園區、傍晚上山看夜景是經典安排。",
+    "image_query": "Nagasaki Glover Garden night view",
+    "official_url": "https://glover-garden.jp/",
+    "access": {
+      "from": "JR長崎駅",
+      "method": "路面電車",
+      "duration_min": 15,
+      "cost_jpy": 140
+    },
+    "self_drive_note": "稻佐山山頂道路可自駕上山，山下也有付費停車場。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 620,
+    "best_season": "傍晚上山看夜景最佳",
+    "is_remote_island": false
+  },
+  {
+    "id": "sakurajima-volcano",
+    "name_zh": "櫻島火山",
+    "name_ja": "桜島",
+    "region": "kyushu",
+    "prefecture": "鹿兒島縣",
+    "category": "attraction",
+    "tags": [
+      "活火山",
+      "渡輪",
+      "火山景觀"
+    ],
+    "description": "至今仍持續噴發的活火山，搭渡輪僅十五分鐘即可登島，環島兜風沿途展望台能近距離感受火山威嚴，湯之平展望所視野最為開闊。",
+    "image_query": "Sakurajima active volcano Kagoshima ferry",
+    "official_url": "https://www.sakurajima.gr.jp/",
+    "access": {
+      "from": "鹿兒島港",
+      "method": "渡輪",
+      "duration_min": 15,
+      "cost_jpy": 200
+    },
+    "self_drive_note": "島上大眾運輸班次少，強烈建議搭渡輪帶車或租車環島。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜，火山灰偶爾影響能見度",
+    "is_remote_island": false
+  },
+  {
+    "id": "yakushima-forest",
+    "name_zh": "屋久島原始林",
+    "name_ja": "屋久島",
+    "region": "kyushu",
+    "prefecture": "鹿兒島縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "離島",
+      "繩文杉"
+    ],
+    "description": "被列為世界自然遺產的原始杉木林，樹齡推估超過七千年的繩文杉需徒步健行才能一睹真容，濕潤山林中滿布青苔的景色宛如《魔法公主》場景。",
+    "image_query": "Yakushima ancient forest moss Japan",
+    "official_url": "https://yakukan.jp/",
+    "access": {
+      "from": "鹿兒島港",
+      "method": "高速船",
+      "duration_min": 120,
+      "cost_jpy": 11000
+    },
+    "self_drive_note": "島上道路狹窄蜿蜒，建議租車代步，深山健行路線需申請並及早出發。",
+    "visit_duration_min": 300,
+    "entry_fee_jpy": 0,
+    "best_season": "5-9月為主要健行季節，注意多雨氣候",
+    "is_remote_island": true
+  },
+  {
+    "id": "kagoshima-kurobuta",
+    "name_zh": "鹿兒島黑豚料理",
+    "name_ja": "鹿児島黒豚料理",
+    "region": "kyushu",
+    "prefecture": "鹿兒島縣",
+    "category": "food",
+    "tags": [
+      "黑豚涮涮鍋",
+      "鄉土美食"
+    ],
+    "description": "鹿兒島特產黑豚肉質細緻少腥味，無論是黑豚涮涮鍋或炸豬排都能吃出鮮甜油脂，是造訪鹿兒島必嚐的鄉土美味。",
+    "image_query": "Kagoshima black pork shabu shabu",
+    "official_url": null,
+    "access": {
+      "from": "鹿兒島中央駅",
+      "method": "徒步",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "市區有停車場，自駕方便。",
+    "visit_duration_min": 70,
+    "entry_fee_jpy": 3200,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "huis-ten-bosch",
+    "name_zh": "豪斯登堡",
+    "name_ja": "ハウステンボス",
+    "region": "kyushu",
+    "prefecture": "長崎縣",
+    "category": "attraction",
+    "tags": [
+      "歐風主題樂園",
+      "燈光秀"
+    ],
+    "description": "重現荷蘭街景的大型主題樂園，運河、風車與鬱金香花田充滿異國風情，冬季的光之王國燈光秀是日本規模最大的燈飾展演之一。",
+    "image_query": "Huis Ten Bosch theme park lights Japan",
+    "official_url": "https://english.huistenbosch.co.jp/",
+    "access": {
+      "from": "JR豪斯登堡駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "園區備有大型停車場，自駕相當方便。",
+    "visit_duration_min": 360,
+    "entry_fee_jpy": 7000,
+    "best_season": "11-2月燈光秀期間最推薦",
+    "is_remote_island": false
+  },
+  {
+    "id": "shuri-castle",
+    "name_zh": "首里城",
+    "name_ja": "首里城",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "琉球王國",
+      "古城"
+    ],
+    "description": "曾為琉球王國政治中心的朱紅色城郭，融合中式與日式建築風格獨樹一格，雖歷經火災正在修復中，仍可參觀見學區了解琉球王朝歷史。",
+    "image_query": "Shuri Castle Okinawa red palace",
+    "official_url": "https://oki-park.jp/shurijo/",
+    "access": {
+      "from": "首里駅",
+      "method": "單軌電車",
+      "duration_min": 15,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "那霸市區道路平緩，自駕與單軌電車皆方便，城區周邊有停車場。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 400,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "churaumi-aquarium",
+    "name_zh": "沖繩美麗海水族館",
+    "name_ja": "沖縄美ら海水族館",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "巨型水槽",
+      "鯨鯊"
+    ],
+    "description": "黑潮之海大水槽中悠遊的鯨鯊與鬼蝠魟是館內招牌，巨大玻璃帷幕呈現的海洋世界震撼力十足，鄰近海洋博公園也適合安排半日漫遊。",
+    "image_query": "Churaumi Aquarium whale shark tank Okinawa",
+    "official_url": "https://churaumi.okinawa/",
+    "access": {
+      "from": "那霸機場",
+      "method": "租車／巴士",
+      "duration_min": 90,
+      "cost_jpy": 2000
+    },
+    "self_drive_note": "沖繩本島北部大眾運輸班次少，強烈建議租車自駕前往，沿途海景公路本身就是景點。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 2180,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "kokusai-street-naha",
+    "name_zh": "國際通",
+    "name_ja": "国際通り",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "food",
+    "tags": [
+      "商店街",
+      "琉球料理",
+      "伴手禮"
+    ],
+    "description": "全長約1.6公里的熱鬧商店街，苦瓜炒什錦、沖繩麵與紅芋塔等在地美食應有盡有，兩旁伴手禮店與工藝品店逛一整條街也不會膩。",
+    "image_query": "Kokusai Street Naha Okinawa shopping food",
+    "official_url": "https://naha-kokusaidori.okinawa/",
+    "access": {
+      "from": "縣廳前駅",
+      "method": "徒步",
+      "duration_min": 5,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "街道為徒步商店街，周邊停車場眾多，自駕也方便。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜，傍晚最熱鬧",
+    "is_remote_island": false
+  },
+  {
+    "id": "miyakojima-beaches",
+    "name_zh": "宮古島海灘",
+    "name_ja": "宮古島",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "粉藍海水",
+      "跨海大橋"
+    ],
+    "description": "與那霸灣被譽為日本最美海灘之一，細白沙灘搭配漸層粉藍海水宛如熱帶天堂，伊良部大橋等跨海大橋兜風也是島上一大亮點。",
+    "image_query": "Miyakojima beach turquoise water bridge",
+    "official_url": "https://miyako-guide.net/",
+    "access": {
+      "from": "宮古機場",
+      "method": "租車",
+      "duration_min": 20,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "島上大眾運輸稀少，強烈建議租車環島，跨海大橋兜風是島上經典行程。",
+    "visit_duration_min": 240,
+    "entry_fee_jpy": 0,
+    "best_season": "4-10月最適合下水",
+    "is_remote_island": true
+  },
+  {
+    "id": "ishigaki-kabira-bay",
+    "name_zh": "石垣島川平灣",
+    "name_ja": "石垣島川平湾",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "玻璃船",
+      "珊瑚礁"
+    ],
+    "description": "被列為國家名勝的夢幻海灣，海水因珊瑚礁與水深呈現層層漸層色彩，搭乘玻璃底遊覽船可觀賞珊瑚與熱帶魚群，是八重山群島的代表景致。",
+    "image_query": "Kabira Bay Ishigaki turquoise coral",
+    "official_url": "https://www.okinawastory.jp/spot/1377",
+    "access": {
+      "from": "石垣機場",
+      "method": "租車",
+      "duration_min": 30,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "石垣島租車自駕最方便，環島公路沿途海景優美。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 1500,
+    "best_season": "全年皆宜，夏季海水最清澈",
+    "is_remote_island": true
+  },
+  {
+    "id": "kerama-zamami-snorkel",
+    "name_zh": "慶良間諸島・座間味浮潛",
+    "name_ja": "慶良間諸島・座間味島",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "浮潛聖地",
+      "粉紅色海水"
+    ],
+    "description": "被稱為「慶良間藍」的透明海水能見度可達30公尺以上，是世界級浮潛與潛水勝地，從那霸搭快艇約50分鐘即可抵達，冬季還能觀賞座頭鯨。",
+    "image_query": "Kerama Islands Zamami snorkeling clear water",
+    "official_url": "https://www.visit-zamami.com/",
+    "access": {
+      "from": "那霸泊港",
+      "method": "渡輪／快艇",
+      "duration_min": 50,
+      "cost_jpy": 3000
+    },
+    "self_drive_note": "島上道路短，可租借電動自行車代步，車輛不需自行開船運送。",
+    "visit_duration_min": 240,
+    "entry_fee_jpy": 0,
+    "best_season": "5-10月浮潛最佳，1-3月賞鯨季",
+    "is_remote_island": true
+  },
+  {
+    "id": "iriomote-jungle-cruise",
+    "name_zh": "西表島紅樹林探險",
+    "name_ja": "西表島",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "紅樹林",
+      "獨木舟"
+    ],
+    "description": "九成面積被亞熱帶叢林覆蓋的秘境島嶼，搭乘獨木舟深入仲間川紅樹林秘境，運氣好還能巧遇瀕危保育類西表山貓的蹤跡。",
+    "image_query": "Iriomote Island mangrove kayak Japan",
+    "official_url": "https://painusima.com/",
+    "access": {
+      "from": "石垣港",
+      "method": "渡輪",
+      "duration_min": 40,
+      "cost_jpy": 2500
+    },
+    "self_drive_note": "島上山林密布，建議參加獨木舟或叢林探險行程，租車僅能行駛外圍道路。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜，避開颱風季",
+    "is_remote_island": true
+  },
+  {
+    "id": "kumejima-hatenohama",
+    "name_zh": "久米島・果てのはま",
+    "name_ja": "久米島・はての浜",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "無人沙洲",
+      "夢幻海景"
+    ],
+    "description": "全長約7公里的無人白色沙洲僅能搭船抵達，四周被翡翠綠海水環繞，被譽為「日本最接近天堂的地方」，是遠離塵囂的私房秘境。",
+    "image_query": "Kumejima Hatenohama sandbar Okinawa",
+    "official_url": "https://www.kanko-kumejima.com/",
+    "access": {
+      "from": "久米島機場",
+      "method": "租車轉搭船",
+      "duration_min": 40,
+      "cost_jpy": 2500
+    },
+    "self_drive_note": "島上租車代步方便，前往沙洲需另外搭乘接駁船。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "4-10月風浪較穩定",
+    "is_remote_island": true
+  },
+  {
+    "id": "tokashiki-island-beach",
+    "name_zh": "渡嘉敷島阿波連海灘",
+    "name_ja": "渡嘉敷島阿波連ビーチ",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "離島",
+      "日歸浮潛",
+      "慶良間國家公園"
+    ],
+    "description": "從那霸搭船僅約35分鐘即可抵達的離島海灘，能見度極高的海水與豐富珊瑚礁群適合浮潛新手，很適合安排當天來回的輕旅行。",
+    "image_query": "Tokashiki Island Aharen beach Okinawa",
+    "official_url": "https://www.vill.tokashiki.okinawa.jp/",
+    "access": {
+      "from": "那霸泊港",
+      "method": "渡輪",
+      "duration_min": 35,
+      "cost_jpy": 2150
+    },
+    "self_drive_note": "島上道路不長，租借電動自行車即可環島，不需自行開車上船。",
+    "visit_duration_min": 180,
+    "entry_fee_jpy": 0,
+    "best_season": "5-10月最適合下水",
+    "is_remote_island": true
+  },
+  {
+    "id": "okinawa-soba",
+    "name_zh": "沖繩麵",
+    "name_ja": "沖縄そば",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "food",
+    "tags": [
+      "鄉土麵食",
+      "三枚肉"
+    ],
+    "description": "粗厚麵條搭配燉煮軟爛的三枚肉與紅薑絲，湯頭以豚骨與柴魚熬製清爽不油膩，是沖繩最庶民也最療癒的一碗鄉土麵食。",
+    "image_query": "Okinawa soba noodle soup pork",
+    "official_url": null,
+    "access": {
+      "from": "那霸機場",
+      "method": "租車／巴士",
+      "duration_min": 20,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "沖繩本島自駕最方便，麵店多分布各地皆有停車場。",
+    "visit_duration_min": 40,
+    "entry_fee_jpy": 700,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "okinawa-taco-rice",
+    "name_zh": "塔可飯",
+    "name_ja": "タコライス",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "food",
+    "tags": [
+      "美式融合料理",
+      "在地特色"
+    ],
+    "description": "受美軍文化影響誕生的沖繩限定美食，墨西哥調味絞肉、生菜起司鋪在白飯上，酸辣開胃又飽足，是體驗沖繩獨特歷史脈絡的美味代表。",
+    "image_query": "Okinawa taco rice dish",
+    "official_url": null,
+    "access": {
+      "from": "那霸市區",
+      "method": "徒步／租車",
+      "duration_min": 10,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "那霸市區停車較不易，租車遊本島其他地區則相當方便。",
+    "visit_duration_min": 30,
+    "entry_fee_jpy": 650,
+    "best_season": "全年皆宜",
+    "is_remote_island": false
+  },
+  {
+    "id": "cape-manzamo",
+    "name_zh": "萬座毛",
+    "name_ja": "万座毛",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "海景懸崖",
+      "免費景點",
+      "IG打卡"
+    ],
+    "description": "恩納村海岸邊的隆起珊瑚礁斷崖，因形狀似大象鼻子的岩石聞名，眼前是一整片湛藍東海，是沖繩本島數一數二的免費海景名所，傍晚時分尤其迷人。",
+    "image_query": "Cape Manzamo Okinawa cliff ocean",
+    "official_url": "https://www.manzamo.jp/manzamou.php",
+    "access": {
+      "from": "那霸巴士總站",
+      "method": "高速巴士＋轉乘當地巴士",
+      "duration_min": 90,
+      "cost_jpy": 1500
+    },
+    "self_drive_note": "沖繩本島最推薦自駕的區域之一，租車走高速公路約1小時可達，停車場免費且寬敞。",
+    "visit_duration_min": 40,
+    "entry_fee_jpy": 100,
+    "best_season": "全年皆宜，傍晚夕陽時段最美",
+    "is_remote_island": false
+  },
+  {
+    "id": "cape-maeda-blue-cave",
+    "name_zh": "青之洞窟",
+    "name_ja": "青の洞窟",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "浮潛",
+      "潛水",
+      "海蝕洞"
+    ],
+    "description": "恩納村真榮田岬海蝕洞，陽光從洞口海面反射進洞穴，海水呈現夢幻寶藍色而得名，是沖繩人氣第一的浮潛與體驗潛水地點，全年都有業者提供行程。",
+    "image_query": "Blue Cave Cape Maeda Okinawa snorkeling",
+    "official_url": "https://maedamisaki.jp/",
+    "access": {
+      "from": "那霸市區",
+      "method": "租車／飯店接駁",
+      "duration_min": 60,
+      "cost_jpy": 0
+    },
+    "self_drive_note": "強烈建議自駕或參加當地接駁行程，真榮田岬停車場旺季一位難求，建議提早抵達。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 500,
+    "best_season": "4月至10月水溫較適合下水",
+    "is_remote_island": false
+  },
+  {
+    "id": "kouri-ocean-tower",
+    "name_zh": "古宇利海洋塔",
+    "name_ja": "古宇利オーシャンタワー",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "展望台",
+      "跨海大橋",
+      "貝殼博物館"
+    ],
+    "description": "位於古宇利島高處的展望塔，可俯瞰橫跨海面的古宇利大橋與周邊漸層藍海，園區內也有貝殼博物館與熱帶植物庭園，是北部行程熱門一站。",
+    "image_query": "Kouri Ocean Tower bridge Okinawa aerial view",
+    "official_url": "https://www.kouri-oceantower.com/",
+    "access": {
+      "from": "名護巴士總站",
+      "method": "當地巴士＋徒步",
+      "duration_min": 40,
+      "cost_jpy": 600
+    },
+    "self_drive_note": "本島北部大眾運輸班次少，強烈建議自駕，古宇利大橋本身開車通過也是熱門體驗。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 1000,
+    "best_season": "全年皆宜，晴天海水漸層最明顯",
+    "is_remote_island": false
+  },
+  {
+    "id": "american-village-chatan",
+    "name_zh": "美國村",
+    "name_ja": "アメリカンビレッジ",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "購物",
+      "美式風情",
+      "摩天輪"
+    ],
+    "description": "北谷町沿海的美式風格商圈，色彩繽紛的建築群聚集了餐廳、選物店與大型摩天輪，白天適合購物拍照，晚上沿海散步看夕陽與夜景氣氛絕佳。",
+    "image_query": "American Village Chatan Okinawa colorful buildings",
+    "official_url": "https://www.okinawa-americanvillage.com/",
+    "access": {
+      "from": "那霸市區",
+      "method": "路線巴士／租車",
+      "duration_min": 40,
+      "cost_jpy": 590
+    },
+    "self_drive_note": "有多個付費停車場，自駕前往相當方便，也適合安排在返還機場前順路停留。",
+    "visit_duration_min": 90,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜，黃昏後燈光氣氛最好",
+    "is_remote_island": false
+  },
+  {
+    "id": "umikaji-terrace-senagajima",
+    "name_zh": "瀨長島海邊露台",
+    "name_ja": "瀬長島ウミカジテラス",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "海景咖啡廳",
+      "近機場",
+      "希臘風建築"
+    ],
+    "description": "緊鄰那霸機場的小島，白色希臘風階梯式建築沿海而建，聚集甜點、咖啡廳與伴手禮店，適合安排在抵達或離境前後順遊，可近距離看飛機起降。",
+    "image_query": "Umikaji Terrace Senagajima Okinawa white buildings",
+    "official_url": "https://www.umikajiterrace.com/",
+    "access": {
+      "from": "那霸機場",
+      "method": "計程車／機場接駁巴士",
+      "duration_min": 15,
+      "cost_jpy": 1200
+    },
+    "self_drive_note": "離機場僅約10分鐘車程，還車前或租車後第一站都很順路，島上有免費停車場。",
+    "visit_duration_min": 60,
+    "entry_fee_jpy": 0,
+    "best_season": "全年皆宜，日落時段景觀最佳",
+    "is_remote_island": false
+  },
+  {
+    "id": "okinawa-world-gyokusendo",
+    "name_zh": "沖繩世界・玉泉洞",
+    "name_ja": "おきなわワールド 玉泉洞",
+    "region": "okinawa",
+    "prefecture": "沖繩縣",
+    "category": "attraction",
+    "tags": [
+      "鐘乳石洞",
+      "琉球文化",
+      "親子景點"
+    ],
+    "description": "南部人氣主題園區，玉泉洞是全長5公里的鐘乳石洞穴，開放約900公尺供遊客步行參觀；園區內另有琉球傳統村落與眼鏡蛇博物公園，可安排半天深度體驗。",
+    "image_query": "Gyokusendo Cave Okinawa World limestone cave",
+    "official_url": "https://www.gyokusendo.co.jp/okinawaworld/",
+    "access": {
+      "from": "那霸巴士總站",
+      "method": "路線巴士（沖繩巴士83、54號）",
+      "duration_min": 50,
+      "cost_jpy": 600
+    },
+    "self_drive_note": "南部景點分散，自駕最有效率，園區備有大型免費停車場。",
+    "visit_duration_min": 150,
+    "entry_fee_jpy": 2000,
+    "best_season": "全年皆宜（洞穴內恆溫，雨天也適合）",
+    "is_remote_island": false
+  },
+  {
+    "id": "tokyo-skytree",
+    "name_zh": "東京晴空塔",
+    "name_ja": "東京スカイツリー",
+    "region": "kanto",
+    "prefecture": "東京都",
+    "category": "attraction",
+    "tags": [
+      "展望台",
+      "地標",
+      "親子景點"
+    ],
+    "description": "高634公尺的世界級自立式電波塔，350公尺與450公尺處都設有展望台，晴天可遠眺富士山；塔下的東京晴空街道商場結合購物、水族館與美食，適合安排半天行程。",
+    "image_query": "Tokyo Skytree tower Sumida",
+    "official_url": "https://www.tokyo-skytree.jp/",
+    "access": {
+      "from": "淺草",
+      "method": "東武晴空塔線／地下鐵半藏門線",
+      "duration_min": 10,
+      "cost_jpy": 200
+    },
+    "self_drive_note": "市區觀光塔，周邊停車位少且塞車，建議搭電車前往。",
+    "visit_duration_min": 120,
+    "entry_fee_jpy": 2100,
+    "best_season": "全年皆宜，秋冬空氣清澈時最容易看見富士山",
+    "is_remote_island": false
+  },
+  {
+    "id": "kinkakuji-golden-pavilion",
+    "name_zh": "金閣寺",
+    "name_ja": "金閣寺（鹿苑寺）",
+    "region": "kansai",
+    "prefecture": "京都府",
+    "category": "attraction",
+    "tags": [
+      "世界遺產",
+      "定番",
+      "京都必訪"
+    ],
+    "description": "正式名稱鹿苑寺，貼滿金箔的舍利殿倒映在鏡湖池上，是京都最具代表性的畫面之一，被列為聯合國教科文組織世界文化遺產，四季景致皆美，冬季雪景尤其夢幻。",
+    "image_query": "Kinkakuji Golden Pavilion Kyoto reflection",
+    "official_url": "https://www.shokoku-ji.jp/kinkakuji/",
+    "access": {
+      "from": "京都車站",
+      "method": "市巴士101／205號",
+      "duration_min": 40,
+      "cost_jpy": 230
+    },
+    "self_drive_note": "京都市區交通管制多、停車位有限，強烈建議搭巴士或計程車前往。",
+    "visit_duration_min": 50,
+    "entry_fee_jpy": 500,
+    "best_season": "全年皆宜，冬季降雪時景色最為夢幻",
+    "is_remote_island": false
+  }
+]

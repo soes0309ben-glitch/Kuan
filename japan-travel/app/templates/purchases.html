@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}我的解鎖行程｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="section-title">
+    <h2>我的解鎖行程</h2>
+  </div>
+  {% if rows %}
+  <div class="plan-grid">
+    {% for row in rows %}
+      {% if row.itinerary %}
+      <div class="plan-card">
+        <div class="badges">
+          <span class="badge">{{ DURATION_LABELS.get(row.itinerary.duration, row.itinerary.duration) }}</span>
+          <span class="badge unlocked">{{ TIER_LABELS.get(row.purchase.tier, row.purchase.tier) }}</span>
+        </div>
+        <h3>{{ row.itinerary.title }}</h3>
+        <p class="summary">購買時間：{{ row.purchase.created_at.strftime("%Y-%m-%d") }} ・NT$ {{ row.purchase.amount_twd }}</p>
+        <a class="btn" href="/itineraries/{{ row.itinerary.id }}">查看完整行程</a>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">還沒有解鎖任何行程，去<a href="/itineraries">行程規劃</a>逛逛吧！</div>
+  {% endif %}
+</section>
+{% endblock %}

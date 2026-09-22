@@ -1,0 +1,1015 @@
+[
+  {
+    "id": "tokyo-classic-3d2n",
+    "title": "東京都會速覽三日",
+    "duration": "3d2n",
+    "nights": 2,
+    "region": "kanto",
+    "summary": "三天兩夜緊湊玩遍東京最具代表性的地標，從老東京的淺草寺到最新潮的teamLab數位藝術，體驗傳統與未來交織的都會魅力。",
+    "days": [
+      {
+        "day": 1,
+        "title": "淺草古韻・築地美食",
+        "attraction_ids": [
+          "asakusa-sensoji",
+          "tsukiji-toyosu-market",
+          "shibuya-crossing"
+        ],
+        "activities": "上午抵達東京，安頓行李後前往淺草寺參拜並穿梭仲見世通採買小吃，午後轉往豐洲市場享用新鮮海鮮丼當午餐，傍晚前往澀谷十字路口感受東京最具代表性的城市脈動，晚上可在澀谷周邊用餐購物。",
+        "transport_notes": "全程使用東京地鐵／JR山手線移動，建議購買西瓜卡(Suica)儲值卡，各站間車程約15-25分鐘，班次密集不需等候過久。",
+        "daily_cost_estimate_jpy": 8500
+      },
+      {
+        "day": 2,
+        "title": "數位藝術・原宿新宿",
+        "attraction_ids": [
+          "teamlab-planets",
+          "akihabara-electric-town",
+          "shinjuku-gyoen"
+        ],
+        "activities": "上午前往teamLab Planets沉浸式體驗光影藝術（建議事先線上預約），中午轉往秋葉原逛動漫電器街，下午到新宿御苑欣賞日式庭園放鬆，晚上可在新宿歌舞伎町一帶用餐感受東京夜生活。",
+        "transport_notes": "搭乘地鐵有樂町線與JR山手線串聯各點，交通順暢，秋葉原到新宿車程約20分鐘。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 3,
+        "title": "台場灣景・賦歸",
+        "attraction_ids": [
+          "odaiba-tokyo-bay",
+          "ueno-park-museums"
+        ],
+        "activities": "上午前往台場欣賞彩虹大橋與海濱公園，逛逛購物中心採買伴手禮，中午後視班機時間前往上野公園或博物館做最後巡禮，再前往機場賦歸。",
+        "transport_notes": "台場搭乘百合海鷗號單軌電車進出，往機場可搭利木津巴士或電車，建議預留2小時交通與報到時間。",
+        "daily_cost_estimate_jpy": 4000
+      }
+    ],
+    "self_drive_route": {
+      "recommended": false,
+      "route_note": "東京都心大眾運輸極為發達且停車費高昂，不建議自駕，全程搭乘地鐵與JR即可順暢移動。"
+    },
+    "packing_notes": "夏季需備薄外套因室內冷氣強勁，全年建議帶一雙好走的鞋，教堂/寺廟參拜建議準備輕便可脫穿的鞋款。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "膠囊旅館／青年旅館",
+        "price_per_night_jpy": 5500
+      },
+      "comfort": {
+        "style_hint": "車站周邊商務飯店",
+        "price_per_night_jpy": 13000
+      },
+      "luxury": {
+        "style_hint": "新宿／銀座五星飯店",
+        "price_per_night_jpy": 32000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 880,
+      "comfort": 1280,
+      "luxury": 1980
+    }
+  },
+  {
+    "id": "osaka-kyoto-3d2n",
+    "title": "大阪京都精華三日",
+    "duration": "3d2n",
+    "nights": 2,
+    "region": "kansai",
+    "summary": "三天兩夜走遍關西最經典的組合：大阪的庶民美食活力與京都的千年古都風雅，適合初訪關西的旅人。",
+    "days": [
+      {
+        "day": 1,
+        "title": "大阪城・道頓堀夜遊",
+        "attraction_ids": [
+          "osaka-castle",
+          "osaka-dotonbori",
+          "osaka-takoyaki-kuromon"
+        ],
+        "activities": "抵達關西機場後前往大阪市區，先參觀大阪城天守閣，傍晚轉往黑門市場品嚐新鮮海產與章魚燒，晚間到道頓堀欣賞固力果招牌與運河霓虹夜景。",
+        "transport_notes": "關西機場搭南海電鐵特急ラピート至難波約38分鐘，市區內以大阪地鐵移動，建議購買Osaka Amazing Pass。",
+        "daily_cost_estimate_jpy": 7500
+      },
+      {
+        "day": 2,
+        "title": "京都古寺巡禮",
+        "attraction_ids": [
+          "fushimi-inari-shrine",
+          "kiyomizudera-temple",
+          "gion-geisha-district"
+        ],
+        "activities": "清晨先到伏見稻荷大社避開人潮拍千本鳥居，接著前往清水寺參拜並漫步二年坂三年坂石板老街，傍晚到祇園花見小路感受藝伎文化氛圍，晚餐可在花見小路周邊享用京料理。",
+        "transport_notes": "從大阪搭JR京都線約30分鐘抵達京都，京都市區以市巴士與京阪電車移動，一日巴士券划算又方便。",
+        "daily_cost_estimate_jpy": 8000
+      },
+      {
+        "day": 3,
+        "title": "嵐山竹林・返程",
+        "attraction_ids": [
+          "arashiyama-bamboo-grove",
+          "kyoto-nishiki-market"
+        ],
+        "activities": "上午前往嵐山漫步竹林小徑並參觀渡月橋，中午回市區到錦市場邊走邊吃採買伴手禮，下午視班機時間前往關西機場。",
+        "transport_notes": "嵐山搭JR嵯峨野線約15分鐘可達，返回機場搭利木津巴士或南海電鐵約1小時，建議預留充裕時間。",
+        "daily_cost_estimate_jpy": 5000
+      }
+    ],
+    "self_drive_route": {
+      "recommended": false,
+      "route_note": "京都市區道路狹窄且熱門景點停車位稀少，大阪市區交通壅塞，建議全程使用電車與巴士，不建議自駕。"
+    },
+    "packing_notes": "京都石板路建議穿好走的鞋，夏季濕熱建議帶帽子與水壺，秋冬早晚溫差大需備外套。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "難波／京都站周邊青年旅館",
+        "price_per_night_jpy": 5000
+      },
+      "comfort": {
+        "style_hint": "車站直結商務飯店",
+        "price_per_night_jpy": 12000
+      },
+      "luxury": {
+        "style_hint": "京都町屋改建旅館／五星飯店",
+        "price_per_night_jpy": 30000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 880,
+      "comfort": 1280,
+      "luxury": 1980
+    }
+  },
+  {
+    "id": "okinawa-island-3d2n",
+    "title": "沖繩海島假期三日",
+    "duration": "3d2n",
+    "nights": 2,
+    "region": "okinawa",
+    "summary": "三天兩夜享受沖繩陽光沙灘與琉球文化，適合想短暫脫離都市、曬曬太陽放鬆身心的旅人。",
+    "days": [
+      {
+        "day": 1,
+        "title": "首里城・國際通",
+        "attraction_ids": [
+          "shuri-castle",
+          "kokusai-street-naha",
+          "okinawa-soba"
+        ],
+        "activities": "抵達那霸機場租車後前往首里城參觀琉球王朝遺跡，傍晚到國際通逛街採買伴手禮，晚餐品嚐道地沖繩麵。",
+        "transport_notes": "那霸機場租車最為方便，市區道路平緩好開，國際通周邊有多個付費停車場。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 2,
+        "title": "美麗海水族館・北部海岸",
+        "attraction_ids": [
+          "churaumi-aquarium",
+          "okinawa-taco-rice"
+        ],
+        "activities": "驅車前往沖繩本島北部的美麗海水族館，觀賞鯨鯊與鬼蝠魟悠游，沿途海景公路景色優美，午餐品嚐塔可飯，傍晚返回那霸市區休息。",
+        "transport_notes": "那霸至美麗海水族館車程約90分鐘，全程高速公路加一般道路，租車自駕最有彈性。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 3,
+        "title": "渡嘉敷島輕旅行・返程",
+        "attraction_ids": [
+          "tokashiki-island-beach"
+        ],
+        "activities": "早班船前往渡嘉敷島阿波連海灘浮潛戲水，享受透明度極高的海水，中午返回那霸，視班機時間前往機場賦歸。",
+        "transport_notes": "那霸泊港搭渡輪約35分鐘抵達渡嘉敷島，島上租借電動自行車代步即可環島。",
+        "daily_cost_estimate_jpy": 5500
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "沖繩本島大眾運輸班次稀少，強烈建議租車自駕，本島高速公路（沖繩自動車道）路況良好，離島段則不開放自行開車上渡輪，需另外租借當地代步工具。"
+    },
+    "packing_notes": "務必攜帶泳衣、防曬乳與海灘拖鞋，浮潛可自備蛙鏡或當地租借，夏季紫外線強烈需加強防曬。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "那霸市區青年旅館",
+        "price_per_night_jpy": 4500
+      },
+      "comfort": {
+        "style_hint": "海景商務飯店",
+        "price_per_night_jpy": 11000
+      },
+      "luxury": {
+        "style_hint": "北部度假村飯店",
+        "price_per_night_jpy": 35000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 880,
+      "comfort": 1280,
+      "luxury": 1980
+    }
+  },
+  {
+    "id": "kansai-classic-4d3n",
+    "title": "京阪奈古都經典四日",
+    "duration": "4d3n",
+    "nights": 3,
+    "region": "kansai",
+    "summary": "四天三夜深入京都、大阪、奈良三大古都，兼顧世界遺產巡禮與主題樂園歡樂體驗。",
+    "days": [
+      {
+        "day": 1,
+        "title": "伏見稻荷・清水寺",
+        "attraction_ids": [
+          "fushimi-inari-shrine",
+          "kiyomizudera-temple"
+        ],
+        "activities": "抵達京都後先到伏見稻荷大社參拜千本鳥居，午後轉往清水寺欣賞懸空舞台，沿二年坂三年坂散步回市區用晚餐。",
+        "transport_notes": "京都市巴士與京阪電車為主要交通工具，建議購買市巴士一日券。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 2,
+        "title": "嵐山竹林・祇園花見小路",
+        "attraction_ids": [
+          "arashiyama-bamboo-grove",
+          "gion-geisha-district",
+          "kyoto-nishiki-market"
+        ],
+        "activities": "上午前往嵐山漫步竹林並參觀渡月橋，午後回市區逛錦市場品嚐小吃，傍晚到祇園花見小路感受藝伎文化，晚餐享用京料理。",
+        "transport_notes": "嵐山搭JR嵯峨野線約15分鐘，市區內以巴士與步行為主。",
+        "daily_cost_estimate_jpy": 7500
+      },
+      {
+        "day": 3,
+        "title": "奈良鹿公園・大阪城",
+        "attraction_ids": [
+          "nara-park-todaiji",
+          "osaka-castle"
+        ],
+        "activities": "上午前往奈良公園與野生鹿群互動並參觀東大寺大佛殿，午後轉往大阪參觀大阪城天守閣，晚上入住大阪市區飯店。",
+        "transport_notes": "京都到奈良搭近鐵約45分鐘，奈良到大阪搭近鐵約40分鐘，建議購買關西周遊券。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 4,
+        "title": "環球影城歡樂日",
+        "attraction_ids": [
+          "universal-studios-japan"
+        ],
+        "activities": "全天暢遊日本環球影城，哈利波特魔法世界與超級任天堂世界是必玩重點，建議提早購買特快通行證節省排隊時間，傍晚視班機時間返回機場。",
+        "transport_notes": "大阪市區搭JR至環球城駅約15分鐘，回機場搭南海電鐵或利木津巴士約1小時。",
+        "daily_cost_estimate_jpy": 9500
+      }
+    ],
+    "self_drive_route": {
+      "recommended": false,
+      "route_note": "關西三大城市大眾運輸系統完善，市區停車費高昂且道路壅塞，不建議自駕，購買關西周遊券可省下不少交通費。"
+    },
+    "packing_notes": "古寺石板路建議穿好走的鞋，奈良公園有鹿群出沒建議勿隨意展示食物，夏季炎熱需加強防曬與補水。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "難波／京都站周邊青年旅館",
+        "price_per_night_jpy": 5000
+      },
+      "comfort": {
+        "style_hint": "車站直結商務飯店",
+        "price_per_night_jpy": 12500
+      },
+      "luxury": {
+        "style_hint": "五星飯店／溫泉旅館",
+        "price_per_night_jpy": 32000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 1280,
+      "comfort": 1780,
+      "luxury": 2680
+    }
+  },
+  {
+    "id": "hokkaido-hakodate-otaru-4d3n",
+    "title": "北海道函館小樽四日",
+    "duration": "4d3n",
+    "nights": 3,
+    "region": "hokkaido",
+    "summary": "四天三夜走訪北海道南部精華，從札幌市區到浪漫小樽運河，再到世界三大夜景之一的函館山。",
+    "days": [
+      {
+        "day": 1,
+        "title": "札幌市區巡禮",
+        "attraction_ids": [
+          "sapporo-clock-tower",
+          "sapporo-ramen-alley"
+        ],
+        "activities": "抵達新千歲機場後前往札幌市區，參觀札幌市鐘樓與大通公園，晚餐前往拉麵橫丁品嚐濃郁味噌拉麵。",
+        "transport_notes": "新千歲機場搭JR快速列車約40分鐘抵達札幌駅，市區內步行或搭地鐵皆方便。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 2,
+        "title": "小樽運河一日遊",
+        "attraction_ids": [
+          "otaru-canal"
+        ],
+        "activities": "搭火車前往小樽，漫步石造倉庫群與運河沿岸，順道參觀玻璃工藝品店與壽司街，傍晚返回札幌。",
+        "transport_notes": "札幌到小樽搭JR約30-40分鐘，班次頻繁，也可考慮自駕沿海岸線兜風約1小時。",
+        "daily_cost_estimate_jpy": 5500
+      },
+      {
+        "day": 3,
+        "title": "函館山夜景・朝市",
+        "attraction_ids": [
+          "hakodate-mountain-night-view",
+          "hakodate-morning-market"
+        ],
+        "activities": "搭特急列車前往函館，傍晚搭纜車登函館山欣賞世界三大夜景，隔日一早前往函館朝市享用新鮮海鮮丼。",
+        "transport_notes": "札幌到函館可搭JR特急北斗約3.5小時或搭乘國內線班機約40分鐘，函館市區以市電移動。",
+        "daily_cost_estimate_jpy": 8000
+      },
+      {
+        "day": 4,
+        "title": "旭山動物園・賦歸",
+        "attraction_ids": [
+          "asahiyama-zoo"
+        ],
+        "activities": "視航班安排，若時間充裕可安排旭山動物園觀賞企鵝散步，午後返回新千歲機場賦歸。",
+        "transport_notes": "函館到新千歲機場建議搭乘國內線班機約45分鐘較省時，機場內轉乘巴士前往市區各點。",
+        "daily_cost_estimate_jpy": 5000
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "北海道城市間距離遙遠，市區間建議搭乘JR或國內線班機，市區周邊景點則適合租車自駕，道路寬敞好開但冬季需備雪胎。"
+    },
+    "packing_notes": "冬季務必攜帶保暖大衣、手套與防滑鞋，夏季早晚溫差大建議攜帶薄外套，函館山夜景風大需保暖。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "札幌站周邊商務旅館",
+        "price_per_night_jpy": 6000
+      },
+      "comfort": {
+        "style_hint": "車站直結三星飯店",
+        "price_per_night_jpy": 13000
+      },
+      "luxury": {
+        "style_hint": "函館海景溫泉飯店",
+        "price_per_night_jpy": 34000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 1280,
+      "comfort": 1780,
+      "luxury": 2680
+    }
+  },
+  {
+    "id": "fukuoka-beppu-4d3n",
+    "title": "福岡別府溫泉四日",
+    "duration": "4d3n",
+    "nights": 3,
+    "region": "kyushu",
+    "summary": "四天三夜體驗九州北部的屋台美食與地獄溫泉奇景，感受由布院的悠閒溫泉小鎮風情。",
+    "days": [
+      {
+        "day": 1,
+        "title": "福岡市區・屋台夜宴",
+        "attraction_ids": [
+          "fukuoka-hakata-yatai"
+        ],
+        "activities": "抵達福岡機場後前往市區，下午自由參觀博多老街，傍晚到中洲屋台品嚐豚骨拉麵與煎餃，感受福岡夜生活活力。",
+        "transport_notes": "福岡機場搭地鐵至博多駅僅約5分鐘，市區交通非常便利。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 2,
+        "title": "別府地獄溫泉巡禮",
+        "attraction_ids": [
+          "beppu-hells-tour"
+        ],
+        "activities": "搭特急列車前往別府，參觀血の池地獄與海地獄等七大地獄溫泉景觀，晚上入住溫泉旅館享受道地別府溫泉。",
+        "transport_notes": "博多搭JR特急ソニック約2小時抵達別府，市內地獄景點分散，建議搭乘周遊巴士或計程車。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 3,
+        "title": "由布院溫泉小鎮",
+        "attraction_ids": [
+          "yufuin-onsen-town"
+        ],
+        "activities": "上午搭巴士前往由布院，漫步金鱗湖畔與湯之坪街道，品嚐當地甜點與工藝品，晚上返回別府或續住由布院享受寧靜山中溫泉。",
+        "transport_notes": "別府到由布院搭由布院之森列車或巴士約1小時，沿途山景優美。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 4,
+        "title": "熊本城巡禮・賦歸",
+        "attraction_ids": [
+          "kumamoto-castle"
+        ],
+        "activities": "搭新幹線前往熊本參觀熊本城，了解震災後修復重建的過程，午後返回福岡機場賦歸。",
+        "transport_notes": "由布院經博多轉搭九州新幹線至熊本約需2.5小時，熊本回福岡機場再搭新幹線約40分鐘。",
+        "daily_cost_estimate_jpy": 6500
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "別府與由布院大眾運輸班次較少且地獄溫泉景點分散，建議在福岡租車自駕遊九州北部，山區道路平緩好開，高速公路路況良好。"
+    },
+    "packing_notes": "溫泉旅館多提供浴衣與盥洗用品，仍建議自備個人保養品，冬季山區早晚偏冷需攜帶保暖外套。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "博多站周邊商務旅館",
+        "price_per_night_jpy": 5500
+      },
+      "comfort": {
+        "style_hint": "溫泉三星飯店",
+        "price_per_night_jpy": 12000
+      },
+      "luxury": {
+        "style_hint": "由布院高級溫泉旅館",
+        "price_per_night_jpy": 38000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 1280,
+      "comfort": 1780,
+      "luxury": 2680
+    }
+  },
+  {
+    "id": "kansai-deep-5d4n",
+    "title": "關西深度五日",
+    "duration": "5d4n",
+    "nights": 4,
+    "region": "kansai",
+    "summary": "五天四夜不趕行程地深度探索關西，加入姬路城與神戶港灣，體驗更完整的古都與現代交融風貌。",
+    "days": [
+      {
+        "day": 1,
+        "title": "大阪城・道頓堀",
+        "attraction_ids": [
+          "osaka-castle",
+          "osaka-dotonbori"
+        ],
+        "activities": "抵達關西機場後前往大阪市區，參觀大阪城天守閣，晚上到道頓堀感受熱鬧夜市氛圍與霓虹招牌。",
+        "transport_notes": "關西機場搭南海電鐵至難波約38分鐘，市區以地鐵移動。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 2,
+        "title": "京都古寺與藝伎街",
+        "attraction_ids": [
+          "fushimi-inari-shrine",
+          "kiyomizudera-temple",
+          "gion-geisha-district"
+        ],
+        "activities": "清晨前往伏見稻荷大社，午後參觀清水寺並漫步石板老街，傍晚到祇園花見小路感受藝伎文化氣息。",
+        "transport_notes": "大阪到京都搭JR京都線約30分鐘，京都市區以巴士與電車為主。",
+        "daily_cost_estimate_jpy": 8000
+      },
+      {
+        "day": 3,
+        "title": "嵐山竹林・錦市場",
+        "attraction_ids": [
+          "arashiyama-bamboo-grove",
+          "kyoto-nishiki-market"
+        ],
+        "activities": "上午漫步嵐山竹林小徑並參觀渡月橋，中午回市區逛錦市場邊走邊吃，下午可自由選逛周邊神社寺廟或購物。",
+        "transport_notes": "嵐山搭JR嵯峨野線約15分鐘，市區交通便利。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 4,
+        "title": "奈良鹿公園・姬路城",
+        "attraction_ids": [
+          "nara-park-todaiji",
+          "himeji-castle"
+        ],
+        "activities": "上午前往奈良公園與大佛殿，午後轉往姬路參觀被列為世界遺產的姬路城，欣賞純白優雅的天守閣建築。",
+        "transport_notes": "京都到奈良搭近鐵約45分鐘，奈良到姬路建議經大阪轉乘JR，車程約需2小時，也可安排先住姬路再返回。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 5,
+        "title": "神戶港灣・賦歸",
+        "attraction_ids": [
+          "kobe-harborland"
+        ],
+        "activities": "上午前往神戶港灣欣賞港塔與摩天輪，午後視班機時間返回關西機場賦歸。",
+        "transport_notes": "姬路到神戶搭JR新快速約40分鐘，神戶到關西機場搭利木津巴士約1小時。",
+        "daily_cost_estimate_jpy": 5000
+      }
+    ],
+    "self_drive_route": {
+      "recommended": false,
+      "route_note": "關西大眾運輸系統成熟完善，古都市區道路狹窄壅塞，建議全程搭乘電車與巴士，購買關西廣域周遊券更划算。"
+    },
+    "packing_notes": "古寺石板路建議穿好走的鞋，夏季濕熱建議攜帶扇子與水壺，姬路城參觀動線較長建議安排充裕時間。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "難波／京都站周邊青年旅館",
+        "price_per_night_jpy": 5000
+      },
+      "comfort": {
+        "style_hint": "車站直結商務飯店",
+        "price_per_night_jpy": 12500
+      },
+      "luxury": {
+        "style_hint": "五星飯店／溫泉旅館",
+        "price_per_night_jpy": 32000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 1680,
+      "comfort": 2280,
+      "luxury": 3480
+    }
+  },
+  {
+    "id": "hokkaido-grand-5d4n",
+    "title": "北海道大地五日",
+    "duration": "5d4n",
+    "nights": 4,
+    "region": "hokkaido",
+    "summary": "五天四夜飽覽北海道中部精華，從札幌都會到富良野花海與旭山動物園，感受北國大地的遼闊風光。",
+    "days": [
+      {
+        "day": 1,
+        "title": "札幌市區巡禮",
+        "attraction_ids": [
+          "sapporo-clock-tower",
+          "sapporo-ramen-alley"
+        ],
+        "activities": "抵達新千歲機場後前往札幌市區，參觀鐘樓與大通公園，晚餐享用味噌拉麵。",
+        "transport_notes": "新千歲機場搭JR快速列車約40分鐘抵達札幌駅。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 2,
+        "title": "小樽運河一日遊",
+        "attraction_ids": [
+          "otaru-canal"
+        ],
+        "activities": "搭火車前往小樽，漫步運河沿岸倉庫群，參觀玻璃工藝品店，傍晚返回札幌。",
+        "transport_notes": "札幌到小樽搭JR約30-40分鐘，班次頻繁。",
+        "daily_cost_estimate_jpy": 5500
+      },
+      {
+        "day": 3,
+        "title": "富良野・美瑛花田兜風",
+        "attraction_ids": [
+          "furano-biei-flower-fields"
+        ],
+        "activities": "自駕或搭巴士前往富良野美瑛地區，欣賞薰衣草花田與拼布之路的丘陵美景，沿途各展望點皆可自由停留拍照。",
+        "transport_notes": "強烈建議租車自駕，札幌到富良野車程約2.5小時，花田間分散需自行開車串聯。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 4,
+        "title": "旭山動物園",
+        "attraction_ids": [
+          "asahiyama-zoo"
+        ],
+        "activities": "前往旭川的旭山動物園，觀賞企鵝散步與北極熊跳水缸等特色行動展示，感受最貼近動物自然行為的展示方式。",
+        "transport_notes": "富良野到旭川車程約1小時，動物園備有大型停車場。",
+        "daily_cost_estimate_jpy": 5000
+      },
+      {
+        "day": 5,
+        "title": "札幌自由活動・賦歸",
+        "attraction_ids": [
+          "sapporo-ramen-alley"
+        ],
+        "activities": "上午返回札幌，可自由選購伴手禮或到大通公園散步，午後前往新千歲機場賦歸。",
+        "transport_notes": "旭川回札幌搭JR特急約1.5小時，機場交通建議預留2小時。",
+        "daily_cost_estimate_jpy": 4000
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "北海道幅員遼闊且景點分散，大眾運輸班次有限，強烈建議全程租車自駕，公路寬敞好開，惟冬季路面易結冰需備雪胎。"
+    },
+    "packing_notes": "冬季需攜帶保暖大衣、手套與防滑鞋，夏季早晚溫差大建議攜帶薄外套，花田拍照建議準備帽子防曬。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "札幌站周邊商務旅館",
+        "price_per_night_jpy": 6000
+      },
+      "comfort": {
+        "style_hint": "車站直結三星飯店",
+        "price_per_night_jpy": 13000
+      },
+      "luxury": {
+        "style_hint": "溫泉度假飯店",
+        "price_per_night_jpy": 35000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 1680,
+      "comfort": 2280,
+      "luxury": 3480
+    }
+  },
+  {
+    "id": "tokyo-fuji-chubu-6d5n",
+    "title": "東京富士山中部六日",
+    "duration": "6d5n",
+    "nights": 5,
+    "region": "chubu",
+    "summary": "六天五夜結合東京都會活力、箱根富士山景與中部山岳古街，一次收藏日本最經典的城市與自然風光。",
+    "days": [
+      {
+        "day": 1,
+        "title": "淺草古韻・築地美食",
+        "attraction_ids": [
+          "asakusa-sensoji",
+          "tsukiji-toyosu-market"
+        ],
+        "activities": "抵達東京後前往淺草寺參拜，午後到豐洲市場享用新鮮海鮮丼，晚上於市區自由活動。",
+        "transport_notes": "東京地鐵與JR山手線移動，建議購買Suica儲值卡。",
+        "daily_cost_estimate_jpy": 7500
+      },
+      {
+        "day": 2,
+        "title": "澀谷新宿・數位藝術",
+        "attraction_ids": [
+          "shibuya-crossing",
+          "teamlab-planets",
+          "shinjuku-gyoen"
+        ],
+        "activities": "上午感受澀谷十字路口城市脈動，接著前往teamLab Planets體驗沉浸式光影藝術，午後到新宿御苑散步放鬆。",
+        "transport_notes": "地鐵串聯各點，車程皆在20-30分鐘內。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 3,
+        "title": "箱根火山溫泉",
+        "attraction_ids": [
+          "hakone-owakudani"
+        ],
+        "activities": "搭乘登山電車與空中纜車前往大涌谷，欣賞終年冒煙的火山地形，晴天時可遠眺富士山，晚上入住箱根溫泉旅館。",
+        "transport_notes": "東京到箱根搭小田急浪漫特快約85分鐘，建議購買箱根周遊券串聯纜車與巴士。",
+        "daily_cost_estimate_jpy": 8000
+      },
+      {
+        "day": 4,
+        "title": "河口湖賞富士山",
+        "attraction_ids": [
+          "mount-fuji-kawaguchiko"
+        ],
+        "activities": "前往河口湖畔，欣賞無風時富士山倒映湖面的絕景，沿湖自由選點拍照或泡湯，晚上入住湖畔溫泉旅館。",
+        "transport_notes": "箱根到河口湖建議搭巴士約2小時，沿途山路景色優美，也可考慮租車自駕更有彈性。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 5,
+        "title": "高山老街・白川鄉合掌村",
+        "attraction_ids": [
+          "takayama-old-town",
+          "hida-beef-takayama",
+          "shirakawago-village"
+        ],
+        "activities": "搭巴士前往高山，漫步江戶風情老街並品嚐飛驒牛握壽司，午後轉往白川鄉參觀世界遺產合掌造聚落。",
+        "transport_notes": "河口湖到高山建議經松本轉乘，車程約4小時，高山到白川鄉搭高速巴士約50分鐘。",
+        "daily_cost_estimate_jpy": 7500
+      },
+      {
+        "day": 6,
+        "title": "金澤兼六園・賦歸",
+        "attraction_ids": [
+          "kanazawa-kenrokuen"
+        ],
+        "activities": "上午前往金澤參觀日本三名園之一的兼六園，午後視交通安排搭新幹線返回東京或名古屋轉機賦歸。",
+        "transport_notes": "白川鄉到金澤搭巴士約75分鐘，金澤有北陸新幹線可直達東京，車程約2.5小時。",
+        "daily_cost_estimate_jpy": 6000
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "中部山岳地區大眾運輸班次較少且班距長，建議在東京取車後自駕遊覽箱根、富士五湖與飛驒高山一帶，山區道路彎多需謹慎駕駛，高速公路過路費較高。"
+    },
+    "packing_notes": "山區早晚溫差大，務必攜帶保暖外套，箱根與河口湖溫泉旅館多提供浴衣，冬季山區可能降雪需留意路況。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "車站周邊商務旅館",
+        "price_per_night_jpy": 6500
+      },
+      "comfort": {
+        "style_hint": "溫泉三星飯店",
+        "price_per_night_jpy": 14000
+      },
+      "luxury": {
+        "style_hint": "富士山景五星溫泉旅館",
+        "price_per_night_jpy": 40000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 2080,
+      "comfort": 2780,
+      "luxury": 4280
+    }
+  },
+  {
+    "id": "kyushu-loop-6d5n",
+    "title": "九州一周六日",
+    "duration": "6d5n",
+    "nights": 5,
+    "region": "kyushu",
+    "summary": "六天五夜環繞九州一圈，從福岡屋台到鹿兒島櫻島火山，飽覽溫泉、古城與火山景觀的多樣魅力。",
+    "days": [
+      {
+        "day": 1,
+        "title": "福岡屋台夜宴",
+        "attraction_ids": [
+          "fukuoka-hakata-yatai"
+        ],
+        "activities": "抵達福岡機場後前往市區，自由參觀博多老街，晚上到中洲屋台品嚐豚骨拉麵與居酒屋小食。",
+        "transport_notes": "福岡機場搭地鐵至博多駅約5分鐘，市區交通便利。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 2,
+        "title": "別府地獄溫泉",
+        "attraction_ids": [
+          "beppu-hells-tour"
+        ],
+        "activities": "搭特急列車前往別府，參觀七大地獄溫泉景觀，晚上入住溫泉旅館。",
+        "transport_notes": "博多搭JR特急ソニック約2小時抵達別府。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 3,
+        "title": "由布院溫泉小鎮",
+        "attraction_ids": [
+          "yufuin-onsen-town"
+        ],
+        "activities": "搭巴士前往由布院，漫步金鱗湖畔與湯之坪街道，享受悠閒溫泉小鎮氛圍。",
+        "transport_notes": "別府到由布院搭由布院之森列車或巴士約1小時。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 4,
+        "title": "熊本城巡禮",
+        "attraction_ids": [
+          "kumamoto-castle"
+        ],
+        "activities": "搭巴士或列車前往熊本，參觀熊本城與震災修復展示，感受城市韌性。",
+        "transport_notes": "由布院到熊本建議經由布院-熊本高速巴士約2小時。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 5,
+        "title": "鹿兒島黑豚・櫻島火山",
+        "attraction_ids": [
+          "kagoshima-kurobuta",
+          "sakurajima-volcano"
+        ],
+        "activities": "搭新幹線前往鹿兒島，品嚐當地黑豚料理，午後搭渡輪登上仍在活動的櫻島火山，近距離感受火山地形震撼。",
+        "transport_notes": "熊本到鹿兒島搭九州新幹線約45分鐘，鹿兒島港到櫻島搭渡輪僅需15分鐘。",
+        "daily_cost_estimate_jpy": 7500
+      },
+      {
+        "day": 6,
+        "title": "長崎異國風情・賦歸",
+        "attraction_ids": [
+          "nagasaki-glover-garden"
+        ],
+        "activities": "搭列車前往長崎，參觀哥拉巴園異國建築群，傍晚視交通安排返回福岡機場賦歸。",
+        "transport_notes": "鹿兒島到長崎建議經由博多轉乘，車程約4小時，長崎回福岡機場搭巴士約2小時。",
+        "daily_cost_estimate_jpy": 6500
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "九州城市間雖有新幹線串聯，但地獄溫泉、櫻島等景點分散，建議在福岡或熊本租車自駕遊覽郊區景點，市區間長途移動則搭乘新幹線更省時。"
+    },
+    "packing_notes": "溫泉旅館多提供浴衣，冬季山區早晚偏冷需攜帶保暖外套，櫻島偶有火山灰飄落建議攜帶口罩。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "車站周邊商務旅館",
+        "price_per_night_jpy": 5500
+      },
+      "comfort": {
+        "style_hint": "溫泉三星飯店",
+        "price_per_night_jpy": 12500
+      },
+      "luxury": {
+        "style_hint": "高級溫泉旅館",
+        "price_per_night_jpy": 36000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 2080,
+      "comfort": 2780,
+      "luxury": 4280
+    }
+  },
+  {
+    "id": "hokkaido-full-7d6n",
+    "title": "北海道全境七日",
+    "duration": "7d6n",
+    "nights": 6,
+    "region": "hokkaido",
+    "summary": "七天六夜深度探索北海道全境，從札幌都會、富良野花海到知床世界遺產與函館夜景，感受北國四季風土的極致多樣性。",
+    "days": [
+      {
+        "day": 1,
+        "title": "札幌市區巡禮",
+        "attraction_ids": [
+          "sapporo-clock-tower",
+          "sapporo-ramen-alley"
+        ],
+        "activities": "抵達新千歲機場後前往札幌市區，參觀鐘樓與大通公園，晚餐享用味噌拉麵。",
+        "transport_notes": "新千歲機場搭JR快速列車約40分鐘抵達札幌駅。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 2,
+        "title": "小樽運河一日遊",
+        "attraction_ids": [
+          "otaru-canal"
+        ],
+        "activities": "搭火車前往小樽，漫步運河沿岸倉庫群，參觀玻璃工藝品店，傍晚返回札幌。",
+        "transport_notes": "札幌到小樽搭JR約30-40分鐘，班次頻繁。",
+        "daily_cost_estimate_jpy": 5500
+      },
+      {
+        "day": 3,
+        "title": "富良野・美瑛花田兜風",
+        "attraction_ids": [
+          "furano-biei-flower-fields"
+        ],
+        "activities": "自駕前往富良野美瑛地區，欣賞薰衣草花田與拼布之路的丘陵美景，沿途各展望點自由停留拍照。",
+        "transport_notes": "強烈建議租車自駕，札幌到富良野車程約2.5小時。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 4,
+        "title": "旭山動物園",
+        "attraction_ids": [
+          "asahiyama-zoo"
+        ],
+        "activities": "前往旭川的旭山動物園，觀賞企鵝散步與北極熊跳水缸等特色展示。",
+        "transport_notes": "富良野到旭川車程約1小時。",
+        "daily_cost_estimate_jpy": 5000
+      },
+      {
+        "day": 5,
+        "title": "知床世界遺產",
+        "attraction_ids": [
+          "shiretoko-national-park"
+        ],
+        "activities": "搭國內線班機前往女滿別機場，租車前往知床國立公園，健行知床五湖步道，欣賞原始半島的壯闊自然景觀。",
+        "transport_notes": "旭川或札幌搭國內線班機至女滿別約45-55分鐘，機場租車前往知床國立公園約1.5小時車程。",
+        "daily_cost_estimate_jpy": 7500
+      },
+      {
+        "day": 6,
+        "title": "函館山夜景",
+        "attraction_ids": [
+          "hakodate-mountain-night-view"
+        ],
+        "activities": "搭乘國內線班機轉往函館，傍晚搭纜車登函館山，欣賞被譽為世界三大夜景之一的絕美夜色。",
+        "transport_notes": "女滿別經新千歲轉機至函館，總航程與轉機約需3.5小時，函館市區以市電移動。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 7,
+        "title": "函館朝市・賦歸",
+        "attraction_ids": [
+          "hakodate-morning-market"
+        ],
+        "activities": "一早前往函館朝市享用新鮮海鮮丼作為此行的完美句點，午後搭機返回新千歲機場轉國際航班賦歸。",
+        "transport_notes": "函館回新千歲機場建議搭國內線班機約40分鐘或JR特急約3.5小時。",
+        "daily_cost_estimate_jpy": 5500
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "北海道幅員遼闊，札幌、旭川、知床、函館之間距離遙遠，建議長途採國內線班機銜接，各地區內則租車自駕最有彈性，公路寬敞但冬季需備雪胎。"
+    },
+    "packing_notes": "全程建議攜帶保暖外套與防風雨具，知床健行需備登山鞋與防熊鈴，冬季前往務必準備防滑雪靴與手套。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "車站周邊商務旅館",
+        "price_per_night_jpy": 6000
+      },
+      "comfort": {
+        "style_hint": "車站直結三星飯店",
+        "price_per_night_jpy": 13500
+      },
+      "luxury": {
+        "style_hint": "溫泉度假飯店",
+        "price_per_night_jpy": 36000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 2480,
+      "comfort": 3280,
+      "luxury": 4980
+    }
+  },
+  {
+    "id": "okinawa-island-hopping-7d6n",
+    "title": "沖繩離島跳島七日",
+    "duration": "7d6n",
+    "nights": 6,
+    "region": "okinawa",
+    "summary": "七天六夜從沖繩本島跳島至八重山群島，飽覽慶良間藍海、川平灣珊瑚礁與西表島紅樹林秘境，體驗最豐富的南國離島風光。",
+    "days": [
+      {
+        "day": 1,
+        "title": "首里城・國際通",
+        "attraction_ids": [
+          "shuri-castle",
+          "kokusai-street-naha",
+          "okinawa-soba"
+        ],
+        "activities": "抵達那霸機場，前往首里城參觀琉球王朝遺跡，傍晚到國際通逛街採買伴手禮，晚餐品嚐沖繩麵。",
+        "transport_notes": "那霸機場租車最為方便，市區道路平緩好開。",
+        "daily_cost_estimate_jpy": 6000
+      },
+      {
+        "day": 2,
+        "title": "美麗海水族館・北部海岸",
+        "attraction_ids": [
+          "churaumi-aquarium",
+          "okinawa-taco-rice"
+        ],
+        "activities": "驅車前往沖繩本島北部的美麗海水族館，觀賞鯨鯊悠游，沿途海景公路景色優美。",
+        "transport_notes": "那霸至美麗海水族館車程約90分鐘，租車自駕最有彈性。",
+        "daily_cost_estimate_jpy": 7000
+      },
+      {
+        "day": 3,
+        "title": "慶良間諸島浮潛",
+        "attraction_ids": [
+          "kerama-zamami-snorkel"
+        ],
+        "activities": "搭快艇前往慶良間諸島座間味島，在被稱為「慶良間藍」的透明海水中浮潛，運氣好還能巧遇海龜。",
+        "transport_notes": "那霸泊港搭渡輪或快艇約50分鐘抵達座間味島，島上可租借電動自行車代步。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 4,
+        "title": "石垣島川平灣",
+        "attraction_ids": [
+          "ishigaki-kabira-bay"
+        ],
+        "activities": "搭乘國內線班機飛往石垣島，抵達後租車前往川平灣，搭乘玻璃底遊覽船欣賞珊瑚礁與熱帶魚群。",
+        "transport_notes": "那霸搭國內線班機至石垣機場約1小時，機場租車最為方便，環島公路沿途海景優美。",
+        "daily_cost_estimate_jpy": 7500
+      },
+      {
+        "day": 5,
+        "title": "西表島紅樹林探險",
+        "attraction_ids": [
+          "iriomote-jungle-cruise"
+        ],
+        "activities": "搭渡輪前往西表島，參加獨木舟行程深入仲間川紅樹林秘境，感受九成被叢林覆蓋的原始島嶼風情。",
+        "transport_notes": "石垣港搭渡輪約40分鐘抵達西表島，建議參加當地獨木舟或叢林探險行程。",
+        "daily_cost_estimate_jpy": 8000
+      },
+      {
+        "day": 6,
+        "title": "宮古島跨海大橋",
+        "attraction_ids": [
+          "miyakojima-beaches"
+        ],
+        "activities": "搭乘國內線班機轉往宮古島，租車前往與那霸灣海灘，並沿伊良部大橋等跨海大橋兜風，欣賞粉藍漸層海水美景。",
+        "transport_notes": "石垣經那霸轉機至宮古機場約需2小時，機場租車環島最為方便。",
+        "daily_cost_estimate_jpy": 6500
+      },
+      {
+        "day": 7,
+        "title": "返回那霸・賦歸",
+        "attraction_ids": [
+          "kokusai-street-naha"
+        ],
+        "activities": "上午搭機返回那霸，若時間充裕可到國際通做最後採購，午後前往那霸機場轉國際航班賦歸。",
+        "transport_notes": "宮古搭國內線班機返回那霸約50分鐘，建議預留2小時銜接國際航班報到。",
+        "daily_cost_estimate_jpy": 4500
+      }
+    ],
+    "self_drive_route": {
+      "recommended": true,
+      "route_note": "沖繩本島與各離島間需搭乘國內線班機或渡輪銜接，島與島之間車輛無法直接開船運送，建議每到一個新島嶼即當地租車，本島與各離島內部道路都很適合自駕。"
+    },
+    "packing_notes": "務必攜帶泳衣、防曬乳、海灘拖鞋與快乾衣物，浮潛與獨木浮建議準備防水袋保護電子產品，離島紫外線強烈需加強防曬。",
+    "accommodation_tiers": {
+      "economy": {
+        "style_hint": "那霸／離島民宿",
+        "price_per_night_jpy": 4800
+      },
+      "comfort": {
+        "style_hint": "離島海景商務飯店",
+        "price_per_night_jpy": 11500
+      },
+      "luxury": {
+        "style_hint": "度假村飯店",
+        "price_per_night_jpy": 38000
+      }
+    },
+    "unlock_price_twd": {
+      "economy": 2480,
+      "comfort": 3280,
+      "luxury": 4980
+    }
+  }
+]

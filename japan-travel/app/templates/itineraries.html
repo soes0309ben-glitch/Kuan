@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}行程規劃書｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="section-title">
+    <h2>行程規劃書</h2>
+  </div>
+  <form class="filter-bar" method="get" action="/itineraries">
+    <select name="duration" onchange="this.form.submit()">
+      <option value="">所有天數</option>
+      {% for key, label in DURATION_LABELS.items() %}
+      <option value="{{ key }}" {% if duration_filter == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select name="region" onchange="this.form.submit()">
+      <option value="">所有地區</option>
+      {% for key, label in REGION_LABELS.items() %}
+      <option value="{{ key }}" {% if region_filter == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <div class="plan-grid">
+    {% for it in itineraries %}
+    <div class="plan-card">
+      <div class="badges">
+        <span class="badge">{{ DURATION_LABELS.get(it.duration, it.duration) }}</span>
+        <span class="badge">{{ REGION_LABELS.get(it.region, it.region) }}</span>
+        {% if it.id in unlocked %}
+        <span class="badge unlocked">已解鎖</span>
+        {% else %}
+        <span class="badge locked">未解鎖</span>
+        {% endif %}
+      </div>
+      <h3>{{ it.title }}</h3>
+      <p class="summary">{{ it.summary }}</p>
+      <div class="price-teaser">
+        {% if it.id in unlocked %}已購買，可查看完整內容{% else %}NT$ {{ it.unlock_price_twd.economy }} 起解鎖完整規劃{% endif %}
+      </div>
+      <a class="btn" href="/itineraries/{{ it.id }}">{% if it.id in unlocked %}查看完整行程{% else %}查看詳情{% endif %}</a>
+    </div>
+    {% else %}
+    <div class="empty-state">找不到符合條件的行程，換個篩選條件試試看。</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

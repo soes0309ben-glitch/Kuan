@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ APP_NAME }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">旅日誌<span class="accent-dot">｜</span>日本旅遊行程規劃</a>
+      <nav class="main-nav">
+        <a href="/">首頁</a>
+        <a href="/explore">探索景點</a>
+        <a href="/favorites">我的收藏</a>
+        <a href="/itineraries">行程規劃</a>
+        <a href="/guides/beginner">新手攻略</a>
+        <a href="/news">旅遊新聞</a>
+        {% if user %}
+          <a href="/account/purchases">我的解鎖</a>
+          <form action="/logout" method="post" style="display:inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+            <button type="submit">登出（{{ user.email }}）</button>
+          </form>
+        {% else %}
+          <a href="/login">登入</a>
+          <a href="/register" class="cta">註冊</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <div id="itinerary-drawer" class="collapsed">
+    <div class="drawer-header">
+      <strong>今日行程（<span class="drawer-count">0</span>）</strong>
+      <button type="button" data-action="clear">清空</button>
+    </div>
+    <div class="drawer-body"></div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>旅日誌｜日本旅遊行程規劃 — 內容為行前參考估算，實際票價、時刻與匯率請以現場/官方公告為準。</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

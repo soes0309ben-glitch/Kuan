@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero" style="background-image: linear-gradient(135deg, rgba(178,58,46,0.55), rgba(201,154,59,0.35)), url('{{ photo_url(season_hero.image_query, 1600) }}');">
+  <span class="hero-badge">🌸 {{ season_hero.label }}</span>
+  <div class="container">
+    <h1>探索日本，寫下屬於你的旅日誌</h1>
+    <p class="hero-season-tagline">{{ season_hero.tagline }}</p>
+    <p>從沖繩離島到北海道大地，精選景點、美食與行程規劃，收藏喜歡的地方，一鍵排進你的每日行程。</p>
+    <form class="search-box" action="/explore" method="get">
+      <input type="text" name="q" placeholder="搜尋景點、美食、地區關鍵字…">
+      <button type="submit">搜尋</button>
+    </form>
+  </div>
+  <svg class="hero-torii" viewBox="0 0 120 100" aria-hidden="true">
+    <path d="M10 30 L110 30 M18 30 L18 20 L102 20 L102 30 M8 20 L112 20 M30 30 L30 90 M90 30 L90 90" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </svg>
+</section>
+
+<section class="section container">
+  <div class="section-title">
+    <h2>精選景點與美食</h2>
+    <a class="see-all" href="/explore">查看全部 →</a>
+  </div>
+  <div class="card-grid" id="featured-grid">
+    {% for a in featured %}
+    <div class="card" data-id="{{ a.id }}">
+      <div class="thumb"><img src="{{ photo_url(a.image_query) }}" alt="{{ a.name_zh }}" loading="lazy"></div>
+      <div class="card-body">
+        <h3>{{ a.name_zh }}{% if a.is_remote_island %} 🏝️{% endif %}</h3>
+        <div class="card-tags">
+          <span class="tag">{{ REGION_LABELS.get(a.region, a.region) }}</span>
+          {% for t in a.tags[:3] %}<span class="tag">{{ t }}</span>{% endfor %}
+        </div>
+        <p class="card-desc">{{ a.description }}</p>
+        <div class="card-actions">
+          <button class="icon-btn fav-btn" data-action="fav">♡ 收藏</button>
+          <button class="icon-btn" data-action="add">+ 加入行程</button>
+          <a class="icon-btn" href="{{ maps_url(a) }}" target="_blank" rel="noopener">📍 地圖</a>
+          {% if a.official_url %}<a class="icon-btn" href="{{ a.official_url }}" target="_blank" rel="noopener">🔗 官方網站</a>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section container">
+  <div class="section-title">
+    <h2>熱門行程規劃書</h2>
+    <a class="see-all" href="/itineraries">查看全部 →</a>
+  </div>
+  <div class="plan-grid">
+    {% for it in itineraries %}
+    <div class="plan-card">
+      <div class="badges">
+        <span class="badge">{{ DURATION_LABELS.get(it.duration, it.duration) }}</span>
+        <span class="badge">{{ REGION_LABELS.get(it.region, it.region) }}</span>
+      </div>
+      <h3>{{ it.title }}</h3>
+      <p class="summary">{{ it.summary }}</p>
+      <div class="price-teaser">NT$ {{ it.unlock_price_twd.economy }} 起解鎖完整規劃</div>
+      <a class="btn" href="/itineraries/{{ it.id }}">查看行程</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var data = {{ featured | tojson }};
+    var grid = document.getElementById("featured-grid");
+    if (!grid) return;
+    var byId = {};
+    data.forEach(function (a) { byId[a.id] = a; });
+    TravelApp.bindGridActions(grid, byId);
+    TravelApp.refreshFavoriteButtons();
+  });
+</script>
+{% endblock %}

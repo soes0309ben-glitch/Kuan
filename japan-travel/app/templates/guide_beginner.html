@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}日本自由行新手攻略｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="hero" style="padding:40px 0">
+  <div class="container">
+    <h1>日本自由行新手攻略</h1>
+    <p>第一次規劃日本自由行不知道從哪開始？這篇把出發前到回程要準備的事一次整理好，照著看就能上手。</p>
+  </div>
+</section>
+
+<div class="ticker" role="note" aria-label="新手重點提醒跑馬燈">
+  <div class="ticker-track">
+    <span class="ticker-item">✈️ 機票建議提前 2～3 個月訂，旺季更要提早</span>
+    <span class="ticker-item">📱 出發前先辦好 eSIM 或 Wifi 分享器</span>
+    <span class="ticker-item">💴 換匯避開機場，銀行線上換匯較划算</span>
+    <span class="ticker-item">📝 出發前先上網填好 Visit Japan Web，入境更快</span>
+    <span class="ticker-item">🧳 住宿多數免訂金，但取消政策要看清楚</span>
+    <span class="ticker-item">🚃 辦一張 Suica／ICOCA 交通 IC 卡，電車巴士超商都能刷</span>
+    <span class="ticker-item">🧊 冬季記得帶保暖外套，室內暖氣通常很悶</span>
+    <span class="ticker-item">🛍️ 單筆消費滿 5,000 円（未稅）才能辦免稅</span>
+    <!-- 重複一次內容，讓橫向捲動可以無縫循環 -->
+    <span class="ticker-item">✈️ 機票建議提前 2～3 個月訂，旺季更要提早</span>
+    <span class="ticker-item">📱 出發前先辦好 eSIM 或 Wifi 分享器</span>
+    <span class="ticker-item">💴 換匯避開機場，銀行線上換匯較划算</span>
+    <span class="ticker-item">📝 出發前先上網填好 Visit Japan Web，入境更快</span>
+    <span class="ticker-item">🧳 住宿多數免訂金，但取消政策要看清楚</span>
+    <span class="ticker-item">🚃 辦一張 Suica／ICOCA 交通 IC 卡，電車巴士超商都能刷</span>
+    <span class="ticker-item">🧊 冬季記得帶保暖外套，室內暖氣通常很悶</span>
+    <span class="ticker-item">🛍️ 單筆消費滿 5,000 円（未稅）才能辦免稅</span>
+  </div>
+</div>
+
+<section class="section container" style="max-width:820px">
+
+  <h2>一、先決定想去哪個地區</h2>
+  <p>日本大致可分為北海道、東北、關東（東京）、中部、關西（大阪京都奈良）、中國、四國、九州、沖繩九大區域，風土民情差異很大。第一次去的話，建議先鎖定「關東」或「關西」——這兩區交通網路最成熟、景點與美食選擇也最豐富，新手不容易踩雷。時間充裕可以抓 7～10 天玩一個大區域；時間有限就專心玩單一城市＋鄰近一兩個景點（例如大阪＋京都、札幌＋小樽），不用貪心排太多地方。</p>
+
+  <h2>二、買機票：傳統航空 vs 廉價航空</h2>
+  <p>傳統航空票價較穩定、包含托運行李與餐點；廉價航空（LCC）票價便宜但托運、選位、餐點多半要另外加購，退改票也較不彈性。日圓匯率與機票淡旺季會直接影響價格，賞櫻（3～4月）、賞楓（11月）與過年、黃金週前後是超旺季，建議至少提前 2～3 個月訂票，若鎖定旺季甚至建議抓 6 個月前開始留意。</p>
+
+  <h2>三、住宿怎麼選</h2>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0">
+    <thead>
+      <tr style="text-align:left;border-bottom:2px solid var(--color-line)">
+        <th style="padding:8px 6px">旅遊形式</th>
+        <th style="padding:8px 6px">推薦住宿</th>
+        <th style="padding:8px 6px">每晚每房參考價</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid var(--color-line)"><td style="padding:8px 6px">背包客／獨旅</td><td style="padding:8px 6px">青年旅館、膠囊旅館</td><td style="padding:8px 6px">2,000～5,000円</td></tr>
+      <tr style="border-bottom:1px solid var(--color-line)"><td style="padding:8px 6px">小資族</td><td style="padding:8px 6px">平價商務旅館</td><td style="padding:8px 6px">5,000～10,000円</td></tr>
+      <tr style="border-bottom:1px solid var(--color-line)"><td style="padding:8px 6px">親子旅遊</td><td style="padding:8px 6px">公寓式酒店</td><td style="padding:8px 6px">7,000～20,000円</td></tr>
+      <tr><td style="padding:8px 6px">預算無上限</td><td style="padding:8px 6px">四星級以上飯店／溫泉旅館</td><td style="padding:8px 6px">30,000円以上</td></tr>
+    </tbody>
+  </table>
+  <p>日本訂房幾乎都不用先付訂金，訂好等入住當天付款即可；但注意每間飯店的免費取消期限不同（常見是「入住前 3～7 天」），訂房時務必看清楚取消政策。</p>
+
+  <h2>四、行前準備</h2>
+  <p><strong>換匯：</strong>建議出發前 1～3 個月開始觀察日圓匯率走勢，銀行線上換匯通常比臨櫃或機場換划算，機場匯率最差還會加收手續費，盡量避免。日本紙鈔面額為一萬、五千、一千（兩千已少見），建議換匯時各面額都留一些方便使用。</p>
+  <p><strong>上網：</strong>常見方式有國際漫遊、Wifi 分享器、實體 SIM 卡、eSIM 四種。輕度使用（查地圖、傳訊息、偶爾打卡）約 2～3GB／5～7天就夠；重度使用者建議選吃到飽方案。eSIM 最方便但要先確認手機支援。</p>
+  <p><strong>電壓與插座：</strong>日本電壓 100V，台灣 110V，插座規格相同；手機、相機、筆電等常見電器多支援 100～240V，短期旅遊通常不需額外帶變壓器。</p>
+  <p><strong>打包穿搭：</strong>春季早晚溫差大建議洋蔥式穿法；夏季（北海道除外）悶熱，穿著輕便透氣；秋季入秋後轉涼，仍建議洋蔥式穿法；冬季務必準備禦寒外套，雪地行程另備手套毛帽，室內因暖氣通常較悶熱，可裡層穿薄一點。</p>
+
+  <h2>五、入境相關</h2>
+  <p>台灣旅客赴日免簽證，但入境時仍須完成通關手續。強烈建議出發前先上網完成「Visit Japan Web」登錄並取得入境與海關 QR Code，可以省去在機場手寫入境卡、海關申告單的時間，通關明顯更快。行李內若攜帶超過免稅額度的物品、肉類蛋奶製品或其他管制品，務必事先確認規定，避免在海關卡關。</p>
+
+  <h2>六、當地交通：搞懂這四種就夠了</h2>
+  <p><strong>JR（含新幹線）：</strong>日本鐵路公司經營，新幹線類似台灣高鐵，適合長途移動；在來線（一般路線）依停靠站數分特急、快速、普通。<strong>私鐵：</strong>JR 以外的民營鐵路（如京王、阪急、小田急），搭乘方式與 JR 相同，刷 IC 卡即可上下車。<strong>地下鐵：</strong>各大城市都有自己的地鐵系統，行程集中在單一城市時最常用到。<strong>公車：</strong>多數行程用電車＋地鐵就能搞定，但京都市區公車網路發達，善用一日券反而更方便。建議先辦一張 Suica、ICOCA 等交通 IC 卡，幾乎所有電車、公車、便利商店都能刷卡，省去每次買票的麻煩；長天數、單一區域深度遊也可以評估 JR Pass 或地區周遊券是否划算。</p>
+
+  <h2>七、預算怎麼抓</h2>
+  <p>參考物價：電車一站約 160～180円、超商美式咖啡約 200円、吉野家牛丼中碗約 500円、一般博物館門票約 1,000～1,800円、市區計程車起跳約 500円。若行程集中在市區搭電車移動，一天交通費約抓 600～800円；餐費一餐 1,000～3,000円是常見區間。日本行動支付（PayPay、Suica 等）已相當普及，可多利用電子支付減少換匯壓力。</p>
+
+  <h2>八、禮節與治安小提醒</h2>
+  <p>手扶梯站立方向：關東靠左站、關西（大阪）靠右站；公共廁所衛生紙直接丟入馬桶；搭乘大眾運輸請勿大聲交談、手機記得靜音；盡量避免邊走邊吃，商店街小吃建議站在店門口食用完畢再移動。日本整體治安良好，但都會區商店多在 21～22 點後陸續打烊，風俗街周邊建議避免獨自夜間行走。</p>
+
+  <h2>九、回程與退稅提醒</h2>
+  <p>建議提早 2 小時抵達機場辦理報到、安檢與出境手續；若還想逛免稅店、買伴手禮，建議抓 2.5～3 小時較保險。同一店家單筆消費滿 5,000 円（未稅）即可辦理退稅，退稅憑證在出境前不可弄丟或撕下，離境時海關可能會抽查；液體類化妝品、飲料、酒類須放託運行李，一般物品可放手提。</p>
+
+</section>
+{% endblock %}

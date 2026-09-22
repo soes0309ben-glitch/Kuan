@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}探索景點與美食｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="section-title">
+    <h2>探索景點與美食</h2>
+  </div>
+  <div class="filter-bar">
+    <input type="text" id="search-q" value="{{ q }}" placeholder="搜尋名稱、地區、標籤…" style="flex:2;min-width:200px">
+    <select id="search-region">
+      <option value="">所有地區</option>
+      {% for key, label in regions.items() %}
+      <option value="{{ key }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select id="search-category">
+      <option value="">景點＋美食</option>
+      <option value="attraction">景點</option>
+      <option value="food">美食</option>
+    </select>
+    <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem">
+      <input type="checkbox" id="search-island"> 只看離島
+    </label>
+  </div>
+  <div class="card-grid" id="attraction-grid">
+    <div class="empty-state">載入中…</div>
+  </div>
+</section>
+{% endblock %}

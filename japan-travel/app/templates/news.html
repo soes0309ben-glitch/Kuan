@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}日本旅遊新聞｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="section-title">
+    <h2>日本旅遊新聞</h2>
+    {% if news.fetched_at %}<span class="card-meta">最後更新：{{ news.fetched_at }}（每日自動更新一次）</span>{% endif %}
+  </div>
+
+  {% if not news.configured %}
+  <div class="empty-state">
+    這個功能還沒開通：尚未設定新聞資料來源。<br>
+    管理者請到 <a href="https://newsapi.org/register" target="_blank" rel="noopener">newsapi.org</a> 申請免費 API Key，填入 <code>.env</code> 的 <code>NEWSAPI_KEY</code> 後即可自動每日更新。
+  </div>
+  {% elif news.error and not news.articles %}
+  <div class="empty-state">{{ news.error }}</div>
+  {% else %}
+    {% if news.error %}<div class="alert warn">{{ news.error }}</div>{% endif %}
+    <div class="card-grid">
+      {% for a in news.articles %}
+      <a class="card" href="{{ a.url }}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+        <div class="thumb"><img src="{{ a.image_url or '/static/img/placeholder.svg' }}" alt="{{ a.title }}" loading="lazy" onerror="this.src='/static/img/placeholder.svg'"></div>
+        <div class="card-body">
+          <h3>{{ a.title }}</h3>
+          <p class="card-desc">{{ a.description or "" }}</p>
+          <div class="card-meta">{{ a.source }}{% if a.published_at %} ・{{ a.published_at[:10] }}{% endif %}</div>
+        </div>
+      </a>
+      {% else %}
+      <div class="empty-state">目前沒有可顯示的新聞，晚點再回來看看。</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
