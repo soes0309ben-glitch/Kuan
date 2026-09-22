@@ -6,6 +6,7 @@
     <h2>日本旅遊新聞</h2>
     {% if news.fetched_at %}<span class="card-meta">最後更新：{{ news.fetched_at }}（每日自動更新一次）</span>{% endif %}
   </div>
+  <p style="color:var(--color-ink-soft);margin-top:-12px;margin-bottom:24px">除了旅遊時事，也收錄日本近期的演唱會、動漫展、國際賽事等活動消息，方便你抓時間安排行程。</p>
 
   {% if not news.configured %}
   <div class="empty-state">

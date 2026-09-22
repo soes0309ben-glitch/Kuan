@@ -35,10 +35,17 @@ def _fetch_from_newsapi(api_key: str) -> list[dict]:
     resp = requests.get(
         "https://newsapi.org/v2/everything",
         params={
-            "q": "Japan travel OR Japan tourism OR 日本 旅遊 OR 日本 観光",
+            # Kept to 1-2 word OR branches — NewsAPI implicitly ANDs the
+            # words within an unquoted phrase, so 3-word branches like
+            # "Japan anime expo" were far too narrow and returned 0 results.
+            "q": (
+                "Japan travel OR Japan tourism OR Japan festival OR "
+                "Japan concert OR anime expo OR Comiket OR Japan sports OR "
+                "日本 旅遊 OR 日本 観光 OR 日本 演唱會 OR 動漫展 OR 日本賽事"
+            ),
             "language": "en",
             "sortBy": "publishedAt",
-            "pageSize": 20,
+            "pageSize": 30,
         },
         headers={**_HEADERS, "X-Api-Key": api_key},
         timeout=8,
@@ -75,7 +82,13 @@ def get_travel_news() -> dict:
     try:
         articles = _fetch_from_newsapi(settings.newsapi_key)
         payload = {"articles": articles, "fetched_unix": time.time(), "fetched_at": time.strftime("%Y-%m-%d %H:%M")}
-        _save_cache(payload)
+        if articles:
+            # Don't lock in a transient empty response for the full 24h TTL —
+            # only persist real results, so an empty blip self-heals on the
+            # next request instead of showing "no news" all day.
+            _save_cache(payload)
+        elif cached:
+            return {"configured": True, **cached, "error": "新聞更新暫時失敗，顯示上次快取內容"}
         return {"configured": True, **payload, "error": None}
     except requests.RequestException as exc:
         logger.warning("NewsAPI fetch failed: %s", exc)
