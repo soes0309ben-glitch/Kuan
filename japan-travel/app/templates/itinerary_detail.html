@@ -87,12 +87,24 @@
   <div class="alert success">你已解鎖這個行程，感謝購買！</div>
   {% else %}
   <p style="color:var(--color-ink-soft);font-size:0.88rem">住宿等級只影響價格與住宿建議風格，解鎖後三種等級都能查看完整每日行程內容。</p>
+  {% if user %}
+  <div class="alert success">🎉 會員專屬優惠：所有解鎖方案現折 8 折！</div>
+  {% else %}
+  <div class="alert warn"><a href="/login">登入</a>即可享全站行程解鎖 8 折優惠</div>
+  {% endif %}
   <div class="tier-grid">
     {% for tier, info in itinerary.accommodation_tiers.items() %}
     <div class="tier-card">
       <h4>{{ TIER_LABELS.get(tier, tier) }}</h4>
       <div class="hint">{{ info.style_hint }}（約 {{ info.price_per_night_jpy }} 円／晚）</div>
+      {% if user %}
+      <div class="price">
+        <span style="text-decoration:line-through;color:var(--color-ink-soft);font-size:0.85em">NT$ {{ itinerary.unlock_price_twd[tier] }}</span>
+        NT$ {{ member_price(itinerary.unlock_price_twd[tier]) }}
+      </div>
+      {% else %}
       <div class="price">NT$ {{ itinerary.unlock_price_twd[tier] }}</div>
+      {% endif %}
       <form action="/itineraries/{{ itinerary.id }}/checkout" method="post">
         <input type="hidden" name="tier" value="{{ tier }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">

@@ -27,6 +27,13 @@ DURATION_LABELS = {
 
 TIER_LABELS = {"economy": "經濟型", "comfort": "舒適型", "luxury": "豪華型"}
 
+# Logged-in users get 20% off every itinerary's unlock price.
+MEMBER_DISCOUNT_RATE = 0.2
+
+
+def member_price_twd(amount_twd: int) -> int:
+    return round(amount_twd * (1 - MEMBER_DISCOUNT_RATE))
+
 
 def _load_json(filename: str) -> list[dict]:
     path = DATA_DIR / filename

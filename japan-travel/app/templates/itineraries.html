@@ -35,7 +35,14 @@
       <h3>{{ it.title }}</h3>
       <p class="summary">{{ it.summary }}</p>
       <div class="price-teaser">
-        {% if it.id in unlocked %}已購買，可查看完整內容{% else %}NT$ {{ it.unlock_price_twd.economy }} 起解鎖完整規劃{% endif %}
+        {% if it.id in unlocked %}
+          已購買，可查看完整內容
+        {% elif user %}
+          <span style="text-decoration:line-through;color:var(--color-ink-soft);font-size:0.85em">NT$ {{ it.unlock_price_twd.economy }}</span>
+          會員價 NT$ {{ member_price(it.unlock_price_twd.economy) }} 起解鎖完整規劃
+        {% else %}
+          NT$ {{ it.unlock_price_twd.economy }} 起解鎖完整規劃・<a href="/login">登入享 8 折</a>
+        {% endif %}
       </div>
       <a class="btn" href="/itineraries/{{ it.id }}">{% if it.id in unlocked %}查看完整行程{% else %}查看詳情{% endif %}</a>
     </div>

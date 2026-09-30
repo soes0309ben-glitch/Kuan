@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.csrf import verify_csrf
-from app.data_store import TIER_LABELS, find_itinerary
+from app.data_store import TIER_LABELS, find_itinerary, member_price_twd
 from app.db import get_db
 from app.dependencies import get_current_user
 from app.email_service import notify_purchase
@@ -73,7 +73,9 @@ def start_checkout(
             # Resume the still-open Checkout Session instead of double-charging.
             return RedirectResponse(stripe_session.url, status_code=303)
 
-    amount_twd = itinerary["unlock_price_twd"][tier]
+    # Checkout always requires login (see the redirect above), so every
+    # purchase here qualifies for the member discount.
+    amount_twd = member_price_twd(itinerary["unlock_price_twd"][tier])
     try:
         stripe_session = create_checkout_session(
             itinerary_id=itinerary_id,

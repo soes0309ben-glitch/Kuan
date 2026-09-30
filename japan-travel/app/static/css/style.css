@@ -605,6 +605,20 @@ img {
   color: #6b4a13;
 }
 
+.promo-banner {
+  background: var(--color-gold);
+  color: #3a2c0f;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.promo-banner a {
+  color: #3a2c0f;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
 /* Forms */
 .form-card {
   max-width: 420px;
