@@ -33,12 +33,23 @@ def _get_with_retry(url: str, params: dict, retries: int = 1) -> requests.Respon
 # attraction on the next page load. Only successful lookups are persisted
 # (see get_photo_url) — a transient network failure must not permanently
 # lock an attraction into showing the placeholder forever.
+#
+# This is gitignored (deploy hosts get a fresh, empty disk), so it alone
+# doesn't help a freshly deployed instance. SEED_CACHE_FILE below is the
+# git-tracked counterpart that ships pre-resolved URLs with the repo.
 _CACHE_FILE = Path(__file__).resolve().parent.parent / ".cache" / "photo_urls.json"
 
+# Git-tracked snapshot of previously resolved URLs, committed to the repo so
+# a fresh deploy (empty disk, no runtime cache yet) doesn't have to pay a
+# live Unsplash/Wikipedia round trip for every image on first page load.
+# Regenerate by copying the runtime _CACHE_FILE over this path once it has
+# warmed up locally.
+_SEED_CACHE_FILE = Path(__file__).resolve().parent / "data" / "photo_urls_seed.json"
 
-def _load_cache() -> dict[str, str]:
+
+def _load_json(path: Path) -> dict[str, str]:
     try:
-        with _CACHE_FILE.open(encoding="utf-8") as f:
+        with path.open(encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
@@ -57,10 +68,12 @@ def _save_cache() -> None:
 # process's lifetime, so we don't re-hit the network for the same query
 # twice in one run even when there's genuinely no photo to find.
 _cache: dict[str, str] = {}
+_cache.update(_load_json(_SEED_CACHE_FILE))
 
 # On-disk cache: holds only successful (non-placeholder) results, loaded
-# once at import time to seed _cache.
-_disk_cache: dict[str, str] = _load_cache()
+# once at import time to seed _cache. Takes precedence over the seed file
+# since it reflects the most recently resolved URLs.
+_disk_cache: dict[str, str] = _load_json(_CACHE_FILE)
 _cache.update(_disk_cache)
 
 
