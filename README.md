@@ -4,11 +4,10 @@
 
 🌐 **線上網址：https://soes0309ben-glitch.github.io/Kuan/**
 
-部署方式是 GitHub Pages（`gh-pages` 分支）。修改網站並 commit 到 `main` 之後，在 repo 根目錄執行下面兩行即可更新線上版（約 1 分鐘生效）：
+部署方式是 GitHub Pages（`gh-pages` 分支）。修改網站並 commit 到 `main` 之後，在 repo 根目錄執行下面這行即可更新線上版（約 1 分鐘生效）：
 
 ```bash
-git subtree split --prefix quiz-site -b gh-pages
-git push origin gh-pages
+git subtree push --prefix quiz-site origin gh-pages
 ```
 
 ## 怎麼開
