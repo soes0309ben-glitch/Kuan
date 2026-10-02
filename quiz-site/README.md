@@ -2,6 +2,15 @@
 
 七大主題 × 四種題型的線上測驗網站。純前端，不需要安裝任何套件。
 
+🌐 **線上網址：https://soes0309ben-glitch.github.io/Kuan/**
+
+部署方式是 GitHub Pages（`gh-pages` 分支）。修改網站並 commit 到 `main` 之後，在 repo 根目錄執行下面兩行即可更新線上版（約 1 分鐘生效）：
+
+```bash
+git subtree split --prefix quiz-site -b gh-pages
+git push origin gh-pages
+```
+
 ## 怎麼開
 
 - **最簡單**：直接雙擊 `index.html` 用瀏覽器開啟。
@@ -44,6 +53,7 @@
 - 結果頁可「重練錯題」。
 - 「題庫總覽」可依主題／題型篩選、搜尋、看答案，並能**匯出整份題庫 JSON**。
 - 支援手機版與深色模式。
+- 粉彩可愛風介面，吉祥物是原創的蝴蝶結小雲朵「問問」（未使用任何三麗鷗官方角色）。
 
 ## 新增題目
 編輯 `js/questions.js` 裡的 `QUESTIONS` 陣列，照現有格式加一行即可：
