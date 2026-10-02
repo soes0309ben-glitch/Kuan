@@ -18,6 +18,10 @@ CATEGORIES = {
     "animal": "動物生活",
     "trivia": "冷知識",
     "language": "語言",
+    "japan": "日系文化",
+    "korea": "韓系潮流",
+    "biology": "生物科學",
+    "health": "醫療保健",
 }
 MIXED = "all"  # 綜合挑戰：從所有主題出題
 TYPES = ("single", "image", "short", "qa")

@@ -3,7 +3,7 @@
   "use strict";
 
   const $app = document.getElementById("app");
-  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", language: "🌏", all: "🎲" };
+  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", language: "🌏", japan: "🎎", korea: "🎤", biology: "🧬", health: "🩺", all: "🎲" };
   const CAT_DESC = {
     anime: "日本動漫、吉卜力、經典角色",
     life: "健康、安全、節慶與日常",
@@ -13,6 +13,10 @@
     animal: "動物習性、冷知識、認動物",
     trivia: "顛覆常識的科學、歷史、生活冷知識",
     language: "英日韓越馬泰，多國語言大考驗",
+    japan: "節慶、和食、傳統藝能與日本生活",
+    korea: "K-pop、韓劇、韓食與韓國文化",
+    biology: "細胞、遺傳、演化與生態",
+    health: "疾病預防、急救、營養與健保",
     all: "從所有主題隨機出題",
   };
   const DIFF = { easy: { name: "簡單", icon: "🌱" }, medium: { name: "中等", icon: "🌟" }, hard: { name: "困難", icon: "🔥" } };
@@ -310,35 +314,53 @@
   function go(view) {
     history.replaceState(null, "", view === "home" ? "/" : `/?view=${view}`);
     closeMenu();
-    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams, psych: renderPsychList }[view] || renderHome)();
+    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams, psych: renderPsychList, mixed: renderMixed }[view] || renderHome)();
     window.scrollTo(0, 0);
   }
 
   const attemptFor = (cat, diff) => ME.attempts.find((a) => a.category === cat && a.difficulty === diff);
 
   /* ---------- 首頁 ---------- */
-  function renderHome() {
-    const cats = [...Object.keys(CONFIG.categories), "all"];
-    const cards = cats.map((c) => {
-      const pills = CONFIG.difficulties.map((d) => {
-        const n = c === "all"
-          ? Object.keys(CONFIG.categories).reduce((s, k) => s + (CONFIG.counts[`${k}:${d}`] || 0), 0)
-          : CONFIG.counts[`${c}:${d}`] || 0;
-        const a = attemptFor(c, d);
-        let state = "open", label = `${n} 題`;
-        if (a?.finished) { state = "done"; label = `${fmt(a.score)} / ${a.total} 分`; }
-        else if (a) { state = "doing"; label = `繼續 ${a.answered}/${a.total}`; }
-        else if (!n) { state = "empty"; label = "準備中"; }
-        return `<button class="diff-pill ${state}" data-cat="${c}" data-diff="${d}" ${state === "done" || state === "empty" ? "disabled" : ""}>
-          <span>${DIFF[d].icon} ${DIFF[d].name}</span><small>${label}</small></button>`;
-      }).join("");
-      return `<div class="cat-card" data-cat="${c}">
-          <span class="cat-icon">${CAT_ICON[c]}</span>
-          <span class="cat-name">${esc(catName(c))}</span>
-          <span class="cat-desc">${esc(CAT_DESC[c])}</span>
-          <div class="diff-pills">${pills}</div>
-        </div>`;
+  // 主題卡片（含三個難度按鈕）：首頁與綜合挑戰頁共用
+  function topicCard(c) {
+    const pills = CONFIG.difficulties.map((d) => {
+      const n = c === "all"
+        ? Object.keys(CONFIG.categories).reduce((s, k) => s + (CONFIG.counts[`${k}:${d}`] || 0), 0)
+        : CONFIG.counts[`${c}:${d}`] || 0;
+      const a = attemptFor(c, d);
+      let state = "open", label = `${n} 題`;
+      if (a?.finished) { state = "done"; label = `${fmt(a.score)} / ${a.total} 分`; }
+      else if (a) { state = "doing"; label = `繼續 ${a.answered}/${a.total}`; }
+      else if (!n) { state = "empty"; label = "準備中"; }
+      return `<button class="diff-pill ${state}" data-cat="${c}" data-diff="${d}" ${state === "done" || state === "empty" ? "disabled" : ""}>
+        <span>${DIFF[d].icon} ${DIFF[d].name}</span><small>${label}</small></button>`;
     }).join("");
+    return `<div class="cat-card" data-cat="${c}">
+        <span class="cat-icon">${CAT_ICON[c]}</span>
+        <span class="cat-name">${esc(catName(c))}</span>
+        <span class="cat-desc">${esc(CAT_DESC[c])}</span>
+        <div class="diff-pills">${pills}</div>
+      </div>`;
+  }
+
+  function bindPills() {
+    $app.querySelectorAll(".diff-pill:not([disabled])").forEach((el) =>
+      el.addEventListener("click", () => startOrResume(el.dataset.cat, el.dataset.diff))
+    );
+  }
+
+  function renderMixed() {
+    $app.innerHTML = `
+      <section class="psy-hero">
+        <h1>🎲 綜合挑戰</h1>
+        <p>從所有主題隨機出題，考驗你的全方位知識！每種難度一樣限挑戰一次。</p>
+      </section>
+      <section class="cat-grid mixed-grid">${topicCard("all")}</section>`;
+    bindPills();
+  }
+
+  function renderHome() {
+    const cards = Object.keys(CONFIG.categories).map(topicCard).join("");
 
     $app.innerHTML = `
       <section class="hero">
@@ -355,9 +377,7 @@
       <section class="cat-grid">${cards}</section>`;
 
     $app.querySelector(".rule-team").addEventListener("click", (e) => { e.preventDefault(); go("teams"); });
-    $app.querySelectorAll(".diff-pill:not([disabled])").forEach((el) =>
-      el.addEventListener("click", () => startOrResume(el.dataset.cat, el.dataset.diff))
-    );
+    bindPills();
   }
 
   async function startOrResume(cat, diff) {
