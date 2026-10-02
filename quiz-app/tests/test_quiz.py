@@ -328,3 +328,22 @@ def test_teammate_avatar_visible_only_to_teammates(make_client):
     mate, _ = make_client("m@example.com")
     mate.post(f"/api/teams/{code}/join", json={})
     assert mate.get(f"/api/teams/avatar/{owner_id}").status_code == 200
+
+
+def test_owner_deletes_team_member_leaves(make_client):
+    owner, _ = make_client("own@example.com")
+    code = owner.post("/api/teams", json={"category": "anime", "difficulty": "easy"}).json()["code"]
+    mate, _ = make_client("mate@example.com")
+    mate.post(f"/api/teams/{code}/join", json={})
+    q = mate.get(f"/api/teams/{code}/play").json()["questions"][0]
+    mate.post(f"/api/teams/{code}/answer", json={"question_id": q["id"], "given": "對"})
+    # 隊員退出：只有自己離開，隊伍還在
+    assert mate.post(f"/api/teams/{code}/leave", json={}).json() == {"left": True}
+    assert len(owner.get(f"/api/teams/{code}").json()["members"]) == 1
+    assert mate.get("/api/teams/mine").json()["teams"] == []
+    # 陌生人不能刪
+    stranger, _ = make_client("x@example.com")
+    assert stranger.post(f"/api/teams/{code}/leave", json={}).status_code == 403
+    # 隊長刪除：整個隊伍消失
+    assert owner.post(f"/api/teams/{code}/leave", json={}).json() == {"deleted": True}
+    assert owner.get(f"/api/teams/{code}").status_code == 404

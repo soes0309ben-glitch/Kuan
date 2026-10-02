@@ -119,7 +119,9 @@ class Team(Base):
     question_ids: Mapped[list] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
-    members: Mapped[list["TeamMember"]] = relationship(back_populates="team", order_by="TeamMember.joined_at")
+    members: Mapped[list["TeamMember"]] = relationship(
+        back_populates="team", order_by="TeamMember.joined_at", cascade="all, delete-orphan"
+    )
 
 
 class TeamMember(Base):

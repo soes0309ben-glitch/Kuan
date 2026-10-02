@@ -153,6 +153,20 @@ def join_team(code: str, user: User = Depends(require_user), db: Session = Depen
     return team_view(db, team, user)
 
 
+@router.post("/{code}/leave", dependencies=[Depends(require_json)])
+def leave_or_delete(code: str, user: User = Depends(require_user), db: Session = Depends(get_db)):
+    """隊長：刪除整個隊伍（含所有成員的作答）；隊員：退出隊伍。"""
+    team = _team(db, code)
+    if team.owner_id == user.id:
+        db.delete(team)
+        db.commit()
+        return {"deleted": True}
+    member = _require_member(team, user)
+    team.members.remove(member)
+    db.commit()
+    return {"left": True}
+
+
 def _answer_result(q: Question, ans: TeamAnswer) -> dict:
     return {
         "question_id": q.id,

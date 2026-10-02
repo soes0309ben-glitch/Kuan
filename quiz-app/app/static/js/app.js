@@ -642,13 +642,36 @@
     if (!box) return;
     box.innerHTML = teams.length
       ? teams.map((t) => `
-          <button class="team-row" data-code="${esc(t.code)}">
-            <span>${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}</span>
-            <span class="team-avatars">${t.members.map((m) => avatarHtml(28, m.profile)).join("")}</span>
-            <small>${STATUS(t)}</small>
-          </button>`).join("")
+          <div class="team-row">
+            <button class="team-open" data-code="${esc(t.code)}">
+              <span>${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}${t.is_owner ? ` <small class="badge soft">隊長</small>` : ""}</span>
+              <span class="team-avatars">${t.members.map((m) => avatarHtml(28, m.profile)).join("")}</span>
+              <small>${STATUS(t)}</small>
+            </button>
+            <button class="team-delete" data-code="${esc(t.code)}" data-owner="${t.is_owner ? 1 : 0}" title="${t.is_owner ? "刪除隊伍" : "退出隊伍"}" aria-label="${t.is_owner ? "刪除隊伍" : "退出隊伍"}">🗑️</button>
+          </div>`).join("")
       : `<p class="hint">還沒有隊伍，建立一個邀請朋友吧！</p>`;
-    box.querySelectorAll(".team-row").forEach((b) => b.addEventListener("click", () => renderTeam(b.dataset.code)));
+    box.querySelectorAll(".team-open").forEach((b) => b.addEventListener("click", () => renderTeam(b.dataset.code)));
+    box.querySelectorAll(".team-delete").forEach((b) => b.addEventListener("click", async () => {
+      if (await leaveTeam(b.dataset.code, b.dataset.owner === "1")) renderTeams();
+    }));
+  }
+
+  // 隊長刪除整個隊伍；隊員退出隊伍
+  async function leaveTeam(code, isOwner) {
+    const ok = await confirmDialog(isOwner
+      ? `<h2>🗑️ 刪除這個隊伍？</h2><p>所有成員的作答紀錄都會一起刪除，而且無法復原。</p>`
+      : `<h2>👋 退出這個隊伍？</h2><p>你的作答紀錄會被移除，其他隊友不受影響。</p>`,
+    isOwner ? "刪除隊伍" : "退出隊伍");
+    if (!ok) return false;
+    try {
+      await api(`/api/teams/${encodeURIComponent(code)}/leave`, {});
+      toast(isOwner ? "已刪除隊伍" : "已退出隊伍");
+      return true;
+    } catch (err) {
+      toast(err.message);
+      return false;
+    }
   }
 
   function renderLoginNeeded(title, next) {
@@ -714,7 +737,10 @@
 
     $app.innerHTML = `
       <section class="panel team">
-        <button class="link back-teams">← 我的隊伍</button>
+        <div class="team-top">
+          <button class="link back-teams">← 我的隊伍</button>
+          ${t.is_member ? `<button class="link danger" id="leave-team">${t.is_owner ? "🗑️ 刪除隊伍" : "👋 退出隊伍"}</button>` : ""}
+        </div>
         <h2>👥 ${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}</h2>
         <p class="hint">${STATUS(t)}・每人 ${t.total} 題・最多 ${t.max_members} 人</p>
         ${t.is_member && t.members.length < t.max_members ? `
@@ -730,6 +756,9 @@
       </section>`;
 
     $app.querySelector(".back-teams").addEventListener("click", () => go("teams"));
+    document.getElementById("leave-team")?.addEventListener("click", async () => {
+      if (await leaveTeam(t.code, t.is_owner)) go("teams");
+    });
     document.getElementById("copy")?.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(link);
