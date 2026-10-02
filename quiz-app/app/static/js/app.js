@@ -1029,27 +1029,72 @@
   const PX_HEART = ["01010", "11111", "11111", "01110", "00100"];
   const PX_STAR = ["00100", "01110", "11111", "01110", "01010"];
   const PX_SPARK = ["010", "111", "010"];
+  const PX_PAW = ["10101", "00000", "01110", "01110"];
   const PX_CLOUD = ["000111000000", "001111111000", "011111111110", "111111111111", "111101101111", "111111111111", "011110011110", "001111111100"];
 
+  // 小動物像素圖：只寫左半邊 8 格，畫的時候左右鏡射成 16×16
+  // o 外框、b 身體、w 肚子／臉、p 腮紅／耳內、d 深色耳朵、e 眼睛、n 鼻子／嘴喙、m 嘴巴
+  const PX_PETS = {
+    cat: ["........", "..o.....", ".opo....", ".oppo...", ".obbbooo", "obbbbbbb", "obbbbbbb", "obbeebbb",
+      "obbeebbb", "oppbbbbn", "obbbbbmb", ".oobbbbb", "..obwwww", ".obbwwww", ".obbowww", "..oooooo"],
+    dog: ["........", "....oooo", "..oobbbb", ".odobbbb", "oddobbbb", "oddobbbb", "oddobeeb", ".oddbeeb",
+      ".oddpbbw", "..oobbwn", "...obwmw", "..obbwww", ".obbbwww", ".obbbwww", ".obbowww", "..oooooo"],
+    bunny: ["..oo....", ".obpo...", ".obpo...", ".obpo...", ".obpoooo", ".obbbbbb", "obbbbbbb", "obbeebbb",
+      "obbeebbb", "oppbbbbn", "obbbbbmb", ".oobbbbb", "..obwwww", ".obbwwww", ".obbowww", "..oooooo"],
+    bear: ["........", ".ooo....", "obpbo...", "obppoooo", "obbbbbbb", "obbbbbbb", "obbbbbbb", "obbeebbb",
+      "obbeebbb", "oppbbwww", "obbbwwwn", "obbbwwmw", ".oobbbbb", ".obbbwww", ".obbowww", "..oooooo"],
+    chick: ["........", "......o.", ".......o", "...ooooo", "..obbbbb", ".obbbbbb", "obbeebbb", "obbeebbb",
+      "oppbbbnn", "obbbbbbn", "obbbbbbb", "obbbbbbb", ".obbbbbb", "..obbbbb", "...ooooo", ".....n.."],
+    hamster: ["........", "........", ".oo.....", "opbo.ooo", "obbobbbb", "obbbbbbb", "obbbbbbb", "obbeebww",
+      "obbeebww", "oppwwwwn", "obwwwwmw", ".obwwwww", "..obbwww", ".obbwwww", ".obbowww", "..oooooo"],
+  };
+  const PET_BASE = { o: "#4a3040", e: "#3a2632", m: "#4a3040", p: "#ffa8c0", n: "#ff7a9c", w: "#fff8ee" };
+  const PET_COLORS = {
+    cat: [{ b: "#ffb46b" }, { b: "#c9ccd8" }, { b: "#fff3e3", w: "#ffffff" }],
+    dog: [{ b: "#f6b26b", d: "#a8653a" }, { b: "#e2c29b", d: "#7a4b2f" }],
+    bunny: [{ b: "#ffffff", w: "#ffffff" }, { b: "#f4e1d2", w: "#fffaf5" }],
+    bear: [{ b: "#b98058", w: "#f3dcc2", p: "#e8a98a" }],
+    chick: [{ b: "#ffe066", n: "#ff9f43" }],
+    hamster: [{ b: "#f0b27a" }, { b: "#d9d4cf" }],
+  };
+  // 依結果文字決定夥伴，讓同一個結果每次都長得一樣、不同結果有不同組合
+  function pxHash(str) {
+    let h = 7;
+    for (const ch of String(str)) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+    return h;
+  }
+  function drawPet(g, kind, colorNo, x, y, s = 1, blink = false) {
+    const opts = PET_COLORS[kind];
+    const pal = { ...PET_BASE, d: "#8a6a5a", ...opts[colorNo % opts.length] };
+    const rows = PX_PETS[kind].map((half) => half + [...half].reverse().join(""));
+    const eyeTop = rows.findIndex((row) => row.includes("e"));
+    rows.forEach((row, j) => [...row].forEach((c, i) => {
+      if (c === ".") return;
+      g.fillStyle = blink && j === eyeTop && c === "e" ? pal.b : pal[c];
+      g.fillRect(x + i * s, y + j * s, s, s);
+    }));
+  }
+
   function drawPixelCard(canvas, r, pal) {
-    const W = 180, H = 250, S = 4;
-    const lo = document.createElement("canvas");
-    lo.width = W; lo.height = H;
-    const g = lo.getContext("2d");
-    const rect = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
-    const bitmap = (map, x, y, c, s = 1) => map.forEach((row, j) => [...row].forEach((v, i) => { if (v === "1") rect(x + i * s, y + j * s, s, s, c); }));
-    // 背景與圓點
-    rect(0, 0, W, H, pal.bg);
-    for (let y = 4; y < H; y += 10) for (let x = (y / 10) % 2 ? 9 : 4; x < W; x += 10) rect(x, y, 2, 2, pal.dot);
-    // 卡片（像素圓角＋外框）
+    const W = 180, H = 290, S = 4;
     const cx = 10, cy = 10, cw = W - 20, ch = H - 20;
-    rect(cx + 2, cy, cw - 4, ch, pal.ink); rect(cx, cy + 2, cw, ch - 4, pal.ink); rect(cx + 1, cy + 1, cw - 2, ch - 2, pal.ink);
-    rect(cx + 3, cy + 1, cw - 6, ch - 2, pal.card); rect(cx + 1, cy + 3, cw - 2, ch - 6, pal.card); rect(cx + 2, cy + 2, cw - 4, ch - 4, pal.card);
-    // 頂部標題列
-    rect(cx + 2, cy + 2, cw - 4, 18, pal.accent);
+    // 底圖（背景、卡片、文字、長條）只畫一次；動畫只重畫小動物和閃光
+    const base = document.createElement("canvas");
+    base.width = W; base.height = H;
+    const g = base.getContext("2d");
+    const rect = (ctx, x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); };
+    const bitmap = (ctx, map, x, y, c, s = 1) => map.forEach((row, j) => [...row].forEach((v, i) => { if (v === "1") rect(ctx, x + i * s, y + j * s, s, s, c); }));
+    // 背景：小腳印圖案
+    rect(g, 0, 0, W, H, pal.bg);
+    for (let y = 3, n = 0; y < H; y += 14, n++) for (let x = n % 2 ? 11 : 2; x < W; x += 18) bitmap(g, PX_PAW, x, y, pal.dot);
+    // 卡片（像素圓角＋外框）
+    rect(g, cx + 2, cy, cw - 4, ch, pal.ink); rect(g, cx, cy + 2, cw, ch - 4, pal.ink); rect(g, cx + 1, cy + 1, cw - 2, ch - 2, pal.ink);
+    rect(g, cx + 3, cy + 1, cw - 6, ch - 2, pal.card); rect(g, cx + 1, cy + 3, cw - 2, ch - 6, pal.card); rect(g, cx + 2, cy + 2, cw - 4, ch - 4, pal.card);
+    // 頂部標題列（下緣做成波浪）
+    rect(g, cx + 2, cy + 2, cw - 4, 18, pal.accent);
+    for (let x = cx + 2; x < cx + cw - 2; x += 6) rect(g, x, cy + 20, 3, 2, pal.accent);
     // 文字：畫在小畫布後二值化，讓字也變成清楚的像素
     const text = (str, x, y, size, color, align = "center", weight = "700") => {
-      // 先畫在透明圖層，再把半透明的邊緣變成實心或透明，文字就是清楚的像素
       const layer = document.createElement("canvas");
       layer.width = W; layer.height = size + 6;
       const lg = layer.getContext("2d");
@@ -1069,19 +1114,18 @@
     const tg = tiny.getContext("2d");
     tg.font = "16px sans-serif"; tg.textAlign = "center"; tg.textBaseline = "middle";
     tg.fillText(icon, 9, 10);
-    rect(W / 2 - 22, cy + 24, 44, 44, pal.soft);
+    const iconY = cy + 28;
+    rect(g, W / 2 - 21, iconY - 4, 42, 44, pal.soft); rect(g, W / 2 - 22, iconY - 3, 44, 42, pal.soft);
     g.imageSmoothingEnabled = false;
-    g.drawImage(tiny, W / 2 - 18, cy + 28, 36, 36);
-    bitmap(PX_SPARK, W / 2 + 18, cy + 22, pal.accent);
-    bitmap(PX_SPARK, W / 2 - 24, cy + 62, pal.accent);
-    let y = cy + 74;
+    g.drawImage(tiny, W / 2 - 18, iconY, 36, 36);
+    let y = cy + 78;
     // 類型名稱與主要數字
     const name = r.kind === "holland" ? `${r.holland}・${r.top[0].name}` : r.type ? r.type.name : "";
     text(name, W / 2, y, 14, pal.ink); y += 18;
     if (r.kind === "index") {
       text(`${r.index}%  ${r.level.name}`, W / 2, y, 11, pal.accent); y += 15;
       const hearts = Math.round(r.index / 10);
-      for (let i = 0; i < 10; i++) bitmap(PX_HEART, 33 + i * 12, y, i < hearts ? pal.accent : pal.soft);
+      for (let i = 0; i < 10; i++) bitmap(g, PX_HEART, 33 + i * 12, y, i < hearts ? pal.accent : pal.soft);
       y += 10;
     } else if (r.kind === "dimension") {
       text(r.type_key, W / 2, y, 12, pal.accent); y += 16;
@@ -1094,21 +1138,59 @@
       : r.dims ? r.dims.map((d) => ({ name: `${d.a}/${d.b}`, pct: d.a_pct })) : [];
     bars.forEach((a) => {
       text(a.name, cx + 8, y, 10, pal.ink, "left");
-      const blocks = 10, filled = Math.round(a.pct / 10);
-      for (let i = 0; i < blocks; i++) rect(cx + 68 + i * 8, y + 2, 6, 7, i < filled ? pal.accent : pal.soft);
+      const filled = Math.round(a.pct / 10);
+      for (let i = 0; i < 10; i++) rect(g, cx + 68 + i * 8, y + 2, 6, 7, i < filled ? pal.accent : pal.soft);
       y += 14;
     });
+    // 草地（小動物遊行的舞台）
+    const ground = cy + ch - 22;
+    rect(g, cx + 3, ground, cw - 6, 2, "#8fd694");
+    for (let x = cx + 5; x < cx + cw - 5; x += 7) rect(g, x, ground - 1, 1, 1, "#6cc574");
     // 頁尾：問問雲朵吉祥物＋網站名稱
-    bitmap(PX_CLOUD, cx + 8, cy + ch - 16, "#ffffff");
-    bitmap(PX_HEART, cx + 15, cy + ch - 13, "#ff6fa3");
+    bitmap(g, PX_CLOUD, cx + 8, cy + ch - 16, "#ffffff");
+    bitmap(g, PX_HEART, cx + 15, cy + ch - 13, "#ff6fa3");
     text("知識大挑戰", cx + 28, cy + ch - 16, 10, pal.ink, "left");
-    bitmap(PX_STAR, cx + cw - 16, cy + ch - 15, pal.accent);
-    bitmap(PX_HEART, 3, 3, pal.accent); bitmap(PX_STAR, W - 8, H - 8, pal.accent);
-    // 放大 4 倍、不平滑
-    canvas.width = W * S; canvas.height = H * S;
+    bitmap(g, PX_STAR, cx + cw - 16, cy + ch - 15, pal.accent);
+
+    // 小動物夥伴：大貓、大狗陪在主角旁邊，下方再一排小動物遊行
+    const seed = pxHash(`${r.slug}|${name}`);
+    const parade = ["bunny", "bear", "chick", "hamster"].sort((a, b) => (pxHash(a + seed) % 97) - (pxHash(b + seed) % 97));
+    const sparks = [[W / 2 + 22, cy + 24], [W / 2 - 26, cy + 68], [cx + 10, cy + 74], [cx + cw - 14, cy + 28], [W / 2 + 24, cy + 66]];
     const out = canvas.getContext("2d");
-    out.imageSmoothingEnabled = false;
-    out.drawImage(lo, 0, 0, W * S, H * S);
+    canvas.width = W * S; canvas.height = H * S;
+    const frame = document.createElement("canvas");
+    frame.width = W; frame.height = H;
+    const f = frame.getContext("2d");
+    const paint = (t) => {
+      f.drawImage(base, 0, 0);
+      const hop = (k) => ((t + k) % 4 === 0 ? 2 : (t + k) % 4 === 1 ? 1 : 0);
+      const blink = (k) => (t + k * 5) % 17 === 0;
+      // 貓在左、狗在右，輪流跳一下
+      drawPet(f, "cat", seed, cx + 8, iconY + 4 - hop(0), 2, blink(1));
+      drawPet(f, "dog", seed >>> 3, cx + cw - 40, iconY + 4 - hop(2), 2, blink(2));
+      // 愛心從貓狗頭上冒出來
+      const rise = t % 10;
+      if (rise < 7) {
+        bitmap(f, PX_HEART, cx + 30 + (rise % 2), iconY - rise * 2, "#ff6fa3");
+        bitmap(f, PX_HEART, cx + cw - 22 - (rise % 2), iconY + 6 - ((rise + 4) % 7) * 2, pal.accent);
+      }
+      // 閃爍的星星
+      sparks.forEach(([sx, sy], i) => { if ((t + i) % 3 !== 0) bitmap(f, PX_SPARK, sx, sy, (t + i) % 3 === 1 ? pal.accent : "#ffd84d"); });
+      // 小動物遊行：輪流跳、左右擺動
+      parade.forEach((kind, i) => {
+        const px = cx + 20 + i * 34 + ((t + i) % 4 < 2 ? 0 : 1);
+        drawPet(f, kind, seed >>> i, px, ground - 16 - hop(i * 2 + 1), 1, blink(i + 3));
+      });
+      out.imageSmoothingEnabled = false;
+      out.drawImage(frame, 0, 0, W * S, H * S);
+    };
+    paint(0);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let t = 0;
+    const timer = setInterval(() => {
+      if (!canvas.isConnected) return clearInterval(timer);
+      paint(++t);
+    }, 220);
   }
 
   /* ---------- 題庫總覽（訂閱制） ---------- */
