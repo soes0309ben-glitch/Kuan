@@ -33,6 +33,7 @@ app.include_router(auth.router)
 app.include_router(quiz.router)
 app.include_router(payments.router)
 app.include_router(admin.router)
+app.include_router(admin.token_router)
 
 # 圖片只透過 /api/media/{題號} 提供，不直接公開資料夾（檔名常常就是答案）
 app.mount("/css", StaticFiles(directory=STATIC_DIR / "css"), name="css")

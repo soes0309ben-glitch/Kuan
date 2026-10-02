@@ -199,3 +199,20 @@ def test_google_redirect_uses_real_host_when_base_url_is_wrong(db, monkeypatch):
     monkeypatch.setattr(settings, "base_url", "https://quiz.example.com/")
     r = client.get("/auth/google/login", follow_redirects=False)
     assert parse_qs(urlsplit(r.headers["location"]).query)["redirect_uri"][0] == "https://quiz.example.com/auth/google/callback"
+
+
+def test_import_with_token(db, monkeypatch):
+    from app.config import get_settings
+    settings = get_settings()
+    client = TestClient(app)
+    item = [{"cat": "trivia", "type": "single", "difficulty": "easy", "q": "密碼匯入測試",
+             "options": ["對", "錯"], "answer": "對"}]
+    # 沒設定 IMPORT_TOKEN：一律拒絕
+    assert client.post("/api/admin/import-with-token", json=item, headers={"x-import-token": ""}).status_code == 403
+    monkeypatch.setattr(settings, "import_token", "x" * 40)
+    assert client.post("/api/admin/import-with-token", json=item, headers={"x-import-token": "wrong"}).status_code == 403
+    r = client.post("/api/admin/import-with-token", json=item, headers={"x-import-token": "x" * 40})
+    assert r.status_code == 200 and r.json() == {"added": 1, "updated": 0}
+    # 太短的密碼視同未啟用
+    monkeypatch.setattr(settings, "import_token", "short")
+    assert client.post("/api/admin/import-with-token", json=item, headers={"x-import-token": "short"}).status_code == 403

@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     monthly_price_twd: int = 49
 
     admin_emails: str = ""
+    # 選填：設定後可用 X-Import-Token 標頭匯入題庫（不需登入），用完請從環境變數刪除
+    import_token: str = ""
 
     @property
     def admin_email_set(self) -> set[str]:
