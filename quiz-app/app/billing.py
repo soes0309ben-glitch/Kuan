@@ -28,7 +28,7 @@ def ensure_customer(db: Session, user: User) -> str:
     return user.stripe_customer_id
 
 
-def create_checkout_url(db: Session, user: User) -> str:
+def create_checkout_url(db: Session, user: User, base_url: str) -> str:
     settings = get_settings()
     if settings.stripe_price_id:
         line_item = {"price": settings.stripe_price_id, "quantity": 1}
@@ -49,16 +49,16 @@ def create_checkout_url(db: Session, user: User) -> str:
             "customer": ensure_customer(db, user),
             "line_items": [line_item],
             "integration_identifier": INTEGRATION_IDENTIFIER,
-            "success_url": f"{settings.base_url}/?view=bank&checkout=success&session_id={{CHECKOUT_SESSION_ID}}",
-            "cancel_url": f"{settings.base_url}/?view=bank&checkout=cancelled",
+            "success_url": f"{base_url}/?view=bank&checkout=success&session_id={{CHECKOUT_SESSION_ID}}",
+            "cancel_url": f"{base_url}/?view=bank&checkout=cancelled",
         }
     )
     return session.url
 
 
-def create_portal_url(user: User) -> str:
+def create_portal_url(user: User, base_url: str) -> str:
     session = client().v1.billing_portal.sessions.create(
-        {"customer": user.stripe_customer_id, "return_url": f"{get_settings().base_url}/?view=bank"}
+        {"customer": user.stripe_customer_id, "return_url": f"{base_url}/?view=bank"}
     )
     return session.url
 

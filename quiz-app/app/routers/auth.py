@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.db import get_db
-from app.dependencies import require_json
+from app.dependencies import public_base_url, require_json
 from app.models import User
 
 router = APIRouter()
@@ -21,8 +21,8 @@ GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo"
 
 
-def _redirect_uri() -> str:
-    return f"{get_settings().base_url}/auth/google/callback"
+def _redirect_uri(request: Request) -> str:
+    return f"{public_base_url(request)}/auth/google/callback"
 
 
 def _safe_next(path: str | None) -> str:
@@ -40,7 +40,7 @@ def google_login(request: Request, next: str | None = None):
     request.session["oauth_next"] = _safe_next(next)
     params = {
         "client_id": settings.google_client_id,
-        "redirect_uri": _redirect_uri(),
+        "redirect_uri": _redirect_uri(request),
         "response_type": "code",
         "scope": "openid email profile",
         "state": state,
@@ -71,7 +71,7 @@ def google_callback(
             "code": code,
             "client_id": settings.google_client_id,
             "client_secret": settings.google_client_secret,
-            "redirect_uri": _redirect_uri(),
+            "redirect_uri": _redirect_uri(request),
             "grant_type": "authorization_code",
         },
         timeout=15,

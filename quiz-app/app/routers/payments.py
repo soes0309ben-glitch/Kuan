@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app import billing
 from app.config import get_settings
 from app.db import get_db
-from app.dependencies import require_json, require_user
+from app.dependencies import public_base_url, require_json, require_user
 from app.models import User
 
 logger = logging.getLogger(__name__)
@@ -22,24 +22,24 @@ def _require_stripe() -> None:
 
 
 @router.post("/api/billing/checkout", dependencies=[Depends(require_json)])
-def checkout(user: User = Depends(require_user), db: Session = Depends(get_db)):
+def checkout(request: Request, user: User = Depends(require_user), db: Session = Depends(get_db)):
     _require_stripe()
     if user.is_subscribed:
         raise HTTPException(409, "你已經是訂閱會員了")
     try:
-        return {"url": billing.create_checkout_url(db, user)}
+        return {"url": billing.create_checkout_url(db, user, public_base_url(request))}
     except stripe.StripeError:
         logger.exception("建立 Checkout Session 失敗")
         raise HTTPException(502, "暫時無法連線到付款服務，請稍後再試")
 
 
 @router.post("/api/billing/portal", dependencies=[Depends(require_json)])
-def portal(user: User = Depends(require_user)):
+def portal(request: Request, user: User = Depends(require_user)):
     _require_stripe()
     if not user.stripe_customer_id:
         raise HTTPException(400, "你還沒有訂閱紀錄")
     try:
-        return {"url": billing.create_portal_url(user)}
+        return {"url": billing.create_portal_url(user, public_base_url(request))}
     except stripe.StripeError:
         logger.exception("建立 Customer Portal 失敗")
         raise HTTPException(502, "暫時無法開啟訂閱管理，請稍後再試")

@@ -169,3 +169,23 @@ def test_bank_does_not_leak_answer_by_option_order(make_client, db):
     # 同一題每次看到的順序一樣
     again = {q["id"]: q["options"] for q in client.get("/api/bank?cat=anime&difficulty=hard&q=順序測試").json()["questions"]}
     assert all(again[q["id"]] == q["options"] for q in qs)
+
+
+def test_google_redirect_uses_real_host_when_base_url_is_wrong(db, monkeypatch):
+    """BASE_URL 填錯（多貼一段）時，回呼網址仍要用實際網址，否則 Google 回 redirect_uri_mismatch。"""
+    from urllib.parse import parse_qs, urlsplit
+
+    from app.config import get_settings
+    settings = get_settings()
+    monkeypatch.setattr(settings, "google_client_id", "test.apps.googleusercontent.com")
+    monkeypatch.setattr(settings, "base_url", "https://quiz.example.comcom.example.com")
+    client = TestClient(app, base_url="http://quiz.example.com")
+    r = client.get("/auth/google/login", headers={"x-forwarded-proto": "https"}, follow_redirects=False)
+    assert r.status_code == 303
+    redirect_uri = parse_qs(urlsplit(r.headers["location"]).query)["redirect_uri"][0]
+    assert redirect_uri == "https://quiz.example.com/auth/google/callback"
+
+    # BASE_URL 正確時照用 BASE_URL
+    monkeypatch.setattr(settings, "base_url", "https://quiz.example.com/")
+    r = client.get("/auth/google/login", follow_redirects=False)
+    assert parse_qs(urlsplit(r.headers["location"]).query)["redirect_uri"][0] == "https://quiz.example.com/auth/google/callback"
