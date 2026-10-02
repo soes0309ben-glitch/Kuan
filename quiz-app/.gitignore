@@ -1,0 +1,6 @@
+# 題庫（含答案）不進版控，改由後台匯入資料庫
+seed/
+*.db
+.env
+tests/test_quiz.db
+local-test.db
