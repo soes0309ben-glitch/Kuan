@@ -119,8 +119,8 @@
   function renderNav() {
     const u = ME.user;
     document.getElementById("account").innerHTML = u
-      ? `${u.picture ? `<img class="avatar" src="${esc(u.picture)}" alt="" referrerpolicy="no-referrer">` : ""}
-         <span class="who">${esc(u.name || u.email)}</span>
+      ? `<a href="#" class="me-link" data-nav="profile" title="個人檔案">${avatarHtml(32)}
+           <span class="who">${esc(displayName())}</span></a>
          ${u.is_admin ? `<a href="#" data-nav="admin">管理</a>` : ""}
          <button class="link" id="logout">登出</button>`
       : `<a class="btn google" href="${loginUrl()}"><span class="g">G</span> Google 登入</a>`;
@@ -138,6 +138,143 @@
     bindNav(document.getElementById("account"));
   }
 
+  /* ---------- 個人外觀 ---------- */
+  const FRAMES = { none: "無", ribbon: "蝴蝶結", heart: "愛心", star: "星星", flower: "花朵", crown: "皇冠", rainbow: "彩虹" };
+  const COLORS = { pink: "粉紅", lavender: "薰衣草", mint: "薄荷", sky: "天空藍", peach: "蜜桃", lemon: "檸檬" };
+  const AVATAR_EMOJIS = ["🐰", "🐱", "🐶", "🐻", "🐼", "🐨", "🦊", "🐹", "🐧", "🦄", "🐸", "🐥",
+    "🌸", "🌈", "⭐", "🍓", "🍰", "🧁", "🍡", "🎀", "💖", "☁️", "🌙", "🍀"];
+
+  const displayName = (p = ME.profile, u = ME.user) => (p && p.nickname) || (u && (u.name || u.email)) || "";
+
+  function avatarHtml(size, p = ME.profile, u = ME.user) {
+    p = p || { avatar_type: "google", avatar_url: u?.picture || "", frame: "none" };
+    let inner;
+    if (p.avatar_type === "emoji" && p.avatar_emoji) inner = `<span class="avatar-img emoji">${esc(p.avatar_emoji)}</span>`;
+    else if (p.avatar_url) inner = `<img class="avatar-img" src="${esc(p.avatar_url)}" alt="" referrerpolicy="no-referrer">`;
+    else inner = `<span class="avatar-img emoji">${esc((displayName(p, u) || "?").slice(0, 1))}</span>`;
+    return `<span class="avatar-wrap frame-${esc(p.frame || "none")}" style="--s:${size}px">${inner}</span>`;
+  }
+
+  function applyColor(color) {
+    if (color && color !== "pink") document.documentElement.dataset.accent = color;
+    else delete document.documentElement.dataset.accent;
+  }
+
+  // 上傳的圖片先在瀏覽器裁成正方形並縮小，再送到伺服器
+  function resizeImage(file, size = 256) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const side = Math.min(img.width, img.height);
+        const canvas = Object.assign(document.createElement("canvas"), { width: size, height: size });
+        canvas.getContext("2d").drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+        URL.revokeObjectURL(img.src);
+        const webp = canvas.toDataURL("image/webp", 0.85);
+        resolve(webp.startsWith("data:image/webp") ? webp : canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.onerror = () => reject(new Error("無法讀取這張圖片，請換一張試試"));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  function renderProfile() {
+    if (!ME.user) {
+      location.href = loginUrl("/?view=profile");
+      return;
+    }
+    const draft = { ...ME.profile };
+    $app.innerHTML = `
+      <section class="panel profile">
+        <h2>🎀 個人檔案</h2>
+        <div class="profile-preview">
+          <div id="pv-avatar"></div>
+          <div><b id="pv-name"></b><p class="hint">${esc(ME.user.email)}</p></div>
+        </div>
+        <fieldset>
+          <legend>暱稱</legend>
+          <input id="nickname" class="text-input" maxlength="20" placeholder="${esc(ME.user.name || "取個可愛的名字")}" value="${esc(draft.nickname)}">
+        </fieldset>
+        <fieldset>
+          <legend>頭像</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="atype" value="google"> Google 大頭貼</label>
+            <label class="chip"><input type="radio" name="atype" value="emoji"> 可愛圖案</label>
+            <label class="chip"><input type="radio" name="atype" value="upload"> 上傳圖片</label>
+          </div>
+          <div class="emoji-grid" id="emoji-grid">${AVATAR_EMOJIS.map((e) => `<button type="button" class="emoji-pick" data-e="${e}">${e}</button>`).join("")}</div>
+          <div id="upload-box" class="upload-box">
+            <label class="btn">📷 選擇圖片<input type="file" id="avatar-file" accept="image/png,image/jpeg,image/webp" hidden></label>
+            <span class="hint">支援 PNG、JPG、WebP，會自動裁成正方形</span>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>頭像框</legend>
+          <div class="frame-grid">${Object.entries(FRAMES).map(([k, v]) => `<button type="button" class="frame-pick" data-f="${k}"><span class="fp-avatar"></span><small>${v}</small></button>`).join("")}</div>
+        </fieldset>
+        <fieldset>
+          <legend>主題顏色</legend>
+          <div class="color-grid">${Object.entries(COLORS).map(([k, v]) => `<button type="button" class="color-pick c-${k}" data-c="${k}"><span></span><small>${v}</small></button>`).join("")}</div>
+        </fieldset>
+        <div class="actions"><button class="btn" id="cancel">取消</button><button class="btn primary" id="save">儲存</button></div>
+      </section>`;
+
+    const refresh = () => {
+      document.getElementById("pv-avatar").innerHTML = avatarHtml(96, draft);
+      document.getElementById("pv-name").textContent = displayName(draft);
+      $app.querySelectorAll("input[name=atype]").forEach((r) => (r.checked = r.value === draft.avatar_type));
+      document.getElementById("emoji-grid").hidden = draft.avatar_type !== "emoji";
+      document.getElementById("upload-box").hidden = draft.avatar_type !== "upload";
+      $app.querySelectorAll(".emoji-pick").forEach((b) => b.classList.toggle("on", b.dataset.e === draft.avatar_emoji));
+      $app.querySelectorAll(".frame-pick").forEach((b) => {
+        b.classList.toggle("on", b.dataset.f === draft.frame);
+        b.querySelector(".fp-avatar").innerHTML = avatarHtml(48, { ...draft, frame: b.dataset.f });
+      });
+      $app.querySelectorAll(".color-pick").forEach((b) => b.classList.toggle("on", b.dataset.c === draft.color));
+      applyColor(draft.color);
+    };
+
+    document.getElementById("nickname").addEventListener("input", (e) => { draft.nickname = e.target.value; refresh(); });
+    $app.querySelectorAll("input[name=atype]").forEach((r) => r.addEventListener("change", () => {
+      draft.avatar_type = r.value;
+      if (r.value === "emoji" && !draft.avatar_emoji) draft.avatar_emoji = AVATAR_EMOJIS[0];
+      if (r.value === "google") draft.avatar_url = ME.user.picture || "";
+      if (r.value === "upload" && draft.has_upload) draft.avatar_url = `/api/profile/avatar?v=${Date.now()}`;
+      refresh();
+    }));
+    $app.querySelectorAll(".emoji-pick").forEach((b) => b.addEventListener("click", () => { draft.avatar_emoji = b.dataset.e; refresh(); }));
+    $app.querySelectorAll(".frame-pick").forEach((b) => b.addEventListener("click", () => { draft.frame = b.dataset.f; refresh(); }));
+    $app.querySelectorAll(".color-pick").forEach((b) => b.addEventListener("click", () => { draft.color = b.dataset.c; refresh(); }));
+    document.getElementById("avatar-file").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const p = await api("/api/profile/avatar", { data_url: await resizeImage(file) });
+        Object.assign(draft, { avatar_type: "upload", avatar_url: p.avatar_url, has_upload: true });
+        ME.profile = { ...ME.profile, avatar_url: p.avatar_url, has_upload: true, avatar_type: "upload" };
+        toast("圖片上傳成功，記得按「儲存」");
+        refresh();
+      } catch (err) {
+        toast(err.message);
+      }
+    });
+    document.getElementById("cancel").addEventListener("click", () => { applyColor(ME.profile.color); go("home"); });
+    document.getElementById("save").addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      try {
+        ME.profile = await api("/api/profile", {
+          nickname: draft.nickname, avatar_type: draft.avatar_type, avatar_emoji: draft.avatar_emoji,
+          frame: draft.frame, color: draft.color,
+        });
+        renderNav();
+        toast("💖 已儲存你的個人檔案");
+      } catch (err) {
+        toast(err.message);
+      }
+      e.target.disabled = false;
+    });
+    refresh();
+  }
+
   function bindNav(root) {
     root.querySelectorAll("[data-nav]").forEach((el) =>
       el.addEventListener("click", (e) => {
@@ -149,7 +286,7 @@
 
   function go(view) {
     history.replaceState(null, "", view === "home" ? "/" : `/?view=${view}`);
-    ({ home: renderHome, bank: renderBank, admin: renderAdmin }[view] || renderHome)();
+    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile }[view] || renderHome)();
     window.scrollTo(0, 0);
   }
 
@@ -616,6 +753,7 @@
   async function loadMe() {
     ME = await api("/api/me");
     if (!ME.attempts) ME.attempts = [];
+    applyColor(ME.profile?.color);
     renderNav();
   }
 

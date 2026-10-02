@@ -216,3 +216,50 @@ def test_import_with_token(db, monkeypatch):
     # 太短的密碼視同未啟用
     monkeypatch.setattr(settings, "import_token", "short")
     assert client.post("/api/admin/import-with-token", json=item, headers={"x-import-token": "short"}).status_code == 403
+
+
+PNG_1PX = ("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==")
+
+
+def test_profile_defaults_and_update(make_client):
+    client, _ = make_client()
+    me = client.get("/api/me").json()
+    assert me["profile"]["frame"] == "none" and me["profile"]["color"] == "pink"
+    r = client.post("/api/profile", json={"nickname": "小可愛", "avatar_type": "emoji", "avatar_emoji": "🐰",
+                                          "frame": "ribbon", "color": "mint"})
+    assert r.status_code == 200, r.text
+    p = client.get("/api/me").json()["profile"]
+    assert (p["nickname"], p["avatar_emoji"], p["frame"], p["color"]) == ("小可愛", "🐰", "ribbon", "mint")
+
+
+def test_profile_rejects_bad_values(make_client):
+    client, _ = make_client()
+    base = {"nickname": "", "avatar_type": "google", "avatar_emoji": "", "frame": "none", "color": "pink"}
+    assert client.post("/api/profile", json={**base, "frame": "gold"}).status_code == 400
+    assert client.post("/api/profile", json={**base, "color": "black"}).status_code == 400
+    assert client.post("/api/profile", json={**base, "nickname": "長" * 21}).status_code == 400
+    assert client.post("/api/profile", json={**base, "avatar_type": "emoji"}).status_code == 400
+    # 還沒上傳圖片不能選「上傳」
+    assert client.post("/api/profile", json={**base, "avatar_type": "upload"}).status_code == 400
+
+
+def test_avatar_upload(make_client):
+    client, _ = make_client()
+    r = client.post("/api/profile/avatar", json={"data_url": PNG_1PX})
+    assert r.status_code == 200, r.text
+    assert r.json()["avatar_type"] == "upload" and r.json()["avatar_url"].startswith("/api/profile/avatar")
+    img = client.get("/api/profile/avatar")
+    assert img.status_code == 200 and img.headers["content-type"] == "image/png"
+    # 偽裝成圖片的檔案、過大的檔案都要擋掉
+    fake = "data:image/png;base64," + __import__("base64").b64encode(b"<script>alert(1)</script>").decode()
+    assert client.post("/api/profile/avatar", json={"data_url": fake}).status_code == 400
+    assert client.post("/api/profile/avatar", json={"data_url": "data:image/svg+xml;base64,PHN2Zz4="}).status_code == 400
+    big = "data:image/png;base64," + __import__("base64").b64encode(b"\x89PNG\r\n\x1a\n" + b"0" * 400_000).decode()
+    assert client.post("/api/profile/avatar", json={"data_url": big}).status_code == 400
+
+
+def test_avatar_is_private(make_client):
+    a, _ = make_client("a@example.com")
+    a.post("/api/profile/avatar", json={"data_url": PNG_1PX})
+    b, _ = make_client("b@example.com")
+    assert b.get("/api/profile/avatar").status_code == 404

@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, LargeBinary, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -88,3 +88,19 @@ class AttemptAnswer(Base):
     answered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     attempt: Mapped[Attempt] = relationship(back_populates="answers")
+
+
+class Profile(Base):
+    """使用者自訂的外觀：暱稱、頭像、頭像框、主題色。獨立成一張表，不必改動既有的 quiz_users。"""
+
+    __tablename__ = "quiz_profiles"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("quiz_users.id"), primary_key=True)
+    nickname: Mapped[str] = mapped_column(String(30), default="")
+    avatar_type: Mapped[str] = mapped_column(String(10), default="google")  # google / emoji / upload
+    avatar_emoji: Mapped[str] = mapped_column(String(16), default="")
+    avatar_mime: Mapped[str] = mapped_column(String(20), default="")
+    avatar_data: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    frame: Mapped[str] = mapped_column(String(20), default="none")
+    color: Mapped[str] = mapped_column(String(20), default="pink")
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

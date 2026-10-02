@@ -52,6 +52,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   color: var(--text);
@@ -77,7 +78,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.15rem; color: var(--accent-deep) !important; }
 .brand svg { width: 34px; height: 34px; }
 .nav-links { display: flex; gap: 8px; font-weight: 500; }
-.nav-links a { padding: 6px 14px; border-radius: 999px; color: var(--muted); }
+.nav-links a { padding: 6px 14px; border-radius: 999px; color: var(--muted); white-space: nowrap; }
 .nav-links a:hover { background: var(--accent-soft); color: var(--accent-deep); }
 
 main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
@@ -100,7 +101,7 @@ main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
 
 .cat-grid {
   display: grid; gap: 16px; margin-top: 24px;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
 .cat-card {
   --tint: var(--surface);
@@ -283,6 +284,7 @@ details p { margin: 4px 0; }
 /* ---------- 帳號 ---------- */
 .nav-links { align-items: center; }
 .account { display: flex; align-items: center; gap: 8px; margin-left: 4px; }
+.account .link, .account a { white-space: nowrap; }
 .account .avatar { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); }
 .account .who { font-size: .9rem; max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
 .btn.google { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; font-size: .9rem; text-decoration: none; color: var(--text) !important; }
@@ -298,7 +300,8 @@ details p { margin: 4px 0; }
   background: var(--surface); cursor: pointer; font-weight: 700; font-size: .9rem;
   transition: transform .12s, border-color .12s;
 }
-.diff-pill small { font-weight: 500; color: var(--muted); font-size: .78rem; }
+.diff-pill span, .diff-pill small { white-space: nowrap; }
+.diff-pill small { font-weight: 500; color: var(--muted); font-size: .76rem; }
 .diff-pill.open:hover { border-color: var(--accent); transform: scale(1.03); }
 .diff-pill.doing { border-color: var(--accent); background: var(--accent-soft); }
 .diff-pill.doing small { color: var(--accent-deep); }
@@ -387,8 +390,74 @@ details p { margin: 4px 0; }
   .confetti, .q-intro, .shake, .feedback.pop, .option.correct, .option.picked, .streak, .mascot { animation: none !important; }
 }
 
+/* ---------- 頭像與頭像框 ---------- */
+.me-link { display: inline-flex; align-items: center; gap: 8px; }
+.avatar-wrap {
+  --s: 32px; position: relative; display: inline-grid; place-items: center; flex: none;
+  width: var(--s); height: var(--s); border-radius: 50%;
+}
+.avatar-img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: grid; place-items: center;
+  border: max(2px, calc(var(--s) * .06)) solid var(--accent); background: var(--surface);
+}
+.avatar-img.emoji { font-size: calc(var(--s) * .55); line-height: 1; }
+.avatar-wrap::before, .avatar-wrap::after { position: absolute; font-size: calc(var(--s) * .42); line-height: 1; pointer-events: none; }
+.frame-ribbon::after {
+  content: ""; width: calc(var(--s) * .62); height: calc(var(--s) * .36); top: calc(var(--s) * -.12); right: calc(var(--s) * -.14);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 54 32'%3E%3Cpath d='M27 16 C18 2 4 2 4 16 C4 30 18 30 27 16Z' fill='%23ff6fa3'/%3E%3Cpath d='M27 16 C36 2 50 2 50 16 C50 30 36 30 27 16Z' fill='%23ff6fa3'/%3E%3Ccircle cx='27' cy='16' r='6' fill='%23e8508a'/%3E%3C/svg%3E") center / contain no-repeat;
+  transform: rotate(18deg);
+}
+.frame-heart::after { content: "💗"; right: calc(var(--s) * -.12); bottom: calc(var(--s) * -.08); }
+.frame-star::before { content: "✨"; left: calc(var(--s) * -.14); top: calc(var(--s) * -.12); }
+.frame-star::after { content: "⭐"; right: calc(var(--s) * -.12); bottom: calc(var(--s) * -.1); }
+.frame-flower::before { content: "🌸"; left: calc(var(--s) * -.14); top: calc(var(--s) * -.12); }
+.frame-flower::after { content: "🌼"; right: calc(var(--s) * -.12); bottom: calc(var(--s) * -.1); }
+.frame-crown::after { content: "👑"; top: calc(var(--s) * -.34); left: 50%; transform: translateX(-50%) rotate(-8deg); }
+.frame-rainbow { padding: max(2px, calc(var(--s) * .07)); background: conic-gradient(#ff6b81, #ffb35c, #ffe066, #7ad7a0, #6ec6ff, #a78bfa, #ff6b81); }
+.frame-rainbow .avatar-img { border-color: var(--surface); }
+
+/* ---------- 個人檔案頁 ---------- */
+.profile-preview { display: flex; align-items: center; gap: 20px; margin: 10px 0 22px; }
+.profile-preview b { font-size: 1.3rem; }
+.profile-preview .hint { margin: 2px 0 0; min-height: 0; }
+.emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; margin-top: 10px; }
+.emoji-pick { font-size: 1.5rem; height: 44px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); cursor: pointer; }
+.emoji-pick.on, .frame-pick.on, .color-pick.on { border-color: var(--accent); background: var(--accent-soft); }
+.upload-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+.upload-box .btn { cursor: pointer; }
+.frame-grid, .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.frame-pick, .color-pick {
+  display: grid; justify-items: center; gap: 6px; padding: 14px 6px 8px; border-radius: 18px;
+  border: 2px solid var(--line); background: var(--surface); cursor: pointer;
+}
+.frame-pick small, .color-pick small { color: var(--muted); }
+.color-pick span { width: 32px; height: 32px; border-radius: 50%; border: 3px solid var(--surface); box-shadow: 0 0 0 2px var(--line); }
+.c-pink span { background: #ff6fa3; } .c-lavender span { background: #9b7bff; } .c-mint span { background: #2fbf9b; }
+.c-sky span { background: #4aa8ff; } .c-peach span { background: #ff8a5c; } .c-lemon span { background: #f2b600; }
+
+/* ---------- 主題顏色（覆蓋預設粉紅） ---------- */
+:root[data-accent="lavender"] { --accent: #9b7bff; --accent-deep: #7c5ce0; --accent-soft: #efe8ff; --line: #e2d8ff; --dot: #e8e0ff; --bg: #f7f3ff; --surface-2: #f4f0ff; }
+:root[data-accent="mint"] { --accent: #2fbf9b; --accent-deep: #1f9e80; --accent-soft: #dcf7ee; --line: #c8efe2; --dot: #d5f3e9; --bg: #f1fbf7; --surface-2: #eafaf4; }
+:root[data-accent="sky"] { --accent: #4aa8ff; --accent-deep: #2a86e0; --accent-soft: #e1f0ff; --line: #cfe4fb; --dot: #d9eafc; --bg: #f2f8ff; --surface-2: #ebf4ff; }
+:root[data-accent="peach"] { --accent: #ff8a5c; --accent-deep: #e66b3d; --accent-soft: #ffe6dc; --line: #ffd6c6; --dot: #ffe0d3; --bg: #fff6f2; --surface-2: #fff0ea; }
+:root[data-accent="lemon"] { --accent: #e0a800; --accent-deep: #b88a00; --accent-soft: #fff5cc; --line: #f6e6a6; --dot: #f9edbd; --bg: #fffcef; --surface-2: #fff8dc; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent] { --bg: #221d26; --dot: #312a36; --line: #4a4152; --surface-2: #3a3240; }
+  :root:not([data-theme="light"])[data-accent="lavender"] { --accent: #b49cff; --accent-deep: #9b7bff; --accent-soft: #3b3158; }
+  :root:not([data-theme="light"])[data-accent="mint"] { --accent: #5fd8b6; --accent-deep: #2fbf9b; --accent-soft: #1f4239; }
+  :root:not([data-theme="light"])[data-accent="sky"] { --accent: #7cc0ff; --accent-deep: #4aa8ff; --accent-soft: #1f3550; }
+  :root:not([data-theme="light"])[data-accent="peach"] { --accent: #ffa580; --accent-deep: #ff8a5c; --accent-soft: #4a2e24; }
+  :root:not([data-theme="light"])[data-accent="lemon"] { --accent: #f5c842; --accent-deep: #e0a800; --accent-soft: #463b17; }
+}
+.btn.primary { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 75%, white), var(--accent)); }
+.progress div { background: repeating-linear-gradient(-45deg, var(--accent) 0 8px, color-mix(in srgb, var(--accent) 60%, white) 8px 16px); }
+
 @media (max-width: 520px) {
   .account .who { display: none; }
+  .nav-links { gap: 2px; }
+  .nav-links > a[data-nav="home"] { display: none; }  /* 左上角標誌就能回首頁 */
+  .account { gap: 4px; }
+  .cat-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .nav-links a[data-nav] { padding: 6px 8px; }
   .topbar { padding: 10px 16px; }
   .brand span { display: none; }

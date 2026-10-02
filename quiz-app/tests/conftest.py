@@ -48,6 +48,8 @@ def db():
 def make_client(db):
     """建立已登入的測試用戶端（跳過 Google 登入流程）。"""
 
+    sessions = []
+
     def _make(email="player@example.com", subscribed=False):
         user = User(google_sub=email, email=email, name=email.split("@")[0],
                     subscription_status="active" if subscribed else "none", stripe_customer_id=f"cus_{email}")
@@ -55,8 +57,20 @@ def make_client(db):
         db.commit()
         uid = user.id
         session = SessionLocal()
-        app.dependency_overrides[get_current_user] = lambda: session.get(User, uid)
+        sessions.append(session)
+
+        def current_user():
+            # 每次請求重新讀取並結束交易，避免長時間占用連線
+            session.expire_all()
+            found = session.get(User, uid)
+            session.commit()
+            return found
+
+        app.dependency_overrides[get_current_user] = current_user
         return TestClient(app), uid
 
     yield _make
     app.dependency_overrides.clear()
+    # 測試結束一定要關閉，否則連線池會被用光，後面的測試卡住直到逾時
+    for session in sessions:
+        session.close()

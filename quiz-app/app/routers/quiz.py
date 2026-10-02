@@ -16,7 +16,8 @@ from app import catalog, pdf_export
 from app.config import get_settings
 from app.db import get_db
 from app.dependencies import get_current_user, require_json, require_user
-from app.models import DIFFICULTIES, Attempt, AttemptAnswer, Question, User
+from app.models import DIFFICULTIES, Attempt, AttemptAnswer, Profile, Question, User
+from app.routers.profile import profile_dict
 
 router = APIRouter(prefix="/api")
 
@@ -52,10 +53,11 @@ def config(db: Session = Depends(get_db)):
 
 
 @router.get("/me")
-def me(user: User | None = Depends(get_current_user)):
+def me(user: User | None = Depends(get_current_user), db: Session = Depends(get_db)):
     if not user:
         return {"user": None}
     return {
+        "profile": profile_dict(user, db.get(Profile, user.id)),
         "user": {
             "name": user.name,
             "email": user.email,
