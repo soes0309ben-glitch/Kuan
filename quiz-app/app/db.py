@@ -5,10 +5,11 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import get_settings
 
-# Render 給的可能是舊式 postgres:// 網址，統一成 SQLAlchemy 認得的 postgresql://
-database_url = re.sub(r"^postgres(ql)?(\+\w+)?://", "postgresql://", get_settings().database_url.strip())
+# Render 給的可能是舊式 postgres:// 網址；一律明確指定 psycopg2 驅動。
+# SQLAlchemy 2.1 起 postgresql:// 預設改用 psycopg（第 3 版），但本專案安裝的是 psycopg2。
+database_url = re.sub(r"^postgres(ql)?(\+\w+)?://", "postgresql+psycopg2://", get_settings().database_url.strip())
 
-if not database_url.startswith(("postgresql://", "sqlite:///")):
+if not database_url.startswith(("postgresql+psycopg2://", "sqlite:///")):
     # 只印出開頭，避免把網址裡的資料庫密碼寫進 log
     scheme = database_url.split("://", 1)[0] if "://" in database_url else database_url[:12]
     raise RuntimeError(
