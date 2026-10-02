@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import secrets
 from functools import lru_cache
@@ -36,8 +37,17 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     settings = Settings()
-    if not settings.secret_key:
-        # 沒設定就每次啟動隨機產生，避免用公開的預設值簽 session；重啟後需重新登入。
-        settings.secret_key = secrets.token_hex(32)
-        logger.warning("SECRET_KEY 未設定，已暫時隨機產生。正式上線前請在環境變數設定 SECRET_KEY。")
+    if not settings.secret_key.strip():
+        # 隨機產生的密鑰每次重啟都會變，Google 登入途中若剛好重啟（部署、免費方案休眠喚醒）
+        # 就會「登入驗證失敗」。所以優先用已設定的其他機密推導出固定值；都沒有才隨機產生。
+        material = "|".join(
+            v for v in (settings.google_client_secret, settings.stripe_secret_key, settings.database_url)
+            if v and not v.startswith("sqlite")
+        )
+        if material:
+            settings.secret_key = hashlib.sha256(f"quiz-app-session|{material}".encode()).hexdigest()
+            logger.warning("SECRET_KEY 未設定，已由其他機密推導出固定值。建議另外設定 SECRET_KEY。")
+        else:
+            settings.secret_key = secrets.token_hex(32)
+            logger.warning("SECRET_KEY 未設定，已暫時隨機產生（重啟後需重新登入）。正式上線前請設定 SECRET_KEY。")
     return settings
