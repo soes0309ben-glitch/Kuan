@@ -131,8 +131,10 @@
     }).join("");
     $app.innerHTML = `
       <section class="hero">
+        <span class="sparkle s1">✨</span><span class="sparkle s2">💖</span><span class="sparkle s3">⭐</span>
+        <svg class="mascot" viewBox="0 0 140 112" role="img" aria-label="吉祥物問問"><use href="#mascot"/></svg>
         <h1>知識大挑戰</h1>
-        <p>七大主題、四種題型，共 <strong>${QUESTIONS.length}</strong> 題。選一個主題開始吧！</p>
+        <p>七大主題、四種題型，共 <strong>${QUESTIONS.length}</strong> 題。和問問一起來挑戰吧！</p>
       </section>
       <section class="cat-grid">
         ${cards}

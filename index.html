@@ -5,15 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>知識大挑戰</title>
   <meta name="description" content="動漫、生活、歷史、旅遊、猜歌、猜謎、動物七大主題測驗，支援單選、圖片、簡答、問答題。">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <meta name="theme-color" content="#ff6fa3">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎀</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- 原創吉祥物：戴蝴蝶結的小雲朵「問問」 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="mascot" viewBox="0 0 140 112">
+      <g fill="#ff9cc2">
+        <circle cx="40" cy="62" r="29"/><circle cx="72" cy="46" r="35"/><circle cx="104" cy="64" r="27"/>
+        <rect x="18" y="62" width="106" height="38" rx="19"/>
+      </g>
+      <g fill="#fff">
+        <circle cx="40" cy="62" r="25"/><circle cx="72" cy="46" r="31"/><circle cx="104" cy="64" r="23"/>
+        <rect x="22" y="62" width="98" height="34" rx="17"/>
+      </g>
+      <ellipse cx="57" cy="66" rx="4.5" ry="5.5" fill="#5a3d4c"/>
+      <ellipse cx="87" cy="66" rx="4.5" ry="5.5" fill="#5a3d4c"/>
+      <circle cx="58.5" cy="64" r="1.6" fill="#fff"/><circle cx="88.5" cy="64" r="1.6" fill="#fff"/>
+      <ellipse cx="46" cy="77" rx="7" ry="4.5" fill="#ffc2d9"/>
+      <ellipse cx="98" cy="77" rx="7" ry="4.5" fill="#ffc2d9"/>
+      <path d="M66 75 Q72 81 78 75" stroke="#5a3d4c" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <g transform="translate(96 18) rotate(18)">
+        <path d="M0 0 C-10 -14 -26 -10 -24 2 C-22 14 -8 10 0 0Z" fill="#ff6fa3"/>
+        <path d="M0 0 C10 -14 26 -10 24 2 C22 14 8 10 0 0Z" fill="#ff6fa3"/>
+        <path d="M-4 1 C-9 -5 -16 -3 -15 2 C-14 7 -8 6 -4 1Z" fill="#ff9cc2"/>
+        <path d="M4 1 C9 -5 16 -3 15 2 C14 7 8 6 4 1Z" fill="#ff9cc2"/>
+        <circle r="5.5" fill="#e8508a"/>
+      </g>
+      <text x="22" y="30" font-size="20" fill="#ffb3cf" font-family="Fredoka, sans-serif" font-weight="700">?</text>
+    </symbol>
+  </svg>
+
   <nav class="topbar">
-    <a href="#" class="brand" data-nav="home">🧠 知識大挑戰</a>
+    <a href="#" class="brand" data-nav="home"><svg viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg><span>知識大挑戰</span></a>
     <div class="nav-links">
       <a href="#" data-nav="home">開始測驗</a>
       <a href="#" data-nav="bank">題庫總覽</a>
