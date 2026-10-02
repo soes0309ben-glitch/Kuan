@@ -8,7 +8,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import get_settings
 from app.db import init_db
-from app.routers import admin, auth, payments, profile, quiz
+from app.routers import admin, auth, payments, profile, quiz, teams
 
 settings = get_settings()
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -35,6 +35,7 @@ app.include_router(payments.router)
 app.include_router(admin.router)
 app.include_router(admin.token_router)
 app.include_router(profile.router)
+app.include_router(teams.router)
 
 # 圖片只透過 /api/media/{題號} 提供，不直接公開資料夾（檔名常常就是答案）
 app.mount("/css", StaticFiles(directory=STATIC_DIR / "css"), name="css")

@@ -267,12 +267,34 @@
         });
         renderNav();
         toast("💖 已儲存你的個人檔案");
+        go("home");
+        return;
       } catch (err) {
         toast(err.message);
       }
       e.target.disabled = false;
     });
     refresh();
+  }
+
+  /* ---------- 左上角 ☰ 選單 ---------- */
+  function closeMenu() {
+    const menu = document.getElementById("menu");
+    if (menu) menu.hidden = true;
+    document.getElementById("menu-btn")?.setAttribute("aria-expanded", "false");
+  }
+
+  function setupMenu() {
+    const btn = document.getElementById("menu-btn");
+    const menu = document.getElementById("menu");
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.hidden = !menu.hidden;
+      btn.setAttribute("aria-expanded", String(!menu.hidden));
+    });
+    document.addEventListener("click", (e) => { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
+    bindNav(menu);
   }
 
   function bindNav(root) {
@@ -286,7 +308,8 @@
 
   function go(view) {
     history.replaceState(null, "", view === "home" ? "/" : `/?view=${view}`);
-    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile }[view] || renderHome)();
+    closeMenu();
+    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams }[view] || renderHome)();
     window.scrollTo(0, 0);
   }
 
@@ -321,11 +344,16 @@
         <span class="sparkle s1">✨</span><span class="sparkle s2">💖</span><span class="sparkle s3">⭐</span>
         <svg class="mascot" viewBox="0 0 140 112" role="img" aria-label="吉祥物問問"><use href="#mascot"/></svg>
         <h1>知識大挑戰</h1>
-        <p>七大主題、三種難度，共 <strong>${CONFIG.total}</strong> 題。每個主題的每種難度，<strong>每人只能挑戰一次</strong>！</p>
+        <p class="tagline">${Object.keys(CONFIG.categories).length} 大主題 × 三種難度，共 <strong>${CONFIG.total}</strong> 題！</p>
+        <div class="rules">
+          <span>🎯 個人挑戰：每個主題的每種難度限一次</span>
+          <a href="#" class="rule-team">👥 組隊挑戰：不限次數，找朋友一起來！</a>
+        </div>
         ${ME.user ? "" : `<p class="login-cta"><a class="btn primary" href="${loginUrl("/")}">用 Google 帳號登入開始挑戰</a></p>`}
       </section>
       <section class="cat-grid">${cards}</section>`;
 
+    $app.querySelector(".rule-team").addEventListener("click", (e) => { e.preventDefault(); go("teams"); });
     $app.querySelectorAll(".diff-pill:not([disabled])").forEach((el) =>
       el.addEventListener("click", () => startOrResume(el.dataset.cat, el.dataset.diff))
     );
@@ -355,17 +383,28 @@
   }
 
   /* ---------- 作答 ---------- */
-  let current = null; // { data, index }
+  let current = null; // { data, index, src }
 
-  async function runAttempt(id) {
-    const data = await api(`/api/attempts/${id}`);
-    if (data.finished) return renderResult(data);
+  // src：{ base 作答 API 前綴, load 讀題目的網址, done 完成後要做什麼, reload 重新載入 }
+  async function runQuiz(src) {
+    const data = await api(src.load);
+    if (data.finished) return src.done(data);
     // 從第一個還沒完成的題目開始（問答題作答後還要自評）
     const index = data.questions.findIndex((q) => !data.results[q.id] || data.results[q.id].score === null);
-    current = { data, index: Math.max(index, 0) };
+    current = { data, index: Math.max(index, 0), src };
     streak = 0;
     renderQuestion();
   }
+
+  const runAttempt = (id) => runQuiz({
+    base: `/api/attempts/${id}`, load: `/api/attempts/${id}`, label: "",
+    done: renderResult, reload: () => runAttempt(id),
+  });
+
+  const runTeamQuiz = (code) => runQuiz({
+    base: `/api/teams/${code}`, load: `/api/teams/${code}/play`, label: "👥 組隊・",
+    done: () => renderTeam(code), reload: () => runTeamQuiz(code),
+  });
 
   function renderQuestion() {
     const { data, index } = current;
@@ -392,7 +431,7 @@
       <section class="panel quiz">
         <header class="quiz-head">
           <button class="link quit">← 回首頁</button>
-          <span>${CAT_ICON[data.category]} ${esc(catName(data.category))}・${DIFF[data.difficulty].icon} ${DIFF[data.difficulty].name}</span>
+          <span>${current.src.label}${CAT_ICON[data.category]} ${esc(catName(data.category))}・${DIFF[data.difficulty].icon} ${DIFF[data.difficulty].name}</span>
           <span class="score-pill">得分 ${fmt(score)}</span>
         </header>
         <div class="progress"><div style="width:${(index / total) * 100}%"></div></div>
@@ -415,12 +454,12 @@
 
     const submit = async (given) => {
       try {
-        const r = await api(`/api/attempts/${data.id}/answer`, { question_id: q.id, given });
+        const r = await api(`${current.src.base}/answer`, { question_id: q.id, given });
         data.results[q.id] = r;
         return r;
       } catch (e) {
         toast(e.message);
-        if (e.status === 409) runAttempt(data.id);
+        if (e.status === 409) current.src.reload();
         return null;
       }
     };
@@ -513,13 +552,13 @@
       b.addEventListener("click", async () => {
         fb.querySelectorAll("button").forEach((x) => (x.disabled = true));
         try {
-          await api(`/api/attempts/${data.id}/self-grade`, { question_id: q.id, score: Number(b.dataset.s) });
+          await api(`${current.src.base}/self-grade`, { question_id: q.id, score: Number(b.dataset.s) });
           streak = Number(b.dataset.s) === 1 ? streak + 1 : 0;
           data.results[q.id].score = Number(b.dataset.s);
           next();
         } catch (e) {
           toast(e.message);
-          runAttempt(data.id);
+          current.src.reload();
         }
       })
     );
@@ -529,7 +568,7 @@
     current.index++;
     if (current.index < current.data.questions.length) return renderQuestion();
     await loadMe();
-    renderResult(await api(`/api/attempts/${current.data.id}`));
+    current.src.done(await api(current.src.load));
   }
 
   /* ---------- 結果 ---------- */
@@ -560,6 +599,162 @@
       confetti();
       sound.play([[523, 0.15], [659, 0.15], [784, 0.15], [1047, 0.5]]);
     }
+  }
+
+
+  /* ---------- 組隊挑戰 ---------- */
+  const STATUS = (t) => t.all_finished ? "🏆 已公布排名" : t.members.length < 2 ? "⏳ 等待隊友加入" : "✏️ 作答中";
+
+  async function renderTeams() {
+    if (!ME.user) return renderLoginNeeded("組隊挑戰", "/?view=teams");
+    const cats = [...Object.keys(CONFIG.categories), "all"];
+    $app.innerHTML = `
+      <section class="panel teams">
+        <h2>👥 組隊挑戰</h2>
+        <p class="hint">開一個隊伍、把邀請連結傳給朋友，最多 3 人答同一組 ${CONFIG.per_attempt} 題，大家各自有空就作答；全員完成後公布隊內排名。組隊不會用掉個人挑戰的次數。</p>
+        <fieldset>
+          <legend>選擇主題</legend>
+          <div class="chips">${cats.map((c, i) => `<label class="chip"><input type="radio" name="tcat" value="${c}" ${i === 0 ? "checked" : ""}> ${CAT_ICON[c]} ${esc(catName(c))}</label>`).join("")}</div>
+        </fieldset>
+        <fieldset>
+          <legend>選擇難度</legend>
+          <div class="chips">${CONFIG.difficulties.map((d, i) => `<label class="chip"><input type="radio" name="tdiff" value="${d}" ${i === 0 ? "checked" : ""}> ${DIFF[d].icon} ${DIFF[d].name}</label>`).join("")}</div>
+        </fieldset>
+        <button class="btn primary big" id="create-team">建立隊伍並取得邀請連結</button>
+        <h3>我的隊伍</h3>
+        <div id="my-teams" class="team-list"><p class="hint">載入中…</p></div>
+      </section>`;
+    document.getElementById("create-team").addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      try {
+        const { code } = await api("/api/teams", {
+          category: $app.querySelector("input[name=tcat]:checked").value,
+          difficulty: $app.querySelector("input[name=tdiff]:checked").value,
+        });
+        renderTeam(code);
+      } catch (err) {
+        toast(err.message);
+        e.target.disabled = false;
+      }
+    });
+    const { teams } = await api("/api/teams/mine");
+    const box = document.getElementById("my-teams");
+    if (!box) return;
+    box.innerHTML = teams.length
+      ? teams.map((t) => `
+          <button class="team-row" data-code="${esc(t.code)}">
+            <span>${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}</span>
+            <span class="team-avatars">${t.members.map((m) => avatarHtml(28, m.profile)).join("")}</span>
+            <small>${STATUS(t)}</small>
+          </button>`).join("")
+      : `<p class="hint">還沒有隊伍，建立一個邀請朋友吧！</p>`;
+    box.querySelectorAll(".team-row").forEach((b) => b.addEventListener("click", () => renderTeam(b.dataset.code)));
+  }
+
+  function renderLoginNeeded(title, next) {
+    $app.innerHTML = `
+      <section class="panel paywall">
+        <svg class="mascot small" viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg>
+        <h2>${esc(title)}</h2>
+        <p>每位參加的朋友都需要先用 Google 帳號登入喔！</p>
+        <a class="btn primary big" href="${loginUrl(next)}">用 Google 帳號登入</a>
+      </section>`;
+  }
+
+  async function renderTeam(code) {
+    history.replaceState(null, "", `/?team=${encodeURIComponent(code)}`);
+    if (!ME.user) return renderLoginNeeded("👥 朋友邀請你一起組隊挑戰！", `/?team=${encodeURIComponent(code)}`);
+    let t;
+    try {
+      t = await api(`/api/teams/${encodeURIComponent(code)}`);
+    } catch (e) {
+      $app.innerHTML = `<section class="panel"><h2>找不到隊伍</h2><p>${esc(e.message)}</p><button class="btn primary" id="back">回組隊頁</button></section>`;
+      document.getElementById("back").addEventListener("click", () => go("teams"));
+      return;
+    }
+    const link = `${location.origin}/?team=${encodeURIComponent(t.code)}`;
+    const memberRows = t.members.map((m) => `
+      <li class="member">
+        ${avatarHtml(44, m.profile)}
+        <div><b>${esc(m.name)}</b>${m.user_id === t.members[0].user_id ? ` <small class="badge soft">隊長</small>` : ""}${m.user_id === t.me ? ` <small class="badge">我</small>` : ""}
+          <p class="ra">${m.finished ? "✅ 已完成" : `作答中 ${m.answered} / ${t.total}`}${m.score !== null ? `・${fmt(m.score)} 分` : ""}</p></div>
+      </li>`).join("");
+    const slots = Array.from({ length: t.max_members - t.members.length }, () => `<li class="member empty"><span class="avatar-wrap" style="--s:44px"><span class="avatar-img emoji">＋</span></span><div><b>等待加入</b></div></li>`).join("");
+
+    let action = "";
+    if (!t.is_member) {
+      action = t.members.length < t.max_members
+        ? `<button class="btn primary big" id="join">加入這個隊伍</button>`
+        : `<p class="hint">這個隊伍已經滿 ${t.max_members} 人了。</p>`;
+    } else if (!t.my_finished) {
+      const answered = t.my_answered;
+      action = `<button class="btn primary big" id="play">${answered ? `繼續作答（${answered} / ${t.total}）` : "開始作答"}</button>`;
+    } else if (!t.all_finished) {
+      action = `<p class="hint">你已經完成了！等隊友都答完就會公布排名。</p><button class="btn" id="refresh">🔄 更新進度</button>`;
+    }
+
+    let ranking = "";
+    if (t.all_finished) {
+      const medals = ["🥇", "🥈", "🥉"];
+      ranking = `
+        <div class="podium">${t.ranking.map((r) => {
+          // 同分同名次
+          const rank = 1 + t.ranking.filter((x) => x.score > r.score).length;
+          return `<div class="place p${rank}">${medals[rank - 1] || ""}<b>${esc(r.name)}</b><span>${fmt(r.score)} 分</span></div>`;
+        }).join("")}</div>
+        <h3>每題作答結果</h3>
+        <div class="breakdown"><table>
+          <thead><tr><th>題目</th>${t.members.map((m) => `<th>${avatarHtml(26, m.profile)}</th>`).join("")}</tr></thead>
+          <tbody>${t.breakdown.map((b, i) => `<tr><td><span class="rq">${i + 1}. ${esc(b.q)} ${b.emoji ? esc(b.emoji) : ""}</span><span class="ra">正解：${esc(b.answer)}</span></td>${t.members.map((m) => {
+            const v = b.scores[m.user_id];
+            return `<td class="mark">${v === 1 ? "✅" : v > 0 ? "🟡" : v === 0 ? "❌" : "—"}</td>`;
+          }).join("")}</tr>`).join("")}</tbody>
+        </table></div>`;
+    }
+
+    $app.innerHTML = `
+      <section class="panel team">
+        <button class="link back-teams">← 我的隊伍</button>
+        <h2>👥 ${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}</h2>
+        <p class="hint">${STATUS(t)}・每人 ${t.total} 題・最多 ${t.max_members} 人</p>
+        ${t.is_member && t.members.length < t.max_members ? `
+        <div class="invite">
+          <b>📨 邀請朋友（還可以再邀 ${t.max_members - t.members.length} 人）</b>
+          <div class="invite-row"><input class="text-input" id="invite-link" readonly value="${esc(link)}">
+            <button class="btn" id="copy">複製連結</button>${navigator.share ? `<button class="btn primary" id="share">分享</button>` : ""}</div>
+          <small class="hint">朋友打開連結、登入 Google 後就能加入。</small>
+        </div>` : ""}
+        <ul class="members">${memberRows}${t.is_member ? slots : ""}</ul>
+        ${action}
+        ${ranking}
+      </section>`;
+
+    $app.querySelector(".back-teams").addEventListener("click", () => go("teams"));
+    document.getElementById("copy")?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(link);
+        toast("已複製邀請連結，貼給朋友吧！");
+      } catch {
+        document.getElementById("invite-link").select();
+        toast("請手動複製連結");
+      }
+    });
+    document.getElementById("share")?.addEventListener("click", () =>
+      navigator.share({ title: "知識大挑戰・組隊邀請", text: `一起來挑戰「${catName(t.category)}・${DIFF[t.difficulty].name}」！`, url: link }).catch(() => {}));
+    document.getElementById("join")?.addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      try {
+        await api(`/api/teams/${encodeURIComponent(t.code)}/join`, {});
+        toast("🎉 已加入隊伍！");
+        renderTeam(t.code);
+      } catch (err) {
+        toast(err.message);
+        renderTeam(t.code);
+      }
+    });
+    document.getElementById("play")?.addEventListener("click", () => runTeamQuiz(t.code));
+    document.getElementById("refresh")?.addEventListener("click", () => renderTeam(t.code));
+    if (t.all_finished && t.ranking.find((r) => r.user_id === t.me)?.score === t.ranking[0]?.score) confetti();
   }
 
   /* ---------- 題庫總覽（訂閱制） ---------- */
@@ -758,7 +953,9 @@
   }
 
   async function boot() {
-    bindNav(document.querySelector(".topbar"));
+    bindNav(document.querySelector(".nav-links"));
+    document.querySelector(".brand").addEventListener("click", (e) => { e.preventDefault(); go("home"); });
+    setupMenu();
     [CONFIG] = await Promise.all([api("/api/config"), loadMe()]);
     const params = new URLSearchParams(location.search);
     if (params.get("checkout") === "success" && params.get("session_id")) {
@@ -774,6 +971,7 @@
     } else if (params.get("login") === "cancelled") {
       toast("已取消登入");
     }
+    if (params.get("team")) return renderTeam(params.get("team"));
     go(params.get("view") || "home");
   }
 

@@ -263,3 +263,68 @@ def test_avatar_is_private(make_client):
     a.post("/api/profile/avatar", json={"data_url": PNG_1PX})
     b, _ = make_client("b@example.com")
     assert b.get("/api/profile/avatar").status_code == 404
+
+
+def _team_play_all(client, code):
+    data = client.get(f"/api/teams/{code}/play").json()
+    for q in data["questions"]:
+        given = {"single": "對", "short": "富士山", "image": "富士山", "qa": "想法"}[q["type"]]
+        assert client.post(f"/api/teams/{code}/answer", json={"question_id": q["id"], "given": given}).status_code == 200
+        if q["type"] == "qa":
+            client.post(f"/api/teams/{code}/self-grade", json={"question_id": q["id"], "score": 1})
+
+
+def test_team_flow_and_ranking(make_client):
+    owner, _ = make_client("owner@example.com")
+    code = owner.post("/api/teams", json={"category": "anime", "difficulty": "easy"}).json()["code"]
+    friend, _ = make_client("friend@example.com")
+    # 還沒加入不能作答
+    assert friend.get(f"/api/teams/{code}/play").status_code == 403
+    assert friend.post(f"/api/teams/{code}/join", json={}).status_code == 200
+    same_q = [q["id"] for q in owner.get(f"/api/teams/{code}/play").json()["questions"]]
+    assert same_q == [q["id"] for q in friend.get(f"/api/teams/{code}/play").json()["questions"]]
+
+    _team_play_all(owner, code)
+    view = friend.get(f"/api/teams/{code}").json()
+    # 隊友還沒答完：看不到隊長的分數
+    assert not view["all_finished"] and all(m["score"] is None for m in view["members"] if m["name"] == "owner")
+    data = friend.get(f"/api/teams/{code}/play").json()
+    for q in data["questions"]:
+        friend.post(f"/api/teams/{code}/answer", json={"question_id": q["id"], "given": "亂答"})
+        if q["type"] == "qa":
+            friend.post(f"/api/teams/{code}/self-grade", json={"question_id": q["id"], "score": 0})
+    view = owner.get(f"/api/teams/{code}").json()
+    assert view["all_finished"] and [r["score"] for r in view["ranking"]] == [10, 0]
+    assert len(view["breakdown"]) == 10
+
+
+def test_team_max_three_and_login_required(db, make_client):
+    owner, _ = make_client("o@example.com")
+    code = owner.post("/api/teams", json={"category": "travel", "difficulty": "hard"}).json()["code"]
+    assert TestClient(app).get(f"/api/teams/{code}").status_code == 401
+    for email in ("b@example.com", "c@example.com"):
+        c, _ = make_client(email)
+        assert c.post(f"/api/teams/{code}/join", json={}).status_code == 200
+    d, _ = make_client("d@example.com")
+    assert d.post(f"/api/teams/{code}/join", json={}).status_code == 409
+
+
+def test_team_does_not_use_solo_attempt(make_client):
+    client, _ = make_client()
+    play_through(client, start(client).json()["attempt_id"])
+    # 個人已挑戰過，組隊仍可再玩同主題同難度
+    assert client.post("/api/teams", json={"category": "anime", "difficulty": "easy"}).status_code == 200
+    assert client.post("/api/teams", json={"category": "anime", "difficulty": "easy"}).status_code == 200
+
+
+def test_teammate_avatar_visible_only_to_teammates(make_client):
+    a, _ = make_client("a@example.com")
+    a.post("/api/profile/avatar", json={"data_url": PNG_1PX})
+    a_id = a.get("/api/me").json()
+    code = a.post("/api/teams", json={"category": "anime", "difficulty": "easy"}).json()["code"]
+    owner_id = a.get(f"/api/teams/{code}").json()["members"][0]["user_id"]
+    stranger, _ = make_client("s@example.com")
+    assert stranger.get(f"/api/teams/avatar/{owner_id}").status_code == 404
+    mate, _ = make_client("m@example.com")
+    mate.post(f"/api/teams/{code}/join", json={})
+    assert mate.get(f"/api/teams/avatar/{owner_id}").status_code == 200

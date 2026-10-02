@@ -93,6 +93,14 @@ main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
   text-shadow: 3px 3px 0 var(--surface), 5px 5px 0 var(--line);
 }
 .hero p { color: var(--muted); margin: 6px 0 0; }
+.hero .tagline { font-size: 1.1rem; color: var(--text); font-weight: 700; }
+.rules { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 10px; }
+.rules span, .rules a {
+  padding: 6px 14px; border-radius: 999px; background: var(--surface); border: 2px solid var(--line);
+  font-size: .9rem; color: var(--muted); text-decoration: none;
+}
+.rules a { color: var(--accent-deep); font-weight: 700; border-color: var(--accent); }
+.rules a:hover { background: var(--accent-soft); }
 .hero .sparkle { position: absolute; font-size: 1.4rem; animation: twinkle 2.4s ease-in-out infinite; }
 .hero .s1 { left: 12%; top: 20%; }
 .hero .s2 { right: 14%; top: 10%; animation-delay: .8s; }
@@ -451,6 +459,52 @@ details p { margin: 4px 0; }
 }
 .btn.primary { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 75%, white), var(--accent)); }
 .progress div { background: repeating-linear-gradient(-45deg, var(--accent) 0 8px, color-mix(in srgb, var(--accent) 60%, white) 8px 16px); }
+
+/* ---------- ☰ 選單 ---------- */
+.brand-wrap { position: relative; display: flex; align-items: center; gap: 6px; }
+.menu-btn {
+  width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface);
+  color: var(--accent-deep); font-size: 1.2rem; cursor: pointer; display: grid; place-items: center;
+}
+.menu-btn:hover, .menu-btn[aria-expanded="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.menu {
+  position: absolute; top: calc(100% + 10px); left: 0; z-index: 15; min-width: 200px;
+  display: grid; padding: 8px; background: var(--surface); border: 3px solid var(--line);
+  border-radius: 20px; box-shadow: var(--shadow); animation: pop-in .2s ease-out;
+}
+.menu a { padding: 10px 14px; border-radius: 12px; text-decoration: none; color: var(--text); font-weight: 700; }
+.menu a:hover { background: var(--accent-soft); color: var(--accent-deep); }
+
+/* ---------- 組隊 ---------- */
+.team-list { display: grid; gap: 8px; }
+.team-row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 16px; border-radius: 18px; border: 2px solid var(--line); background: var(--surface);
+  cursor: pointer; text-align: left; font-weight: 700;
+}
+.team-row:hover { border-color: var(--accent); }
+.team-row small { color: var(--muted); font-weight: 500; }
+.team-avatars { display: flex; gap: 4px; }
+.invite { background: var(--accent-soft); border: 2px dashed var(--accent); border-radius: 18px; padding: 12px 16px; margin: 12px 0; }
+.invite-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+.invite-row .text-input { min-width: 200px; font-size: .88rem; }
+.members { list-style: none; padding: 0; display: grid; gap: 10px; margin: 16px 0; }
+.member { display: flex; align-items: center; gap: 12px; }
+.member .ra { margin: 0; }
+.member.empty { opacity: .5; }
+.podium { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 18px 0; }
+.place {
+  display: grid; justify-items: center; gap: 2px; padding: 12px 16px; border-radius: 18px 18px 6px 6px;
+  background: var(--accent-soft); min-width: 92px; font-size: 1.6rem;
+}
+.place b { font-size: .95rem; } .place span { font-size: .85rem; color: var(--muted); }
+.place.p1 { order: 2; padding-top: 28px; background: color-mix(in srgb, #ffd166 45%, var(--surface)); }
+.place.p2 { order: 1; } .place.p3 { order: 3; padding-top: 6px; }
+.breakdown { overflow-x: auto; }
+.breakdown table { width: 100%; border-collapse: collapse; }
+.breakdown th, .breakdown td { padding: 8px 6px; border-top: 2px dotted var(--line); text-align: center; vertical-align: middle; }
+.breakdown td:first-child, .breakdown th:first-child { text-align: left; }
+.breakdown .rq, .breakdown .ra { display: block; }
 
 @media (max-width: 520px) {
   .account .who { display: none; }

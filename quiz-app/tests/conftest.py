@@ -9,6 +9,7 @@ os.environ["STRIPE_SECRET_KEY"] = "sk_test_dummy"
 os.environ["STRIPE_WEBHOOK_SECRET"] = "whsec_test"
 os.environ["ADMIN_EMAILS"] = "admin@example.com"
 
+from fastapi import Request  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app.catalog import import_questions  # noqa: E402
@@ -48,29 +49,27 @@ def db():
 def make_client(db):
     """建立已登入的測試用戶端（跳過 Google 登入流程）。"""
 
-    sessions = []
+    session = SessionLocal()
+
+    def current_user(request: Request):
+        # 每個測試用戶端用 X-Test-User 標頭帶自己的身分，多位使用者才不會互相覆蓋；
+        # 沒帶標頭就是未登入。每次請求重新讀取並結束交易，避免長時間占用連線。
+        uid = request.headers.get("x-test-user")
+        session.expire_all()
+        found = session.get(User, int(uid)) if uid else None
+        session.commit()
+        return found
+
+    app.dependency_overrides[get_current_user] = current_user
 
     def _make(email="player@example.com", subscribed=False):
         user = User(google_sub=email, email=email, name=email.split("@")[0],
                     subscription_status="active" if subscribed else "none", stripe_customer_id=f"cus_{email}")
         db.add(user)
         db.commit()
-        uid = user.id
-        session = SessionLocal()
-        sessions.append(session)
-
-        def current_user():
-            # 每次請求重新讀取並結束交易，避免長時間占用連線
-            session.expire_all()
-            found = session.get(User, uid)
-            session.commit()
-            return found
-
-        app.dependency_overrides[get_current_user] = current_user
-        return TestClient(app), uid
+        return TestClient(app, headers={"x-test-user": str(user.id)}), user.id
 
     yield _make
     app.dependency_overrides.clear()
     # 測試結束一定要關閉，否則連線池會被用光，後面的測試卡住直到逾時
-    for session in sessions:
-        session.close()
+    session.close()

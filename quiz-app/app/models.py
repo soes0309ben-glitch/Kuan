@@ -104,3 +104,49 @@ class Profile(Base):
     frame: Mapped[str] = mapped_column(String(20), default="none")
     color: Mapped[str] = mapped_column(String(20), default="pink")
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class Team(Base):
+    """組隊挑戰：最多 3 人答同一組題目，各自作答、隊內排名。不受個人「只能挑戰一次」限制。"""
+
+    __tablename__ = "quiz_teams"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    code: Mapped[str] = mapped_column(String(16), unique=True, index=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("quiz_users.id"))
+    category: Mapped[str] = mapped_column(String(20))
+    difficulty: Mapped[str] = mapped_column(String(10))
+    question_ids: Mapped[list] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    members: Mapped[list["TeamMember"]] = relationship(back_populates="team", order_by="TeamMember.joined_at")
+
+
+class TeamMember(Base):
+    __tablename__ = "quiz_team_members"
+    __table_args__ = (UniqueConstraint("team_id", "user_id", name="uq_quiz_team_member"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    team_id: Mapped[int] = mapped_column(ForeignKey("quiz_teams.id"), index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("quiz_users.id"), index=True)
+    score: Mapped[float] = mapped_column(Float, default=0)
+    joined_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    team: Mapped[Team] = relationship(back_populates="members")
+    user: Mapped[User] = relationship()
+    answers: Mapped[list["TeamAnswer"]] = relationship(back_populates="member", cascade="all, delete-orphan")
+
+
+class TeamAnswer(Base):
+    __tablename__ = "quiz_team_answers"
+    __table_args__ = (UniqueConstraint("member_id", "question_id", name="uq_quiz_team_answer_once"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    member_id: Mapped[int] = mapped_column(ForeignKey("quiz_team_members.id"), index=True)
+    question_id: Mapped[int] = mapped_column(ForeignKey("quiz_questions.id"))
+    given: Mapped[str] = mapped_column(Text, default="")
+    score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    answered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    member: Mapped[TeamMember] = relationship(back_populates="answers")

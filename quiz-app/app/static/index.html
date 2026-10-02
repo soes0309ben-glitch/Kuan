@@ -42,7 +42,16 @@
   </svg>
 
   <nav class="topbar">
-    <a href="#" class="brand" data-nav="home"><svg viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg><span>知識大挑戰</span></a>
+    <div class="brand-wrap">
+      <button class="menu-btn" id="menu-btn" aria-label="開啟選單" aria-expanded="false" aria-controls="menu">☰</button>
+      <a href="#" class="brand" data-nav="home"><svg viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg><span>知識大挑戰</span></a>
+      <nav class="menu" id="menu" hidden>
+        <a href="#" data-nav="home">🏠 開始挑戰</a>
+        <a href="#" data-nav="teams">👥 組隊挑戰</a>
+        <a href="#" data-nav="bank">📚 題庫總覽</a>
+        <a href="#" data-nav="profile">🎀 個人檔案</a>
+      </nav>
+    </div>
     <div class="nav-links">
       <a href="#" data-nav="home">開始挑戰</a>
       <a href="#" data-nav="bank">題庫總覽</a>
