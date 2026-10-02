@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{% if is_new %}新增景點{% else %}編輯景點{% endif %}｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2>{% if is_new %}新增景點{% else %}編輯景點：{{ attraction.name_zh }}{% endif %}</h2>
+  <p><a href="/admin/attractions">← 回景點列表</a></p>
+
+  <form class="admin-form" method="post" action="{% if is_new %}/admin/attractions/new{% else %}/admin/attractions/{{ attraction.id }}/edit{% endif %}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+
+    {% if is_new %}
+    <label for="id">景點 ID（英文/數字/連字號，之後不能改）</label>
+    <input type="text" id="id" name="id" pattern="[a-z0-9\-]+" required placeholder="例如 sapporo-clock-tower">
+    {% endif %}
+
+    <label for="name_zh">中文名稱</label>
+    <input type="text" id="name_zh" name="name_zh" required value="{{ attraction.name_zh if attraction else '' }}">
+
+    <label for="name_ja">日文名稱</label>
+    <input type="text" id="name_ja" name="name_ja" value="{{ attraction.name_ja if attraction else '' }}">
+
+    <label for="region">地區</label>
+    <select id="region" name="region" required>
+      {% for key, label in region_labels.items() %}
+      <option value="{{ key }}" {% if attraction and attraction.region == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="prefecture">縣市</label>
+    <input type="text" id="prefecture" name="prefecture" value="{{ attraction.prefecture if attraction else '' }}">
+
+    <label for="category">分類（例如 attraction／food）</label>
+    <input type="text" id="category" name="category" value="{{ attraction.category if attraction else 'attraction' }}">
+
+    <label for="tags">標籤（用逗號分隔）</label>
+    <input type="text" id="tags" name="tags" value="{{ attraction.tags|join(', ') if attraction else '' }}">
+
+    <label for="description">介紹文字</label>
+    <textarea id="description" name="description" rows="4">{{ attraction.description if attraction else '' }}</textarea>
+
+    <label for="image_query">圖片搜尋關鍵字（留空會用中文名稱）</label>
+    <input type="text" id="image_query" name="image_query" value="{{ attraction.image_query if attraction else '' }}">
+
+    <label for="official_url">官方網站網址</label>
+    <input type="url" id="official_url" name="official_url" value="{{ attraction.official_url if attraction else '' }}">
+
+    <h3>交通方式（選填）</h3>
+    <label for="access_from">出發點</label>
+    <input type="text" id="access_from" name="access_from" value="{{ attraction.access.get('from','') if attraction and attraction.access else '' }}">
+    <label for="access_method">交通方式</label>
+    <input type="text" id="access_method" name="access_method" value="{{ attraction.access.get('method','') if attraction and attraction.access else '' }}">
+    <div class="admin-form-grid">
+      <div>
+        <label for="access_duration_min">所需時間（分鐘）</label>
+        <input type="number" id="access_duration_min" name="access_duration_min" value="{{ attraction.access.get('duration_min','') if attraction and attraction.access else '' }}">
+      </div>
+      <div>
+        <label for="access_cost_jpy">交通費（日幣）</label>
+        <input type="number" id="access_cost_jpy" name="access_cost_jpy" value="{{ attraction.access.get('cost_jpy','') if attraction and attraction.access else '' }}">
+      </div>
+    </div>
+
+    <label for="self_drive_note">自駕備註</label>
+    <input type="text" id="self_drive_note" name="self_drive_note" value="{{ attraction.self_drive_note if attraction else '' }}">
+
+    <div class="admin-form-grid">
+      <div>
+        <label for="visit_duration_min">建議停留時間（分鐘）</label>
+        <input type="number" id="visit_duration_min" name="visit_duration_min" value="{{ attraction.visit_duration_min if attraction else '' }}">
+      </div>
+      <div>
+        <label for="entry_fee_jpy">門票（日幣）</label>
+        <input type="number" id="entry_fee_jpy" name="entry_fee_jpy" value="{{ attraction.entry_fee_jpy if attraction else '' }}">
+      </div>
+    </div>
+
+    <label for="best_season">最佳季節</label>
+    <input type="text" id="best_season" name="best_season" value="{{ attraction.best_season if attraction else '' }}">
+
+    <label class="admin-checkbox-label">
+      <input type="checkbox" name="is_remote_island" {% if attraction and attraction.is_remote_island %}checked{% endif %}>
+      離島景點
+    </label>
+
+    <button type="submit" class="btn admin-submit">{% if is_new %}新增景點{% else %}儲存變更{% endif %}</button>
+  </form>
+</section>
+{% endblock %}

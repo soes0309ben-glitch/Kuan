@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}{% if is_new %}新增行程{% else %}編輯行程{% endif %}｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <h2>{% if is_new %}新增行程{% else %}編輯行程：{{ itinerary.title }}{% endif %}</h2>
+  <p><a href="/admin/itineraries">← 回行程列表</a></p>
+
+  <form class="admin-form" method="post" action="{% if is_new %}/admin/itineraries/new{% else %}/admin/itineraries/{{ itinerary.id }}/edit{% endif %}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+
+    {% if is_new %}
+    <label for="id">行程 ID（英文/數字/連字號，之後不能改）</label>
+    <input type="text" id="id" name="id" pattern="[a-z0-9\-]+" required placeholder="例如 tokyo-classic-3d2n">
+    {% endif %}
+
+    <label for="title">行程標題</label>
+    <input type="text" id="title" name="title" required value="{{ itinerary.title if itinerary else '' }}">
+
+    <label for="duration">天數</label>
+    <select id="duration" name="duration" required>
+      {% for key, label in duration_labels.items() %}
+      <option value="{{ key }}" {% if itinerary and itinerary.duration == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="region">地區</label>
+    <select id="region" name="region" required>
+      {% for key, label in region_labels.items() %}
+      <option value="{{ key }}" {% if itinerary and itinerary.region == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="summary">行程簡介</label>
+    <textarea id="summary" name="summary" rows="3">{{ itinerary.summary if itinerary else '' }}</textarea>
+
+    <h3>住宿等級與解鎖價格</h3>
+    {% for tier, label in tier_labels.items() %}
+    <div class="day-block">
+      <strong>{{ label }}</strong>
+      <div class="admin-form-grid">
+        <div>
+          <label for="price_{{ tier }}">解鎖價格（NT$）</label>
+          <input type="number" id="price_{{ tier }}" name="price_{{ tier }}" value="{{ itinerary.unlock_price_twd.get(tier, '') if itinerary else '' }}">
+        </div>
+        <div>
+          <label for="tier_price_jpy_{{ tier }}">每晚房價參考（日幣）</label>
+          <input type="number" id="tier_price_jpy_{{ tier }}" name="tier_price_jpy_{{ tier }}" value="{{ itinerary.accommodation_tiers.get(tier, {}).get('price_per_night_jpy', '') if itinerary else '' }}">
+        </div>
+      </div>
+      <label for="tier_hint_{{ tier }}">住宿風格說明</label>
+      <input type="text" id="tier_hint_{{ tier }}" name="tier_hint_{{ tier }}" value="{{ itinerary.accommodation_tiers.get(tier, {}).get('style_hint', '') if itinerary else '' }}">
+    </div>
+    {% endfor %}
+
+    <h3>每日行程</h3>
+    <p class="hint">只要填了「當天標題」或「活動內容」，這天就會被存起來；留空兩個欄位代表這天不使用。</p>
+
+    <details class="attraction-reference">
+      <summary>景點 ID 對照表（點開查詢，複製貼到下面「景點 ID」欄位，多個用逗號分隔）</summary>
+      <div class="attraction-reference-list">
+        {% for a in attraction_reference %}
+        <div><code>{{ a.id }}</code> — {{ a.name_zh }}</div>
+        {% endfor %}
+      </div>
+    </details>
+
+    {% for day_num in day_range %}
+    {% set day = days_by_number.get(day_num) %}
+    <div class="day-block">
+      <strong>第 {{ day_num }} 天</strong>
+      <label for="day_{{ day_num }}_title">當天標題</label>
+      <input type="text" id="day_{{ day_num }}_title" name="day_{{ day_num }}_title" value="{{ day.title if day else '' }}">
+
+      <label for="day_{{ day_num }}_attraction_ids">景點 ID（用逗號分隔）</label>
+      <input type="text" id="day_{{ day_num }}_attraction_ids" name="day_{{ day_num }}_attraction_ids" value="{{ day.attraction_ids|join(', ') if day else '' }}">
+
+      <label for="day_{{ day_num }}_activities">活動內容</label>
+      <textarea id="day_{{ day_num }}_activities" name="day_{{ day_num }}_activities" rows="3">{{ day.activities if day else '' }}</textarea>
+
+      <label for="day_{{ day_num }}_transport_notes">交通備註</label>
+      <input type="text" id="day_{{ day_num }}_transport_notes" name="day_{{ day_num }}_transport_notes" value="{{ day.transport_notes if day else '' }}">
+
+      <label for="day_{{ day_num }}_cost">當日預估花費（日幣，不含住宿）</label>
+      <input type="number" id="day_{{ day_num }}_cost" name="day_{{ day_num }}_cost" value="{{ day.daily_cost_estimate_jpy if day else '' }}">
+    </div>
+    {% endfor %}
+
+    <h3>自駕與打包提醒</h3>
+    <label class="admin-checkbox-label">
+      <input type="checkbox" name="self_drive_recommended" {% if itinerary and itinerary.self_drive_route.recommended %}checked{% endif %}>
+      建議自駕
+    </label>
+    <label for="self_drive_route_note">自駕／交通路線備註</label>
+    <input type="text" id="self_drive_route_note" name="self_drive_route_note" value="{{ itinerary.self_drive_route.route_note if itinerary else '' }}">
+
+    <label for="packing_notes">行前打包提醒</label>
+    <textarea id="packing_notes" name="packing_notes" rows="3">{{ itinerary.packing_notes if itinerary else '' }}</textarea>
+
+    <button type="submit" class="btn admin-submit">{% if is_new %}新增行程{% else %}儲存變更{% endif %}</button>
+  </form>
+</section>
+{% endblock %}

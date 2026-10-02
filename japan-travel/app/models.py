@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -45,4 +45,23 @@ class PageView(Base):
     session_key: Mapped[str] = mapped_column(String(64), nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=datetime.datetime.utcnow, index=True
+    )
+
+
+class ContentOverride(Base):
+    """Admin-authored add/edit/delete on top of the shipped attractions.json
+    / itineraries.json seed data, so edits persist in the database (and
+    survive redeploys) instead of being written back to files on disk.
+    """
+
+    __tablename__ = "content_overrides"
+    __table_args__ = (UniqueConstraint("kind", "item_id", name="uq_content_override_kind_item"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    item_id: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    deleted: Mapped[bool] = mapped_column(Boolean, default=False)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )

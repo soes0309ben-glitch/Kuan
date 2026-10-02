@@ -6,6 +6,11 @@
     <h2>管理後台</h2>
   </div>
 
+  <div class="admin-quick-links">
+    <a class="btn" href="/admin/attractions">景點管理</a>
+    <a class="btn" href="/admin/itineraries">行程管理</a>
+  </div>
+
   <div class="stat-tiles">
     <div class="stat-tile">
       <div class="stat-value">{{ total_users }}</div>
@@ -44,6 +49,7 @@
 
   <h3>各方案銷售排行</h3>
   {% if best_sellers %}
+  <div class="admin-table-wrap">
   <table class="admin-table">
     <thead><tr><th>行程</th><th>住宿等級</th><th>訂單數</th><th>營收</th></tr></thead>
     <tbody>
@@ -57,12 +63,14 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <div class="empty-state">目前還沒有任何已付款訂單。</div>
   {% endif %}
 
   <h3>最近訂單</h3>
   {% if recent_purchases %}
+  <div class="admin-table-wrap">
   <table class="admin-table">
     <thead><tr><th>時間</th><th>行程</th><th>方案</th><th>金額</th></tr></thead>
     <tbody>
@@ -76,6 +84,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <div class="empty-state">目前還沒有任何訂單紀錄。</div>
   {% endif %}

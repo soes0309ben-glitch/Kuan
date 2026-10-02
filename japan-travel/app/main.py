@@ -8,7 +8,7 @@ from starlette.responses import FileResponse
 from app.analytics import track_page_view
 from app.config import get_settings
 from app.db import init_db
-from app.routers import admin, api, auth, pages, payments
+from app.routers import admin, admin_content, api, auth, pages, payments
 
 settings = get_settings()
 
@@ -41,3 +41,4 @@ app.include_router(auth.router)
 app.include_router(api.router)
 app.include_router(payments.router)
 app.include_router(admin.router)
+app.include_router(admin_content.router)

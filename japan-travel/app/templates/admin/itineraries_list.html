@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}行程管理｜{{ APP_NAME }}{% endblock %}
+{% block content %}
+<section class="section container">
+  <div class="section-title">
+    <h2>行程管理</h2>
+    <a class="btn" href="/admin/itineraries/new">+ 新增行程</a>
+  </div>
+  <p><a href="/admin">← 回管理後台</a></p>
+
+  <div class="admin-list">
+    {% for it in itineraries %}
+    <div class="admin-list-row">
+      <div class="admin-list-main">
+        <strong>{{ it.title }}</strong>
+        <span class="card-meta">{{ DURATION_LABELS.get(it.duration, it.duration) }}・{{ REGION_LABELS.get(it.region, it.region) }}・{{ it.id }}</span>
+      </div>
+      <div class="admin-list-actions">
+        <a class="icon-btn" href="/admin/itineraries/{{ it.id }}/edit">編輯</a>
+        <form action="/admin/itineraries/{{ it.id }}/delete" method="post" onsubmit="return confirm('確定要刪除「{{ it.title }}」嗎？');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token(request) }}">
+          <button type="submit" class="icon-btn danger">刪除</button>
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-state">還沒有任何行程。</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

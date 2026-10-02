@@ -43,9 +43,36 @@ def _load_json(filename: str) -> list[dict]:
         return json.load(f)
 
 
+def _load_overrides(kind: str) -> dict[str, dict | None]:
+    """Admin add/edit/delete rows for one content kind, keyed by item id.
+    A None value means the item was deleted. Uses its own short-lived
+    session since callers (template globals, cached getters) don't have a
+    request-scoped db session available.
+    """
+    from app.db import SessionLocal
+    from app.models import ContentOverride
+
+    db = SessionLocal()
+    try:
+        rows = db.query(ContentOverride).filter(ContentOverride.kind == kind).all()
+        return {r.item_id: (None if r.deleted else r.data) for r in rows}
+    finally:
+        db.close()
+
+
+def _apply_overrides(base_items: list[dict], kind: str) -> list[dict]:
+    merged = {item["id"]: item for item in base_items}
+    for item_id, data in _load_overrides(kind).items():
+        if data is None:
+            merged.pop(item_id, None)
+        else:
+            merged[item_id] = data
+    return list(merged.values())
+
+
 @lru_cache
 def get_attractions() -> list[dict]:
-    return _load_json("attractions.json")
+    return _apply_overrides(_load_json("attractions.json"), "attraction")
 
 
 @lru_cache
@@ -55,7 +82,7 @@ def get_attractions_by_id() -> dict[str, dict]:
 
 @lru_cache
 def get_itineraries() -> list[dict]:
-    return _load_json("itineraries.json")
+    return _apply_overrides(_load_json("itineraries.json"), "itinerary")
 
 
 @lru_cache
@@ -118,3 +145,45 @@ def clear_cache() -> None:
     get_attractions_by_id.cache_clear()
     get_itineraries.cache_clear()
     get_itineraries_by_id.cache_clear()
+
+
+def save_content_override(db, kind: str, item_id: str, data: dict) -> None:
+    """Create or update an admin override for one attraction/itinerary, then
+    invalidate the cached getters so the change shows up immediately.
+    """
+    from app.models import ContentOverride
+
+    row = (
+        db.query(ContentOverride)
+        .filter(ContentOverride.kind == kind, ContentOverride.item_id == item_id)
+        .first()
+    )
+    if row:
+        row.data = data
+        row.deleted = False
+    else:
+        db.add(ContentOverride(kind=kind, item_id=item_id, data=data, deleted=False))
+    db.commit()
+    clear_cache()
+
+
+def delete_content_override(db, kind: str, item_id: str) -> None:
+    """Soft-delete: if the item came from the shipped JSON seed, the row
+    marks it deleted so it's hidden; if it was itself admin-created, this
+    just un-does that creation. Either way, clear_cache() below is what
+    actually makes get_attractions()/get_itineraries() stop returning it.
+    """
+    from app.models import ContentOverride
+
+    row = (
+        db.query(ContentOverride)
+        .filter(ContentOverride.kind == kind, ContentOverride.item_id == item_id)
+        .first()
+    )
+    if row:
+        row.data = None
+        row.deleted = True
+    else:
+        db.add(ContentOverride(kind=kind, item_id=item_id, data=None, deleted=True))
+    db.commit()
+    clear_cache()

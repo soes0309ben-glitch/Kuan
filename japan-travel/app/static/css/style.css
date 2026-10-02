@@ -692,6 +692,39 @@ img {
     margin: 30px 16px;
     padding: 24px;
   }
+
+  .admin-form {
+    padding: 20px;
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .admin-list-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-list-actions a.icon-btn,
+  .admin-list-actions button.icon-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .admin-quick-links .btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .main-nav a, .main-nav button {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+  }
 }
 
 /* Flight price reference */
@@ -862,6 +895,142 @@ img {
   color: var(--color-ink-soft);
   font-weight: 600;
   background: var(--color-bg);
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-quick-links {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.admin-list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 18px;
+  flex-wrap: wrap;
+}
+
+.admin-list-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-list-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-btn.danger {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.admin-form {
+  max-width: 640px;
+  background: var(--color-paper);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 40px;
+}
+
+.admin-form label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: var(--color-ink-soft);
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-line);
+  margin-bottom: 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.admin-form h3 {
+  color: var(--color-accent-dark);
+  margin-top: 28px;
+}
+
+.admin-form .hint {
+  font-size: 0.82rem;
+  color: var(--color-ink-soft);
+  margin-top: -6px;
+  margin-bottom: 14px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.admin-checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.admin-checkbox-label input {
+  width: auto !important;
+  margin-bottom: 0 !important;
+}
+
+.admin-submit {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 8px;
+}
+
+.attraction-reference {
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+
+.attraction-reference summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+}
+
+.attraction-reference-list {
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 0.82rem;
+  margin-top: 10px;
+  line-height: 1.6;
 }
 
 /* Beginner-guide ticker */
