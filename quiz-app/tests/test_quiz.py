@@ -100,7 +100,8 @@ def test_bank_needs_login_but_not_subscription(db, make_client):
     assert r.status_code == 200 and r.json()["total"] == 11
     # 免費會員看得到題目和選項，看不到答案
     assert all("answer" not in q and q["q"] for q in r.json()["questions"])
-    assert client.get("/api/bank/export.pdf").status_code == 200
+    # PDF 是訂閱會員專屬
+    assert client.get("/api/bank/export.pdf").status_code == 402
 
 
 def test_free_user_sees_answers_only_for_finished_combos(make_client):

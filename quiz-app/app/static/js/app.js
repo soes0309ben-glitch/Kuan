@@ -434,7 +434,7 @@
       <section class="panel paywall">
         <svg class="mascot small" viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg>
         <h2>📚 題庫總覽</h2>
-        <p>登入後就能<strong>免費</strong>瀏覽全部 <strong>${CONFIG.total}</strong> 題、篩選搜尋並匯出 PDF。</p>
+        <p>登入後就能<strong>免費</strong>瀏覽全部 <strong>${CONFIG.total}</strong> 題、篩選與搜尋；訂閱會員可看全部答案並匯出 PDF。</p>
         <a class="btn primary big" href="${loginUrl("/?view=bank")}">用 Google 帳號登入</a>
       </section>`;
   }
@@ -445,7 +445,7 @@
       <div class="sub-banner">
         <div>
           <b>🔓 訂閱解鎖全部答案與解說</b>
-          <p>每月 NT$${CONFIG.price_twd}，隨時可以取消。訂閱後題庫與 PDF 都會附上所有答案。</p>
+          <p>每月 NT$${CONFIG.price_twd}，隨時可以取消。訂閱後可看全部答案，並匯出含答案與解說的 PDF 題本。</p>
         </div>
         <button class="btn primary" id="subscribe">訂閱 NT$${CONFIG.price_twd} / 月</button>
       </div>`;
@@ -481,7 +481,9 @@
           <select id="f-diff"><option value="">全部難度</option>${opt(DIFF, bankFilters.difficulty, (k, v) => `${v.icon} ${v.name}`)}</select>
           <select id="f-type"><option value="">全部題型</option>${opt(TYPES, bankFilters.type, (k, v) => `${v.icon} ${v.name}`)}</select>
           <input id="f-q" class="text-input" placeholder="搜尋題目關鍵字" value="${esc(bankFilters.q)}">
-          <a class="btn primary" id="export">📄 匯出 PDF</a>
+          ${subscribed
+            ? `<a class="btn primary" id="export">📄 匯出 PDF</a>`
+            : `<button class="btn" id="export-locked" type="button">🔒 匯出 PDF（訂閱會員）</button>`}
         </div>
         <p class="hint" id="bank-count">載入中…</p>
         <ol class="bank-list"></ol>
@@ -490,6 +492,11 @@
       </section>`;
 
     bindSubscribe();
+    document.getElementById("export-locked")?.addEventListener("click", () => {
+      toast("匯出 PDF 是訂閱會員功能，訂閱後可下載含全部答案與解說的題本");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      document.getElementById("subscribe")?.focus();
+    });
     document.getElementById("portal")?.addEventListener("click", async () => {
       try {
         location.href = (await api("/api/billing/portal", {})).url;
@@ -501,7 +508,9 @@
     const query = () => new URLSearchParams(Object.entries(bankFilters).filter(([, v]) => v !== "")).toString();
     const updateExport = () => {
       const { page, ...rest } = bankFilters;
-      document.getElementById("export").href = `/api/bank/export.pdf?${new URLSearchParams(Object.entries(rest).filter(([, v]) => v))}`;
+      const link = document.getElementById("export");
+      if (!link) return;
+      link.href = `/api/bank/export.pdf?${new URLSearchParams(Object.entries(rest).filter(([, v]) => v))}`;
     };
 
     const draw = async () => {

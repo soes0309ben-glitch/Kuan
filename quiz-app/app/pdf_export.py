@@ -77,7 +77,6 @@ def _styles() -> dict[str, ParagraphStyle]:
         "emoji": ParagraphStyle("emoji", parent=base, fontSize=22, leading=30, spaceBefore=4, spaceAfter=2),
         "opt": ParagraphStyle("opt", parent=base, leftIndent=12),
         "ans": ParagraphStyle("ans", parent=base, backColor=SOFT, borderPadding=(4, 6, 4, 6), leftIndent=6, rightIndent=6, spaceBefore=6),
-        "locked": ParagraphStyle("locked", parent=base, fontSize=9, textColor=MUTED, spaceBefore=4),
     }
 
 
@@ -92,7 +91,7 @@ def _image(q: Question):
     return img
 
 
-def _question_block(n: int, q: Question, reveal: bool, s: dict) -> KeepTogether:
+def _question_block(n: int, q: Question, s: dict) -> KeepTogether:
     meta = f"{catalog.CATEGORIES[q.cat]}　｜　{DIFF_LABEL[q.difficulty]}　｜　{TYPE_LABEL[q.type]}"
     parts = [Paragraph(rich(meta), s["meta"]), Paragraph(rich(f"{n}. {q.q}"), s["q"])]
     if q.emoji:
@@ -105,25 +104,23 @@ def _question_block(n: int, q: Question, reveal: bool, s: dict) -> KeepTogether:
         parts += [Paragraph(rich(f"({letters[i]}) {o}"), s["opt"]) for i, o in enumerate(options)]
     if q.type in ("short", "qa"):
         parts.append(Paragraph(rich("作答：＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿"), s["opt"]))
-    if reveal:
-        if q.type == "short":
-            answer = "可接受：" + "／".join(q.accept or [])
-        elif options:
-            answer = f"({'ABCDEFGH'[options.index(q.answer)]}) {q.answer}"
-        else:
-            answer = catalog.correct_answer_text(q)
-        label = "參考答案" if q.type == "qa" else "答案"
-        text = f"<b>{label}</b>　{rich(answer)}"
-        if q.explain:
-            text += f"<br/>{rich(q.explain)}"
-        parts.append(Paragraph(text, s["ans"]))
+    if q.type == "short":
+        answer = "可接受：" + "／".join(q.accept or [])
+    elif options:
+        answer = f"({'ABCDEFGH'[options.index(q.answer)]}) {q.answer}"
     else:
-        parts.append(Paragraph(rich("🔒 答案為訂閱會員內容（挑戰完這個主題與難度也能看到）"), s["locked"]))
+        answer = catalog.correct_answer_text(q)
+    label = "參考答案" if q.type == "qa" else "答案"
+    text = f"<b>{label}</b>　{rich(answer)}"
+    if q.explain:
+        text += f"<br/>{rich(q.explain)}"
+    parts.append(Paragraph(text, s["ans"]))
     parts.append(Spacer(1, 12))
     return KeepTogether(parts)
 
 
-def build_pdf(questions: list[Question], *, reveal, owner: str, filters: str) -> bytes:
+def build_pdf(questions: list[Question], *, owner: str, filters: str) -> bytes:
+    """訂閱會員專屬：每題都附答案與解說。"""
     _fonts()
     s = _styles()
     buf = io.BytesIO()
@@ -146,7 +143,7 @@ def build_pdf(questions: list[Question], *, reveal, owner: str, filters: str) ->
         Paragraph(rich(f"{filters}・共 {len(questions)} 題・匯出時間 {now}"), s["sub"]),
         Spacer(1, 14),
     ]
-    story += [_question_block(i, q, reveal(q), s) for i, q in enumerate(questions, 1)]
+    story += [_question_block(i, q, s) for i, q in enumerate(questions, 1)]
     if not questions:
         story.append(Paragraph("沒有符合篩選條件的題目。", s["sub"]))
     doc.build(story, onFirstPage=footer, onLaterPages=footer)

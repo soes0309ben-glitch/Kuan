@@ -264,13 +264,16 @@ def export_pdf(
     user: User = Depends(require_user),
     db: Session = Depends(get_db),
 ):
+    # PDF 是訂閱會員專屬功能，內容一律附全部答案與解說
+    if not user.is_subscribed:
+        raise HTTPException(402, "匯出 PDF 需要訂閱會員，訂閱後即可下載含全部答案與解說的題本")
     rows = list(db.scalars(_bank_query(cat, difficulty, type, q).order_by(*ORDER)))
     labels = [
         catalog.CATEGORIES.get(cat, "全部主題"),
         pdf_export.DIFF_LABEL.get(difficulty, "全部難度"),
         pdf_export.TYPE_LABEL.get(type, "全部題型"),
     ] + ([f"關鍵字「{q}」"] if q else [])
-    pdf = pdf_export.build_pdf(rows, reveal=_answer_visible(user), owner=user.email, filters="・".join(labels))
+    pdf = pdf_export.build_pdf(rows, owner=user.email, filters="・".join(labels))
     filename = quote(f"知識大挑戰題庫_{datetime.now().strftime('%Y%m%d')}.pdf")
     return Response(
         pdf,
