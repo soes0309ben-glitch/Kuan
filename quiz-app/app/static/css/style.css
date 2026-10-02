@@ -26,6 +26,7 @@
   --c-riddle: #fff3b8;
   --c-animal: #ffe0d1;
   --c-trivia: #d9f3ff;
+  --c-language: #e9e1ff;
   --c-all: #ffc2d9;
 }
 @media (prefers-color-scheme: dark) {
@@ -47,7 +48,7 @@
     --bad-soft: #4d2832;
     --shadow: 0 4px 0 #22182a;
     --c-anime: #5a3048; --c-life: #26453c; --c-history: #4d3e26; --c-travel: #263e55;
-    --c-song: #3e3260; --c-riddle: #4c4526; --c-animal: #553a2e; --c-trivia: #24465a; --c-all: #6a3555;
+    --c-song: #3e3260; --c-riddle: #4c4526; --c-animal: #553a2e; --c-trivia: #24465a; --c-language: #3b3060; --c-all: #6a3555;
   }
 }
 
@@ -131,6 +132,7 @@ main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
 .cat-card[data-cat="riddle"] { --tint: var(--c-riddle); }
 .cat-card[data-cat="animal"] { --tint: var(--c-animal); }
 .cat-card[data-cat="trivia"] { --tint: var(--c-trivia); }
+.cat-card[data-cat="language"] { --tint: var(--c-language); }
 .cat-card[data-cat="all"] { --tint: var(--c-all); }
 .cat-icon {
   font-size: 1.8rem; width: 56px; height: 56px; display: grid; place-items: center;

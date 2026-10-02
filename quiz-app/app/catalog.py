@@ -17,14 +17,15 @@ CATEGORIES = {
     "riddle": "猜謎",
     "animal": "動物生活",
     "trivia": "冷知識",
+    "language": "語言",
 }
 MIXED = "all"  # 綜合挑戰：從所有主題出題
 TYPES = ("single", "image", "short", "qa")
 CHOICE_TYPES = ("single", "image")
 
 # 每次挑戰的題數與題型配比（不足時用其他題型補滿）
-QUESTIONS_PER_ATTEMPT = 10
-TYPE_MIX = {"single": 5, "image": 2, "short": 2, "qa": 1}
+QUESTIONS_PER_ATTEMPT = 30
+TYPE_MIX = {"single": 15, "image": 6, "short": 6, "qa": 3}
 
 
 class ImportError_(ValueError):

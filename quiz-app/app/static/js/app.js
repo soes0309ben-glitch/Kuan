@@ -3,7 +3,7 @@
   "use strict";
 
   const $app = document.getElementById("app");
-  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", all: "🎲" };
+  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", language: "🌏", all: "🎲" };
   const CAT_DESC = {
     anime: "日本動漫、吉卜力、經典角色",
     life: "健康、安全、節慶與日常",
@@ -12,6 +12,7 @@
     riddle: "字謎、腦筋急轉彎、成語圖謎",
     animal: "動物習性、冷知識、認動物",
     trivia: "顛覆常識的科學、歷史、生活冷知識",
+    language: "英日韓越馬泰，多國語言大考驗",
     all: "從所有主題隨機出題",
   };
   const DIFF = { easy: { name: "簡單", icon: "🌱" }, medium: { name: "中等", icon: "🌟" }, hard: { name: "困難", icon: "🔥" } };

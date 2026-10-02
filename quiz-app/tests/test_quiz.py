@@ -37,7 +37,8 @@ def test_questions_hide_answers(make_client):
     client, _ = make_client()
     aid = start(client).json()["attempt_id"]
     data = client.get(f"/api/attempts/{aid}").json()
-    assert len(data["questions"]) == 10
+    # 測試資料每格只有 11 題，不足 30 題時全部出
+    assert len(data["questions"]) == min(30, 11)
     for q in data["questions"]:
         assert "answer" not in q and "accept" not in q and "ref" not in q
         if q["img"]:
@@ -51,7 +52,7 @@ def test_one_attempt_per_category_and_difficulty(make_client):
     # 未完成前再按開始：回到同一場，不會換題
     assert start(client).json() == {"attempt_id": aid, "resumed": True}
     result = play_through(client, aid)
-    assert result["finished"] and result["score"] == 10
+    assert result["finished"] and result["score"] == result["total"]
     assert start(client).status_code == 409
     # 其他難度、其他主題仍可挑戰
     assert start(client, "anime", "hard").status_code == 200
@@ -294,8 +295,8 @@ def test_team_flow_and_ranking(make_client):
         if q["type"] == "qa":
             friend.post(f"/api/teams/{code}/self-grade", json={"question_id": q["id"], "score": 0})
     view = owner.get(f"/api/teams/{code}").json()
-    assert view["all_finished"] and [r["score"] for r in view["ranking"]] == [10, 0]
-    assert len(view["breakdown"]) == 10
+    assert view["all_finished"] and [r["score"] for r in view["ranking"]] == [view["total"], 0]
+    assert len(view["breakdown"]) == view["total"]
 
 
 def test_team_max_three_and_login_required(db, make_client):
