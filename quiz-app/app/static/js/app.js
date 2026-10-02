@@ -427,24 +427,30 @@
   /* ---------- 題庫總覽（訂閱制） ---------- */
   const bankFilters = { cat: "", difficulty: "", type: "", q: "", page: 1 };
 
-  function renderPaywall() {
-    const u = ME.user;
+  // 未登入：請先登入（瀏覽題庫免費，只需要登入）
+  function renderLoginPrompt() {
     $app.innerHTML = `
       <section class="panel paywall">
         <svg class="mascot small" viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg>
-        <h2>📚 題庫總覽・會員限定</h2>
-        <p>訂閱後可以瀏覽全部 <strong>${CONFIG.total}</strong> 題，依主題、難度、題型篩選，並匯出 PDF。</p>
-        <ul class="perks">
-          <li>💖 每月 NT$${CONFIG.price_twd}，隨時可以取消</li>
-          <li>🔍 搜尋與篩選所有題目</li>
-          <li>📄 一鍵匯出 PDF 題本</li>
-          <li>🎯 挑戰完成的組合，可看完整答案與解說</li>
-        </ul>
-        ${u
-          ? `<button class="btn primary big" id="subscribe">訂閱 NT$${CONFIG.price_twd} / 月</button>`
-          : `<a class="btn primary big" href="${loginUrl("/?view=bank")}">先用 Google 帳號登入</a>`}
-        <p class="hint">付款由 Stripe 安全處理，本站不會經手你的卡號。</p>
+        <h2>📚 題庫總覽</h2>
+        <p>登入後就能<strong>免費</strong>瀏覽全部 <strong>${CONFIG.total}</strong> 題、篩選搜尋並匯出 PDF。</p>
+        <a class="btn primary big" href="${loginUrl("/?view=bank")}">用 Google 帳號登入</a>
       </section>`;
+  }
+
+  // 免費會員在題庫上方看到的訂閱方案
+  function subscribeBanner() {
+    return `
+      <div class="sub-banner">
+        <div>
+          <b>🔓 訂閱解鎖全部答案與解說</b>
+          <p>每月 NT$${CONFIG.price_twd}，隨時可以取消。訂閱後題庫與 PDF 都會附上所有答案。</p>
+        </div>
+        <button class="btn primary" id="subscribe">訂閱 NT$${CONFIG.price_twd} / 月</button>
+      </div>`;
+  }
+
+  function bindSubscribe() {
     document.getElementById("subscribe")?.addEventListener("click", async (e) => {
       e.target.disabled = true;
       try {
@@ -457,15 +463,18 @@
   }
 
   async function renderBank() {
-    if (!ME.user?.subscribed) return renderPaywall();
+    if (!ME.user) return renderLoginPrompt();
+    const subscribed = ME.user.subscribed;
     const opt = (obj, sel, labelFn) => Object.entries(obj).map(([k, v]) => `<option value="${k}" ${sel === k ? "selected" : ""}>${labelFn(k, v)}</option>`).join("");
     $app.innerHTML = `
       <section class="panel bank">
         <div class="bank-head">
           <h2>📚 題庫總覽</h2>
-          <button class="link" id="portal">管理訂閱</button>
+          ${subscribed ? `<button class="link" id="portal">管理訂閱</button>` : ""}
         </div>
-        <p class="hint">🎯 已挑戰完成的「主題 × 難度」會顯示答案；還沒挑戰的先隱藏，避免先看答案。</p>
+        ${subscribed
+          ? `<p class="hint">💖 你是訂閱會員，可以看到全部答案與解說。</p>`
+          : subscribeBanner() + `<p class="hint">免費瀏覽所有題目；你已挑戰完成的「主題 × 難度」也會顯示答案。</p>`}
         <div class="filters">
           <select id="f-cat"><option value="">全部主題</option>${opt(CONFIG.categories, bankFilters.cat, (k, v) => `${CAT_ICON[k]} ${v}`)}</select>
           <select id="f-diff"><option value="">全部難度</option>${opt(DIFF, bankFilters.difficulty, (k, v) => `${v.icon} ${v.name}`)}</select>
@@ -479,7 +488,8 @@
         <p class="credits">圖片來源：Wikimedia Commons／Wikipedia（自由授權）。</p>
       </section>`;
 
-    document.getElementById("portal").addEventListener("click", async () => {
+    bindSubscribe();
+    document.getElementById("portal")?.addEventListener("click", async () => {
       try {
         location.href = (await api("/api/billing/portal", {})).url;
       } catch (e) {
@@ -499,13 +509,12 @@
       try {
         data = await api(`/api/bank?${query()}`);
       } catch (e) {
-        if (e.status === 402) return renderPaywall();
         return toast(e.message);
       }
       document.getElementById("bank-count").textContent = `共 ${data.total} 題・第 ${data.page} / ${data.pages} 頁`;
       $app.querySelector(".bank-list").innerHTML = data.questions.map((q) => {
         const answer = q.answer === undefined
-          ? `<p class="locked">🔒 挑戰完「${esc(catName(q.cat))}・${DIFF[q.difficulty].name}」後顯示答案</p>`
+          ? `<p class="locked">🔒 答案為訂閱會員內容<button class="link unlock">　訂閱解鎖 →</button></p>`
           : `<details><summary>看答案</summary><p>${esc(q.answer)}</p>${q.explain ? `<p class="ra">${esc(q.explain)}</p>` : ""}</details>`;
         return `<li>
           <div class="q-meta"><span class="badge">${TYPES[q.type].icon} ${TYPES[q.type].name}</span>
@@ -517,6 +526,10 @@
           ${answer}
         </li>`;
       }).join("");
+      $app.querySelectorAll(".unlock").forEach((b) => b.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        document.getElementById("subscribe")?.focus();
+      }));
       const pager = $app.querySelector(".pager");
       pager.innerHTML = data.pages > 1
         ? `<button class="btn" data-p="${data.page - 1}" ${data.page <= 1 ? "disabled" : ""}>← 上一頁</button>

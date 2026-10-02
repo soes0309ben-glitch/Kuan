@@ -217,14 +217,15 @@ def _bank_query(cat: str, difficulty: str, type: str, q: str):
     return stmt
 
 
-def _require_subscriber(user: User) -> None:
-    if not user.is_subscribed:
-        raise HTTPException(402, "題庫總覽需要訂閱才能觀看")
+def _answer_visible(user: User):
+    """題庫總覽登入即可免費瀏覽；答案是付費內容。
 
-
-def _played(user: User) -> set[tuple[str, str]]:
-    # 還沒挑戰完的「主題 × 難度」先不顯示答案，避免先看答案再去挑戰
-    return {(a.category, a.difficulty) for a in user.attempts if a.finished_at}
+    訂閱會員看得到全部答案；免費使用者只看得到自己已挑戰完的「主題 × 難度」（結果頁本來就會顯示）。
+    """
+    if user.is_subscribed:
+        return lambda q: True
+    played = {(a.category, a.difficulty) for a in user.attempts if a.finished_at}
+    return lambda q: (q.cat, q.difficulty) in played
 
 
 ORDER = (Question.cat, Question.difficulty, Question.id)
@@ -240,17 +241,17 @@ def bank(
     user: User = Depends(require_user),
     db: Session = Depends(get_db),
 ):
-    _require_subscriber(user)
     stmt = _bank_query(cat, difficulty, type, q)
     total = db.scalar(select(func.count()).select_from(stmt.subquery()))
     page_size = 30
     rows = db.scalars(stmt.order_by(*ORDER).offset((max(page, 1) - 1) * page_size).limit(page_size))
-    played = _played(user)
+    visible = _answer_visible(user)
     return {
         "total": total,
         "page": page,
         "pages": max(1, -(-total // page_size)),
-        "questions": [catalog.full_question(r, reveal=(r.cat, r.difficulty) in played) for r in rows],
+        "subscribed": user.is_subscribed,
+        "questions": [catalog.full_question(r, reveal=visible(r)) for r in rows],
     }
 
 
@@ -263,14 +264,13 @@ def export_pdf(
     user: User = Depends(require_user),
     db: Session = Depends(get_db),
 ):
-    _require_subscriber(user)
     rows = list(db.scalars(_bank_query(cat, difficulty, type, q).order_by(*ORDER)))
     labels = [
         catalog.CATEGORIES.get(cat, "全部主題"),
         pdf_export.DIFF_LABEL.get(difficulty, "全部難度"),
         pdf_export.TYPE_LABEL.get(type, "全部題型"),
     ] + ([f"關鍵字「{q}」"] if q else [])
-    pdf = pdf_export.build_pdf(rows, revealed=_played(user), owner=user.email, filters="・".join(labels))
+    pdf = pdf_export.build_pdf(rows, reveal=_answer_visible(user), owner=user.email, filters="・".join(labels))
     filename = quote(f"知識大挑戰題庫_{datetime.now().strftime('%Y%m%d')}.pdf")
     return Response(
         pdf,

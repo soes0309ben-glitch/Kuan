@@ -93,19 +93,28 @@ def test_short_answer_matching():
     assert not check_short("", ["明"])
 
 
-def test_bank_requires_subscription(make_client):
+def test_bank_needs_login_but_not_subscription(db, make_client):
+    assert TestClient(app).get("/api/bank").status_code == 401
     client, _ = make_client()
-    assert client.get("/api/bank").status_code == 402
-    assert client.get("/api/bank/export.pdf").status_code == 402
+    r = client.get("/api/bank?cat=anime&difficulty=easy")
+    assert r.status_code == 200 and r.json()["total"] == 11
+    # 免費會員看得到題目和選項，看不到答案
+    assert all("answer" not in q and q["q"] for q in r.json()["questions"])
+    assert client.get("/api/bank/export.pdf").status_code == 200
 
 
-def test_bank_reveals_only_played_combos(make_client):
-    client, _ = make_client(subscribed=True)
-    data = client.get("/api/bank?cat=anime&difficulty=easy").json()
-    assert data["total"] == 11 and all("answer" not in q for q in data["questions"])
+def test_free_user_sees_answers_only_for_finished_combos(make_client):
+    client, _ = make_client()
     play_through(client, start(client).json()["attempt_id"])
     assert all("answer" in q for q in client.get("/api/bank?cat=anime&difficulty=easy").json()["questions"])
     assert all("answer" not in q for q in client.get("/api/bank?cat=anime&difficulty=hard").json()["questions"])
+
+
+def test_subscriber_sees_all_answers(make_client):
+    client, _ = make_client(subscribed=True)
+    data = client.get("/api/bank").json()
+    assert data["subscribed"] and data["questions"]
+    assert all("answer" in q for q in data["questions"])
 
 
 def test_pdf_export(make_client):

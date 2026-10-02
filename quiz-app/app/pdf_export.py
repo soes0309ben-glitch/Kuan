@@ -118,12 +118,12 @@ def _question_block(n: int, q: Question, reveal: bool, s: dict) -> KeepTogether:
             text += f"<br/>{rich(q.explain)}"
         parts.append(Paragraph(text, s["ans"]))
     else:
-        parts.append(Paragraph(rich("🔒 挑戰完成這個主題與難度後，才會附上答案"), s["locked"]))
+        parts.append(Paragraph(rich("🔒 答案為訂閱會員內容（挑戰完這個主題與難度也能看到）"), s["locked"]))
     parts.append(Spacer(1, 12))
     return KeepTogether(parts)
 
 
-def build_pdf(questions: list[Question], *, revealed: set[tuple[str, str]], owner: str, filters: str) -> bytes:
+def build_pdf(questions: list[Question], *, reveal, owner: str, filters: str) -> bytes:
     _fonts()
     s = _styles()
     buf = io.BytesIO()
@@ -146,7 +146,7 @@ def build_pdf(questions: list[Question], *, revealed: set[tuple[str, str]], owne
         Paragraph(rich(f"{filters}・共 {len(questions)} 題・匯出時間 {now}"), s["sub"]),
         Spacer(1, 14),
     ]
-    story += [_question_block(i, q, (q.cat, q.difficulty) in revealed, s) for i, q in enumerate(questions, 1)]
+    story += [_question_block(i, q, reveal(q), s) for i, q in enumerate(questions, 1)]
     if not questions:
         story.append(Paragraph("沒有符合篩選條件的題目。", s["sub"]))
     doc.build(story, onFirstPage=footer, onLaterPages=footer)
