@@ -358,7 +358,7 @@ def _answer_all(client, slug, pick_index, n=0):
 def test_psych_list_and_no_scores_leaked(db):
     c = TestClient(app)
     tests = c.get("/api/psych").json()["tests"]
-    assert {t["slug"] for t in tests} == {"lovebrain", "lovetype", "animal", "type16", "match", "career", "psychopath"}
+    assert {t["slug"] for t in tests} == {"lovebrain", "lovetype", "animal", "type16", "match", "career", "psychopath", "taiwan"}
     t = c.get("/api/psych/lovebrain?n=10").json()
     assert len(t["questions"]) == 10 and all(isinstance(o, str) for q in t["questions"] for o in q["options"])
 
@@ -408,3 +408,21 @@ def test_psych_save_share_and_match(make_client):
                 "answers": [{"q": q["id"], "o": 0} for q in t["questions"]]}).json()
     assert rb["partner"]["compat"] >= 90  # 答案完全相同，默契很高
     assert len(b.get("/api/psych/me/results").json()["results"]) == 1
+
+
+def test_psych_illust_admin_only_and_limit(make_client):
+    user, _ = make_client("u@example.com")
+    assert user.post("/api/admin/psych-illust", json={"slug": "taiwan", "data_url": PNG_1PX}).status_code == 403
+    admin, _ = make_client("admin@example.com")
+    slugs = ["lovebrain", "lovetype", "animal", "type16", "match"]
+    for slug in slugs:
+        assert admin.post("/api/admin/psych-illust", json={"slug": slug, "data_url": PNG_1PX}).status_code == 200
+    # 第 6 張超過免費上限
+    assert admin.post("/api/admin/psych-illust", json={"slug": "career", "data_url": PNG_1PX}).status_code == 409
+    # 替換既有的不算新增
+    assert admin.post("/api/admin/psych-illust", json={"slug": "match", "data_url": PNG_1PX}).status_code == 200
+    tests = {t["slug"]: t for t in TestClient(app).get("/api/psych").json()["tests"]}
+    assert tests["lovebrain"]["illust"].startswith("/api/psych/illust/lovebrain") and tests["career"]["illust"] is None
+    assert TestClient(app).get("/api/psych/illust/lovebrain").headers["content-type"] == "image/png"
+    admin.post("/api/admin/psych-illust/delete", json={"slug": "match"})
+    assert admin.post("/api/admin/psych-illust", json={"slug": "career", "data_url": PNG_1PX}).status_code == 200

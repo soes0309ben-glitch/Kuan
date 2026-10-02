@@ -167,3 +167,14 @@ class PsychResult(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     user: Mapped[User | None] = relationship()
+
+
+class PsychIllust(Base):
+    """心理測驗插畫（例如 shigureni free illust）。存在資料庫，不放進公開的 git repo。"""
+
+    __tablename__ = "quiz_psych_illusts"
+
+    slug: Mapped[str] = mapped_column(String(20), primary_key=True)
+    mime: Mapped[str] = mapped_column(String(20))
+    data: Mapped[bytes] = mapped_column(LargeBinary)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

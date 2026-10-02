@@ -86,9 +86,9 @@ class AvatarBody(BaseModel):
     data_url: str
 
 
-@router.post("/avatar", dependencies=[Depends(require_json)])
-def upload_avatar(body: AvatarBody, user: User = Depends(require_user), db: Session = Depends(get_db)):
-    header, _, encoded = body.data_url.partition(",")
+def decode_image(data_url: str, max_bytes: int) -> tuple[str, bytes]:
+    """解析 data URL，只接受 PNG／JPEG／WebP，並用檔頭確認真的是圖片。"""
+    header, _, encoded = data_url.partition(",")
     mime = header.removeprefix("data:").removesuffix(";base64")
     if mime not in IMAGE_SIGNATURES or not header.endswith(";base64"):
         raise HTTPException(400, "只支援 PNG、JPEG、WebP 圖片")
@@ -96,10 +96,16 @@ def upload_avatar(body: AvatarBody, user: User = Depends(require_user), db: Sess
         data = base64.b64decode(encoded, validate=True)
     except (binascii.Error, ValueError):
         raise HTTPException(400, "圖片資料格式錯誤")
-    if len(data) > MAX_AVATAR_BYTES:
+    if len(data) > max_bytes:
         raise HTTPException(400, "圖片太大了，請選小一點的圖片")
     if not data.startswith(IMAGE_SIGNATURES[mime]) or (mime == "image/webp" and data[8:12] != b"WEBP"):
         raise HTTPException(400, "檔案內容不是有效的圖片")
+    return mime, data
+
+
+@router.post("/avatar", dependencies=[Depends(require_json)])
+def upload_avatar(body: AvatarBody, user: User = Depends(require_user), db: Session = Depends(get_db)):
+    mime, data = decode_image(body.data_url, MAX_AVATAR_BYTES)
     profile = get_profile(db, user)
     profile.avatar_data = data
     profile.avatar_mime = mime

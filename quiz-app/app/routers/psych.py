@@ -4,13 +4,14 @@ import random
 import secrets
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.dependencies import get_current_user, require_json, require_user
-from app.models import Profile, PsychResult, User
+from app.models import Profile, PsychIllust, PsychResult, User
 from app.psych_data import DISCLAIMER, TESTS
 
 router = APIRouter(prefix="/api/psych")
@@ -23,19 +24,38 @@ def _test(slug: str) -> dict:
     return test
 
 
+def _illusts(db: Session) -> dict[str, int]:
+    """有插畫的測驗與更新時間（當作快取版本號）。"""
+    return {i.slug: int(i.updated_at.timestamp()) if i.updated_at else 0 for i in db.scalars(select(PsychIllust))}
+
+
+def _illust_url(slug: str, illusts: dict) -> str | None:
+    return f"/api/psych/illust/{slug}?v={illusts[slug]}" if slug in illusts else None
+
+
 @router.get("")
-def list_tests():
+def list_tests(db: Session = Depends(get_db)):
+    illusts = _illusts(db)
     return {
         "tests": [
             {"slug": slug, "title": t["title"], "subtitle": t["subtitle"], "emoji": t["emoji"],
-             "theme": t["theme"], "count": len(t["questions"])}
+             "theme": t["theme"], "count": len(t["questions"]), "illust": _illust_url(slug, illusts)}
             for slug, t in TESTS.items()
         ]
     }
 
 
+@router.get("/illust/{slug}")
+def illust(slug: str, db: Session = Depends(get_db)):
+    item = db.get(PsychIllust, slug)
+    if not item:
+        raise HTTPException(404)
+    return Response(item.data, media_type=item.mime,
+                    headers={"Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff"})
+
+
 @router.get("/{slug}")
-def get_test(slug: str, n: int = 0, seed: int | None = None):
+def get_test(slug: str, n: int = 0, seed: int | None = None, db: Session = Depends(get_db)):
     """n=0 代表全部題目；其他數字代表隨機抽 n 題。選項只給文字，計分留在伺服器。"""
     test = _test(slug)
     questions = list(test["questions"])
@@ -62,6 +82,7 @@ def get_test(slug: str, n: int = 0, seed: int | None = None):
         "disclaimer": DISCLAIMER,
         "total": len(test["questions"]),
         "axes": test.get("axes"),
+        "illust": _illust_url(slug, _illusts(db)),
         "questions": [{"id": q["id"], "q": q["q"], "options": [o["t"] for o in q["options"]]} for q in questions],
     }
 
@@ -167,7 +188,7 @@ def submit(slug: str, body: SubmitBody, user: User | None = Depends(get_current_
         db.add(saved)
         db.commit()
         result["code"] = saved.code
-    return result
+    return {**result, "illust": _illust_url(slug, _illusts(db))}
 
 
 @router.get("/r/{code}")
@@ -176,7 +197,7 @@ def shared_result(code: str, db: Session = Depends(get_db)):
     r = db.scalar(select(PsychResult).where(PsychResult.code == code))
     if not r:
         raise HTTPException(404, "找不到這個測驗結果")
-    return {**r.result, "code": r.code, "owner": _owner_name(db, r)}
+    return {**r.result, "code": r.code, "owner": _owner_name(db, r), "illust": _illust_url(r.slug, _illusts(db))}
 
 
 @router.get("/me/results")

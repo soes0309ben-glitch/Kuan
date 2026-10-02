@@ -826,12 +826,13 @@
       </section>
       <section class="psy-grid">${tests.map((t) => `
         <button class="psy-card theme-${t.theme}" data-slug="${t.slug}">
-          <span class="psy-emoji">${t.emoji}</span>
+          ${t.illust ? `<img class="psy-illust-thumb" src="${esc(t.illust)}" alt="">` : `<span class="psy-emoji">${t.emoji}</span>`}
           <b>${esc(t.title)}</b>
           <small>${esc(t.subtitle)}</small>
           <span class="psy-count">題庫 ${t.count} 題</span>
         </button>`).join("")}
       </section>
+      ${tests.some((t) => t.illust) ? `<p class="credits">插畫：<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
       ${mine.results.length ? `
       <section class="panel psy-history">
         <h3>📒 我的測驗紀錄</h3>
@@ -850,7 +851,7 @@
     $app.innerHTML = `
       <section class="panel psy-intro theme-${t.theme}">
         <button class="link back-psy">← 所有心理測驗</button>
-        <div class="psy-cover">${t.emoji}</div>
+        ${t.illust ? `<img class="psy-illust" src="${esc(t.illust)}" alt="">` : `<div class="psy-cover">${t.emoji}</div>`}
         <h2>${esc(t.title)}</h2>
         <p class="psy-sub">${esc(t.subtitle)}</p>
         ${partner ? `<div class="invite">💌 <b>${esc(partner.owner)}</b> 邀請你來測默契！完成後就能看到你們的默契指數。</div>` : ""}
@@ -858,6 +859,7 @@
         <fieldset><legend>題數</legend><div class="chips">${counts.map((n, i) => `<label class="chip"><input type="radio" name="psy-n" value="${n}" ${i === 0 ? "checked" : ""}> ${n ? `隨機 ${n} 題` : `全部 ${t.total} 題`}</label>`).join("")}</div></fieldset>
         <p class="hint">⚠️ ${esc(t.disclaimer)}${ME.user ? "" : " 登入後結果會保存，並可產生分享連結。"}</p>
         <button class="btn primary big" id="psy-start">開始測驗</button>
+        ${t.illust ? `<p class="credits">插畫：<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
       </section>`;
     $app.querySelector(".back-psy").addEventListener("click", () => go("psych"));
     document.getElementById("psy-start").addEventListener("click", async () => {
@@ -958,6 +960,7 @@
       <section class="panel psy-result theme-${r.theme}" style="--psy-bg:${pal.bg};--psy-accent:${pal.accent}">
         <button class="link back-psy">← 所有心理測驗</button>
         <p class="psy-sub">${esc(r.title)}${shared && r.owner ? `・${esc(r.owner)} 的結果` : ""}</p>
+        ${r.illust ? `<img class="psy-illust small" src="${esc(r.illust)}" alt="">` : ""}
         ${main}
         ${r.axes && r.axes.length >= 3 ? radarSvg(r.axes, pal.accent) : ""}
         ${r.axes ? `<div class="psy-bars">${r.axes.map((a) => `<div class="psy-bar"><span>${esc(a.name)}</span><div><i style="width:${a.pct}%"></i></div><b>${a.pct}%</b></div>`).join("")}</div>` : ""}
@@ -971,6 +974,7 @@
           <button class="btn" id="retry">${shared ? "我也要測" : "再測一次"}</button>
         </div>
         <p class="hint">⚠️ 本測驗僅供娛樂與自我探索，不是醫學、心理學或專業的診斷。</p>
+        ${r.illust ? `<p class="credits">插畫：<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
       </section>`;
     const canvas = document.getElementById("pixel-card");
     drawPixelCard(canvas, r, pal);
@@ -1241,6 +1245,9 @@
         <h3>匯入題庫</h3>
         <p class="hint">選擇題庫 JSON 檔（可多選）。相同主題＋題目會更新，新的會新增，不會刪除舊題。</p>
         <input type="file" id="import-file" accept=".json,application/json" multiple>
+        <h3>心理測驗插畫</h3>
+        <p class="hint">可放 shigureni free illust 等授權插畫，每個測驗一張，最多 5 張（商用免費上限）。插畫存在資料庫，不會進 git。</p>
+        <div id="illust-admin" class="illust-admin">載入中…</div>
         <h3>重設某人的挑戰</h3>
         <form id="reset-form" class="filters">
           <input class="text-input" name="email" placeholder="使用者 Email" required>
@@ -1249,6 +1256,41 @@
           <button class="btn" type="submit">重設</button>
         </form>
       </section>`;
+    const drawIllusts = async () => {
+      const { tests } = await api("/api/psych");
+      const used = tests.filter((t) => t.illust).length;
+      const box = document.getElementById("illust-admin");
+      box.innerHTML = `<p class="hint">已使用 ${used} / 5 張</p>` + tests.map((t) => `
+        <div class="illust-row">
+          ${t.illust ? `<img src="${esc(t.illust)}" alt="">` : `<span class="psy-emoji">${t.emoji}</span>`}
+          <b>${esc(t.title)}</b>
+          <label class="btn">${t.illust ? "更換" : "上傳"}<input type="file" accept="image/png,image/jpeg,image/webp" data-slug="${t.slug}" hidden></label>
+          ${t.illust ? `<button class="btn" data-del="${t.slug}">移除</button>` : ""}
+        </div>`).join("");
+      box.querySelectorAll("input[type=file]").forEach((inp) => inp.addEventListener("change", async () => {
+        const file = inp.files[0];
+        if (!file) return;
+        if (file.size > 1024 * 1024) return toast("插畫請小於 1MB");
+        const dataUrl = await new Promise((res, rej) => {
+          const fr = new FileReader();
+          fr.onload = () => res(fr.result);
+          fr.onerror = rej;
+          fr.readAsDataURL(file);
+        });
+        try {
+          await api("/api/admin/psych-illust", { slug: inp.dataset.slug, data_url: dataUrl });
+          toast("插畫已上傳");
+        } catch (err) {
+          toast(err.message);
+        }
+        drawIllusts();
+      }));
+      box.querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", async () => {
+        await api("/api/admin/psych-illust/delete", { slug: b.dataset.del });
+        drawIllusts();
+      }));
+    };
+    drawIllusts();
     document.getElementById("import-file").addEventListener("change", async (e) => {
       try {
         let items = [];
