@@ -152,3 +152,18 @@ class TeamAnswer(Base):
     answered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     member: Mapped[TeamMember] = relationship(back_populates="answers")
+
+
+class PsychResult(Base):
+    """心理測驗結果（登入使用者才保存），code 用於分享連結與默契配對。"""
+
+    __tablename__ = "quiz_psych_results"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    code: Mapped[str] = mapped_column(String(16), unique=True, index=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("quiz_users.id"), index=True, nullable=True)
+    slug: Mapped[str] = mapped_column(String(20))
+    result: Mapped[dict] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    user: Mapped[User | None] = relationship()

@@ -515,6 +515,69 @@ details p { margin: 4px 0; }
 .breakdown td:first-child, .breakdown th:first-child { text-align: left; }
 .breakdown .rq, .breakdown .ra { display: block; }
 
+/* ---------- 心理測驗 ---------- */
+.psy-hero { text-align: center; padding: 8px 0 4px; }
+.psy-hero h1 { margin: 0; color: var(--accent-deep); font-size: clamp(1.8rem, 6vw, 2.6rem); }
+.psy-hero p { color: var(--muted); margin: 6px 0 0; }
+.psy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin: 20px 0; }
+.psy-card {
+  display: grid; justify-items: start; gap: 4px; text-align: left; padding: 18px; cursor: pointer;
+  border-radius: var(--radius); border: 3px solid var(--surface); box-shadow: var(--shadow); background: var(--c-anime);
+  transition: transform .15s;
+}
+.psy-card:hover { transform: translateY(-4px); }
+.psy-card.theme-love { background: var(--c-anime); } .psy-card.theme-nature { background: var(--c-life); }
+.psy-card.theme-cool { background: var(--c-travel); } .psy-card.theme-sunny { background: var(--c-riddle); }
+.psy-card.theme-dark { background: #3a2140; color: #ffe1ee; }
+.psy-card.theme-dark small { color: #e6b8cc; }
+.psy-emoji { font-size: 2rem; width: 56px; height: 56px; display: grid; place-items: center; background: var(--surface); border-radius: 50%; }
+.psy-card small { color: var(--muted); }
+.psy-count { font-size: .78rem; font-weight: 700; background: var(--surface); color: var(--accent-deep); padding: 2px 10px; border-radius: 999px; margin-top: 6px; }
+.psy-history ul { list-style: none; padding: 0; margin: 0; }
+.psy-history li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 2px dotted var(--line); }
+.psy-history a { color: var(--text); text-decoration: none; font-weight: 700; }
+.psy-history small { color: var(--muted); white-space: nowrap; }
+.psy-cover { font-size: 4rem; text-align: center; animation: bob 3s ease-in-out infinite; }
+.psy-intro h2, .psy-intro .psy-sub { text-align: center; }
+.psy-sub { color: var(--muted); margin: 0 0 12px; }
+.psy-options { display: grid; gap: 10px; }
+.psy-option {
+  text-align: left; padding: 16px 18px; border-radius: 20px; border: 3px solid var(--line); background: var(--surface);
+  font-size: 1.02rem; font-weight: 500; cursor: pointer; transition: transform .12s, border-color .12s;
+}
+.psy-option:hover { border-color: var(--accent); transform: translateX(4px); }
+.psy-option.picked { border-color: var(--accent); background: var(--accent-soft); }
+.psy-back { margin-top: 14px; }
+.psy-result { --psy-bg: var(--accent-soft); --psy-accent: var(--accent); }
+.psy-index { display: grid; justify-items: center; gap: 4px; margin: 10px 0; text-align: center; }
+.psy-index .big { font-size: 3.6rem; font-weight: 900; color: var(--psy-accent); line-height: 1; }
+.psy-index .big.code { letter-spacing: .15em; }
+.psy-index .big small { font-size: 1.4rem; }
+.psy-typebox { display: flex; gap: 14px; align-items: flex-start; background: var(--psy-bg); border-radius: 20px; padding: 14px 16px; margin: 10px 0; color: var(--text); }
+.psy-result.theme-dark .psy-typebox { color: #ffe1ee; }
+.psy-typebox > span { font-size: 2.4rem; line-height: 1; }
+.psy-typebox small { color: var(--muted); font-weight: 700; }
+.psy-result.theme-dark .psy-typebox small { color: #ffb8cf; }
+.psy-typebox b { display: block; font-size: 1.25rem; }
+.psy-typebox p { margin: 4px 0 0; }
+.psy-typebox.big > span { font-size: 3.2rem; }
+.careers { font-size: .9rem; }
+.radar { display: block; width: min(320px, 100%); margin: 8px auto; }
+.radar-grid { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.radar-label { font-size: 11px; font-weight: 700; fill: var(--text); }
+.psy-bars { display: grid; gap: 8px; margin: 8px 0 18px; }
+.psy-bar { display: grid; grid-template-columns: 6.5em 1fr 3em; align-items: center; gap: 8px; font-size: .9rem; }
+.psy-bar > div { height: 12px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.psy-bar i { display: block; height: 100%; background: var(--psy-accent); border-radius: 99px; }
+.dims { display: grid; gap: 10px; margin: 12px 0; }
+.dim { display: grid; grid-template-columns: 5.5em 1fr 5.5em; align-items: center; gap: 8px; font-size: .9rem; color: var(--muted); }
+.dim span:last-child { text-align: right; }
+.dim .on { color: var(--accent-deep); font-weight: 900; }
+.dim-bar { height: 12px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.dim-bar div { height: 100%; background: var(--psy-accent); }
+.pixel-wrap { display: grid; place-items: center; background: var(--surface-2); border-radius: 20px; padding: 14px; }
+.pixel-wrap canvas { width: min(300px, 100%); height: auto; image-rendering: pixelated; border-radius: 6px; box-shadow: var(--shadow); }
+
 @media (max-width: 520px) {
   .account .who { display: none; }
   .nav-links { gap: 2px; }

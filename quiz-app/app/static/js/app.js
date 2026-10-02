@@ -309,7 +309,7 @@
   function go(view) {
     history.replaceState(null, "", view === "home" ? "/" : `/?view=${view}`);
     closeMenu();
-    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams }[view] || renderHome)();
+    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams, psych: renderPsychList }[view] || renderHome)();
     window.scrollTo(0, 0);
   }
 
@@ -786,6 +786,306 @@
     if (t.all_finished && t.ranking.find((r) => r.user_id === t.me)?.score === t.ranking[0]?.score) confetti();
   }
 
+  /* ---------- 心理測驗 ---------- */
+  const PSY_THEMES = {
+    love: { bg: "#ffe3ee", dot: "#ffc8dc", card: "#fff7fa", ink: "#7a3253", accent: "#ff6fa3", soft: "#ffd1e2" },
+    nature: { bg: "#e3f6e9", dot: "#c6ecd2", card: "#f7fff9", ink: "#2f6b4f", accent: "#3fbf8f", soft: "#c9f0da" },
+    cool: { bg: "#e4efff", dot: "#c9ddfb", card: "#f7faff", ink: "#34507a", accent: "#5b8def", soft: "#d3e3fd" },
+    sunny: { bg: "#fff3cf", dot: "#ffe39a", card: "#fffbef", ink: "#7a5a12", accent: "#f2a900", soft: "#ffe9a8" },
+    dark: { bg: "#3a2140", dot: "#4d2b55", card: "#4a2a50", ink: "#ffe1ee", accent: "#ff5c8a", soft: "#6b3a72" },
+  };
+
+  // 等級越高，畫面越「濃」：戀愛腦越粉、心理變態越暗紅
+  function psyPalette(r) {
+    const p = { ...PSY_THEMES[r.theme] || PSY_THEMES.love };
+    if (r.kind === "index" && r.level_no) {
+      const t = (r.level_no - 1) / Math.max(1, r.levels - 1);
+      if (r.theme === "dark") {
+        p.bg = mix("#3a2140", "#5c0f24", t); p.dot = mix("#4d2b55", "#7a1530", t); p.card = mix("#4a2a50", "#3b0b18", t);
+        p.accent = mix("#ff8fb1", "#ff2a55", t);
+      } else {
+        p.bg = mix("#fff0f5", "#ff9ec4", t); p.dot = mix("#ffd9e6", "#ff7fb0", t); p.accent = mix("#ff8fb8", "#ff2d7a", t);
+      }
+    }
+    return p;
+  }
+  function mix(a, b, t) {
+    const pa = a.match(/\w\w/g).map((h) => parseInt(h, 16)), pb = b.match(/\w\w/g).map((h) => parseInt(h, 16));
+    return "#" + pa.map((v, i) => Math.round(v + (pb[i] - v) * t).toString(16).padStart(2, "0")).join("");
+  }
+
+  async function renderPsychList() {
+    const [{ tests }, mine] = await Promise.all([
+      api("/api/psych"),
+      ME.user ? api("/api/psych/me/results").catch(() => ({ results: [] })) : Promise.resolve({ results: [] }),
+    ]);
+    $app.innerHTML = `
+      <section class="psy-hero">
+        <h1>🔮 心理測驗</h1>
+        <p>沒有對錯、可以一直重測！憑直覺作答，結果還能做成可愛像素圖分享給朋友。</p>
+      </section>
+      <section class="psy-grid">${tests.map((t) => `
+        <button class="psy-card theme-${t.theme}" data-slug="${t.slug}">
+          <span class="psy-emoji">${t.emoji}</span>
+          <b>${esc(t.title)}</b>
+          <small>${esc(t.subtitle)}</small>
+          <span class="psy-count">題庫 ${t.count} 題</span>
+        </button>`).join("")}
+      </section>
+      ${mine.results.length ? `
+      <section class="panel psy-history">
+        <h3>📒 我的測驗紀錄</h3>
+        <ul>${mine.results.map((r) => `<li><a href="#" data-code="${esc(r.code)}">${esc(r.title)}：${r.type ? `${r.type.emoji || ""} ${esc(r.type.name)}` : ""}${r.index != null ? `（${r.index}%）` : ""}</a><small>${new Date(r.created_at).toLocaleDateString("zh-TW")}</small></li>`).join("")}</ul>
+      </section>` : ""}`;
+    $app.querySelectorAll(".psy-card").forEach((b) => b.addEventListener("click", () => renderPsychIntro(b.dataset.slug)));
+    $app.querySelectorAll(".psy-history a").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); renderPsychShared(a.dataset.code); }));
+  }
+
+  async function renderPsychIntro(slug, withCode) {
+    history.replaceState(null, "", `/?psych=${slug}${withCode ? `&with=${encodeURIComponent(withCode)}` : ""}`);
+    const t = await api(`/api/psych/${slug}?n=0`);
+    let partner = null;
+    if (withCode) partner = await api(`/api/psych/r/${encodeURIComponent(withCode)}`).catch(() => null);
+    const counts = t.total > 12 ? [12, 0] : [0];
+    $app.innerHTML = `
+      <section class="panel psy-intro theme-${t.theme}">
+        <button class="link back-psy">← 所有心理測驗</button>
+        <div class="psy-cover">${t.emoji}</div>
+        <h2>${esc(t.title)}</h2>
+        <p class="psy-sub">${esc(t.subtitle)}</p>
+        ${partner ? `<div class="invite">💌 <b>${esc(partner.owner)}</b> 邀請你來測默契！完成後就能看到你們的默契指數。</div>` : ""}
+        <p>${esc(t.intro)}</p>
+        <fieldset><legend>題數</legend><div class="chips">${counts.map((n, i) => `<label class="chip"><input type="radio" name="psy-n" value="${n}" ${i === 0 ? "checked" : ""}> ${n ? `隨機 ${n} 題` : `全部 ${t.total} 題`}</label>`).join("")}</div></fieldset>
+        <p class="hint">⚠️ ${esc(t.disclaimer)}${ME.user ? "" : " 登入後結果會保存，並可產生分享連結。"}</p>
+        <button class="btn primary big" id="psy-start">開始測驗</button>
+      </section>`;
+    $app.querySelector(".back-psy").addEventListener("click", () => go("psych"));
+    document.getElementById("psy-start").addEventListener("click", async () => {
+      const n = Number($app.querySelector("input[name=psy-n]:checked").value);
+      const test = n ? await api(`/api/psych/${slug}?n=${n}`) : t;
+      runPsych(test, withCode);
+    });
+  }
+
+  function runPsych(test, withCode) {
+    const state = { test, idx: 0, answers: [] };
+    const draw = () => {
+      const q = test.questions[state.idx];
+      $app.innerHTML = `
+        <section class="panel psy-q theme-${test.theme}">
+          <header class="quiz-head">
+            <button class="link quit">✕ 離開</button><span>${test.emoji} ${esc(test.title)}</span><span class="q-count">${state.idx + 1} / ${test.questions.length}</span>
+          </header>
+          <div class="progress"><div style="width:${(state.idx / test.questions.length) * 100}%"></div></div>
+          <h2 class="q-text">${esc(q.q)}</h2>
+          <div class="psy-options">${q.options.map((o, i) => `<button class="psy-option" data-i="${i}">${esc(o)}</button>`).join("")}</div>
+          ${state.idx ? `<button class="link psy-back">← 上一題</button>` : ""}
+        </section>`;
+      $app.querySelector(".quit").addEventListener("click", () => go("psych"));
+      $app.querySelector(".psy-back")?.addEventListener("click", () => { state.idx--; state.answers.pop(); draw(); });
+      $app.querySelectorAll(".psy-option").forEach((b) => b.addEventListener("click", async () => {
+        b.classList.add("picked");
+        sound.tick();
+        state.answers.push({ q: q.id, o: Number(b.dataset.i) });
+        await new Promise((r) => setTimeout(r, 180));
+        if (++state.idx < test.questions.length) return draw();
+        $app.innerHTML = `<section class="panel psy-q theme-${test.theme}"><div class="suspense">分析中<span>.</span><span>.</span><span>.</span></div></section>`;
+        try {
+          const [result] = await Promise.all([
+            api(`/api/psych/${test.slug}/submit`, { answers: state.answers, with_code: withCode || null }),
+            new Promise((r) => setTimeout(r, 1200)),
+          ]);
+          renderPsychResult(result);
+        } catch (err) {
+          toast(err.message);
+          go("psych");
+        }
+      }));
+    };
+    draw();
+  }
+
+  async function renderPsychShared(code) {
+    history.replaceState(null, "", `/?psych_result=${encodeURIComponent(code)}`);
+    try {
+      renderPsychResult(await api(`/api/psych/r/${encodeURIComponent(code)}`), true);
+    } catch (e) {
+      $app.innerHTML = `<section class="panel"><h2>找不到測驗結果</h2><p>${esc(e.message)}</p></section>`;
+    }
+  }
+
+  function radarSvg(axes, color) {
+    const n = axes.length, R = 90, cx = 130, cy = 120;
+    const pt = (i, v) => {
+      const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+      return [cx + Math.cos(a) * R * v, cy + Math.sin(a) * R * v];
+    };
+    const ring = (v) => axes.map((_, i) => pt(i, v).join(",")).join(" ");
+    return `<svg class="radar" viewBox="0 0 260 240" role="img" aria-label="特性雷達圖">
+      ${[0.25, 0.5, 0.75, 1].map((v) => `<polygon points="${ring(v)}" class="radar-grid"/>`).join("")}
+      ${axes.map((_, i) => `<line x1="${cx}" y1="${cy}" x2="${pt(i, 1)[0]}" y2="${pt(i, 1)[1]}" class="radar-grid"/>`).join("")}
+      <polygon points="${axes.map((a, i) => pt(i, Math.max(0.04, a.pct / 100)).join(",")).join(" ")}" fill="${color}" fill-opacity=".35" stroke="${color}" stroke-width="2.5"/>
+      ${axes.map((a, i) => { const [x, y] = pt(i, 1.22); return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" class="radar-label">${esc(a.name)}</text>`; }).join("")}
+    </svg>`;
+  }
+
+  function renderPsychResult(r, shared = false) {
+    const pal = psyPalette(r);
+    if (r.code && !shared) history.replaceState(null, "", `/?psych_result=${encodeURIComponent(r.code)}`);
+    const shareUrl = r.code ? `${location.origin}/?psych_result=${encodeURIComponent(r.code)}` : "";
+    let main = "";
+    if (r.kind === "index") {
+      main = `<div class="psy-index"><span class="big">${r.index}<small>%</small></span><b>${r.level.emoji} ${esc(r.level.name)}</b></div>
+              <p>${esc(r.level.desc)}</p>
+              <div class="psy-typebox"><span>${r.type.emoji}</span><div><small>你的類型</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>`;
+    } else if (r.kind === "dimension") {
+      main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${esc(r.type_key)}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>
+              <div class="dims">${r.dims.map((d) => `<div class="dim"><span class="${d.pick === d.a ? "on" : ""}">${d.a} ${esc(d.a_name)}</span>
+                <div class="dim-bar"><div style="width:${d.a_pct}%"></div></div><span class="${d.pick === d.b ? "on" : ""}">${esc(d.b_name)} ${d.b}</span></div>`).join("")}</div>`;
+    } else if (r.kind === "holland") {
+      main = `<div class="psy-index"><span class="big code">${esc(r.holland)}</span><b>你的職業興趣代碼</b></div>
+              ${r.top.map((t, i) => `<div class="psy-typebox"><span>${t.emoji}</span><div><small>第 ${i + 1} 名</small><b>${esc(t.name)}</b><p>${esc(t.desc)}</p><p class="careers">💼 ${t.careers.map(esc).join("、")}</p></div></div>`).join("")}`;
+    } else {
+      main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>你的類型</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p>${r.type.tip ? `<p class="hint">💡 ${esc(r.type.tip)}</p>` : ""}</div></div>`;
+      if (r.kind === "match") {
+        main += r.partner
+          ? `<div class="psy-index"><span class="big">${r.partner.compat}<small>%</small></span><b>你和 ${esc(r.partner.name)}（${r.partner.type.emoji} ${esc(r.partner.type.name)}）的默契指數</b></div>`
+          : "";
+        main += `<p><b>最合拍的類型：</b>${r.best.map((b) => `${b.emoji} ${esc(b.name)}`).join("、")}</p>`;
+      }
+    }
+    $app.innerHTML = `
+      <section class="panel psy-result theme-${r.theme}" style="--psy-bg:${pal.bg};--psy-accent:${pal.accent}">
+        <button class="link back-psy">← 所有心理測驗</button>
+        <p class="psy-sub">${esc(r.title)}${shared && r.owner ? `・${esc(r.owner)} 的結果` : ""}</p>
+        ${main}
+        ${r.axes && r.axes.length >= 3 ? radarSvg(r.axes, pal.accent) : ""}
+        ${r.axes ? `<div class="psy-bars">${r.axes.map((a) => `<div class="psy-bar"><span>${esc(a.name)}</span><div><i style="width:${a.pct}%"></i></div><b>${a.pct}%</b></div>`).join("")}</div>` : ""}
+        <h3>🎨 像素結果圖</h3>
+        <div class="pixel-wrap"><canvas id="pixel-card"></canvas></div>
+        <div class="actions">
+          <button class="btn primary" id="px-share">📤 分享結果圖</button>
+          <button class="btn" id="px-save">⬇️ 下載圖片</button>
+          ${shareUrl ? `<button class="btn" id="copy-result">🔗 複製結果連結</button>` : ""}
+          ${r.kind === "match" && r.code && !shared ? `<button class="btn" id="invite-match">💌 邀朋友測默契</button>` : ""}
+          <button class="btn" id="retry">${shared ? "我也要測" : "再測一次"}</button>
+        </div>
+        <p class="hint">⚠️ 本測驗僅供娛樂與自我探索，不是醫學、心理學或專業的診斷。</p>
+      </section>`;
+    const canvas = document.getElementById("pixel-card");
+    drawPixelCard(canvas, r, pal);
+    if (!shared && (r.kind !== "index" || r.level_no >= 3)) confetti();
+    $app.querySelector(".back-psy").addEventListener("click", () => go("psych"));
+    document.getElementById("retry").addEventListener("click", () => renderPsychIntro(r.slug));
+    const fileName = `${r.title}-${r.type ? r.type.name : "結果"}.png`;
+    document.getElementById("px-save").addEventListener("click", () => {
+      const a = Object.assign(document.createElement("a"), { href: canvas.toDataURL("image/png"), download: fileName });
+      a.click();
+    });
+    document.getElementById("px-share").addEventListener("click", () => canvas.toBlob(async (blob) => {
+      const file = new File([blob], fileName, { type: "image/png" });
+      const text = `我在「${r.title}」測出：${r.type ? r.type.name : ""}${r.index != null ? `（${r.index}%）` : ""}！你也來測測看～`;
+      if (navigator.canShare?.({ files: [file] })) {
+        navigator.share({ files: [file], title: r.title, text: shareUrl ? `${text} ${shareUrl}` : text }).catch(() => {});
+      } else {
+        document.getElementById("px-save").click();
+        toast("你的瀏覽器不支援直接分享，已改為下載圖片");
+      }
+    }, "image/png"));
+    const copy = async (url, msg) => {
+      try { await navigator.clipboard.writeText(url); toast(msg); } catch { toast(url); }
+    };
+    document.getElementById("copy-result")?.addEventListener("click", () => copy(shareUrl, "已複製結果連結！"));
+    document.getElementById("invite-match")?.addEventListener("click", () =>
+      copy(`${location.origin}/?psych=match&with=${encodeURIComponent(r.code)}`, "已複製邀請連結，傳給朋友一起測默契吧！"));
+  }
+
+  /* ---------- 可愛像素風結果圖：先畫在小畫布，再以不平滑的方式放大 ---------- */
+  const PX_HEART = ["01010", "11111", "11111", "01110", "00100"];
+  const PX_STAR = ["00100", "01110", "11111", "01110", "01010"];
+  const PX_SPARK = ["010", "111", "010"];
+  const PX_CLOUD = ["000111000000", "001111111000", "011111111110", "111111111111", "111101101111", "111111111111", "011110011110", "001111111100"];
+
+  function drawPixelCard(canvas, r, pal) {
+    const W = 180, H = 250, S = 4;
+    const lo = document.createElement("canvas");
+    lo.width = W; lo.height = H;
+    const g = lo.getContext("2d");
+    const rect = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+    const bitmap = (map, x, y, c, s = 1) => map.forEach((row, j) => [...row].forEach((v, i) => { if (v === "1") rect(x + i * s, y + j * s, s, s, c); }));
+    // 背景與圓點
+    rect(0, 0, W, H, pal.bg);
+    for (let y = 4; y < H; y += 10) for (let x = (y / 10) % 2 ? 9 : 4; x < W; x += 10) rect(x, y, 2, 2, pal.dot);
+    // 卡片（像素圓角＋外框）
+    const cx = 10, cy = 10, cw = W - 20, ch = H - 20;
+    rect(cx + 2, cy, cw - 4, ch, pal.ink); rect(cx, cy + 2, cw, ch - 4, pal.ink); rect(cx + 1, cy + 1, cw - 2, ch - 2, pal.ink);
+    rect(cx + 3, cy + 1, cw - 6, ch - 2, pal.card); rect(cx + 1, cy + 3, cw - 2, ch - 6, pal.card); rect(cx + 2, cy + 2, cw - 4, ch - 4, pal.card);
+    // 頂部標題列
+    rect(cx + 2, cy + 2, cw - 4, 18, pal.accent);
+    // 文字：畫在小畫布後二值化，讓字也變成清楚的像素
+    const text = (str, x, y, size, color, align = "center", weight = "700") => {
+      // 先畫在透明圖層，再把半透明的邊緣變成實心或透明，文字就是清楚的像素
+      const layer = document.createElement("canvas");
+      layer.width = W; layer.height = size + 6;
+      const lg = layer.getContext("2d");
+      lg.font = `${weight} ${size}px "Noto Sans TC", "PingFang TC", sans-serif`;
+      lg.textAlign = align; lg.textBaseline = "top"; lg.fillStyle = color;
+      lg.fillText(str, x, 2, cw - 12);
+      const im = lg.getImageData(0, 0, layer.width, layer.height);
+      for (let i = 3; i < im.data.length; i += 4) im.data[i] = im.data[i] >= 90 ? 255 : 0;
+      lg.putImageData(im, 0, 0);
+      g.drawImage(layer, 0, y - 2);
+    };
+    text(r.title, W / 2, cy + 4, 12, "#ffffff");
+    // 主角圖示：emoji 先縮成 18×18 再放大，變成像素圖示
+    const icon = r.type ? r.type.emoji : "✨";
+    const tiny = document.createElement("canvas");
+    tiny.width = tiny.height = 18;
+    const tg = tiny.getContext("2d");
+    tg.font = "16px sans-serif"; tg.textAlign = "center"; tg.textBaseline = "middle";
+    tg.fillText(icon, 9, 10);
+    rect(W / 2 - 22, cy + 24, 44, 44, pal.soft);
+    g.imageSmoothingEnabled = false;
+    g.drawImage(tiny, W / 2 - 18, cy + 28, 36, 36);
+    bitmap(PX_SPARK, W / 2 + 18, cy + 22, pal.accent);
+    bitmap(PX_SPARK, W / 2 - 24, cy + 62, pal.accent);
+    let y = cy + 74;
+    // 類型名稱與主要數字
+    const name = r.kind === "holland" ? `${r.holland}・${r.top[0].name}` : r.type ? r.type.name : "";
+    text(name, W / 2, y, 14, pal.ink); y += 18;
+    if (r.kind === "index") {
+      text(`${r.index}%  ${r.level.name}`, W / 2, y, 11, pal.accent); y += 15;
+      const hearts = Math.round(r.index / 10);
+      for (let i = 0; i < 10; i++) bitmap(PX_HEART, 33 + i * 12, y, i < hearts ? pal.accent : pal.soft);
+      y += 10;
+    } else if (r.kind === "dimension") {
+      text(r.type_key, W / 2, y, 12, pal.accent); y += 16;
+    } else if (r.kind === "match" && r.partner) {
+      text(`默契指數 ${r.partner.compat}%`, W / 2, y, 11, pal.accent); y += 15;
+    }
+    y += 3;
+    // 特性長條（像素方塊）
+    const bars = r.axes ? [...r.axes].sort((a, b) => b.pct - a.pct).slice(0, 5)
+      : r.dims ? r.dims.map((d) => ({ name: `${d.a}/${d.b}`, pct: d.a_pct })) : [];
+    bars.forEach((a) => {
+      text(a.name, cx + 8, y, 10, pal.ink, "left");
+      const blocks = 10, filled = Math.round(a.pct / 10);
+      for (let i = 0; i < blocks; i++) rect(cx + 68 + i * 8, y + 2, 6, 7, i < filled ? pal.accent : pal.soft);
+      y += 14;
+    });
+    // 頁尾：問問雲朵吉祥物＋網站名稱
+    bitmap(PX_CLOUD, cx + 8, cy + ch - 16, "#ffffff");
+    bitmap(PX_HEART, cx + 15, cy + ch - 13, "#ff6fa3");
+    text("知識大挑戰", cx + 28, cy + ch - 16, 10, pal.ink, "left");
+    bitmap(PX_STAR, cx + cw - 16, cy + ch - 15, pal.accent);
+    bitmap(PX_HEART, 3, 3, pal.accent); bitmap(PX_STAR, W - 8, H - 8, pal.accent);
+    // 放大 4 倍、不平滑
+    canvas.width = W * S; canvas.height = H * S;
+    const out = canvas.getContext("2d");
+    out.imageSmoothingEnabled = false;
+    out.drawImage(lo, 0, 0, W * S, H * S);
+  }
+
   /* ---------- 題庫總覽（訂閱制） ---------- */
   const bankFilters = { cat: "", difficulty: "", type: "", q: "", page: 1 };
 
@@ -1001,6 +1301,8 @@
       toast("已取消登入");
     }
     if (params.get("team")) return renderTeam(params.get("team"));
+    if (params.get("psych_result")) return renderPsychShared(params.get("psych_result"));
+    if (params.get("psych")) return renderPsychIntro(params.get("psych"), params.get("with"));
     go(params.get("view") || "home");
   }
 

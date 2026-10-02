@@ -347,3 +347,64 @@ def test_owner_deletes_team_member_leaves(make_client):
     # 隊長刪除：整個隊伍消失
     assert owner.post(f"/api/teams/{code}/leave", json={}).json() == {"deleted": True}
     assert owner.get(f"/api/teams/{code}").status_code == 404
+
+
+def _answer_all(client, slug, pick_index, n=0):
+    t = client.get(f"/api/psych/{slug}?n={n}").json()
+    return client.post(f"/api/psych/{slug}/submit",
+                       json={"answers": [{"q": q["id"], "o": pick_index(q)} for q in t["questions"]]})
+
+
+def test_psych_list_and_no_scores_leaked(db):
+    c = TestClient(app)
+    tests = c.get("/api/psych").json()["tests"]
+    assert {t["slug"] for t in tests} == {"lovebrain", "lovetype", "animal", "type16", "match", "career", "psychopath"}
+    t = c.get("/api/psych/lovebrain?n=10").json()
+    assert len(t["questions"]) == 10 and all(isinstance(o, str) for q in t["questions"] for o in q["options"])
+
+
+def test_psych_index_extremes(db):
+    c = TestClient(app)
+    high = _answer_all(c, "lovebrain", lambda q: 0).json()   # 每題都選最強烈的選項
+    low = _answer_all(c, "lovebrain", lambda q: len(q["options"]) - 1).json()
+    assert high["index"] == 100 and high["level"]["name"] == "戀愛腦末期"
+    assert low["index"] == 0 and low["level"]["name"] == "清醒理智派"
+    assert "code" not in high  # 未登入不保存
+
+
+def test_psych_type16_and_career(db):
+    c = TestClient(app)
+    r = _answer_all(c, "type16", lambda q: 0).json()
+    assert r["type_key"] == "ESTJ" and len(r["dims"]) == 4
+    r = _answer_all(c, "type16", lambda q: 1, n=8).json()
+    assert len(r["type_key"]) == 4
+    r = _answer_all(c, "career", lambda q: 0).json()
+    assert len(r["holland"]) == 3 and r["top"][0]["careers"]
+
+
+def test_psych_rejects_bad_answers(db):
+    c = TestClient(app)
+    assert c.post("/api/psych/animal/submit", json={"answers": [{"q": 0, "o": 9}]}).status_code == 400
+    assert c.post("/api/psych/animal/submit", json={"answers": []}).status_code == 400
+    assert c.get("/api/psych/nope").status_code == 404
+
+
+def test_career_code_survives_saving(make_client):
+    # 登入後會加上分享代碼 code，不能蓋掉三碼的興趣代碼
+    client, _ = make_client()
+    r = _answer_all(client, "career", lambda q: 0).json()
+    assert len(r["holland"]) == 3 and set(r["holland"]) <= set("RIASEC") and len(r["code"]) > 3
+
+
+def test_psych_save_share_and_match(make_client):
+    a, _ = make_client("a@example.com")
+    ra = _answer_all(a, "match", lambda q: 0).json()
+    assert ra["code"]
+    shared = TestClient(app).get(f"/api/psych/r/{ra['code']}").json()
+    assert shared["type_key"] == ra["type_key"] and "email" not in json.dumps(shared)
+    b, _ = make_client("b@example.com")
+    t = b.get("/api/psych/match").json()
+    rb = b.post("/api/psych/match/submit", json={"with_code": ra["code"],
+                "answers": [{"q": q["id"], "o": 0} for q in t["questions"]]}).json()
+    assert rb["partner"]["compat"] >= 90  # 答案完全相同，默契很高
+    assert len(b.get("/api/psych/me/results").json()["results"]) == 1
