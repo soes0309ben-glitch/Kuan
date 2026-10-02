@@ -3,7 +3,7 @@
   "use strict";
 
   const $app = document.getElementById("app");
-  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", all: "🎲" };
+  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", all: "🎲" };
   const CAT_DESC = {
     anime: "日本動漫、吉卜力、經典角色",
     life: "健康、安全、節慶與日常",
@@ -11,6 +11,7 @@
     travel: "世界景點、首都與地理",
     riddle: "字謎、腦筋急轉彎、成語圖謎",
     animal: "動物習性、冷知識、認動物",
+    trivia: "顛覆常識的科學、歷史、生活冷知識",
     all: "從所有主題隨機出題",
   };
   const DIFF = { easy: { name: "簡單", icon: "🌱" }, medium: { name: "中等", icon: "🌟" }, hard: { name: "困難", icon: "🔥" } };
@@ -183,7 +184,7 @@
         <span class="sparkle s1">✨</span><span class="sparkle s2">💖</span><span class="sparkle s3">⭐</span>
         <svg class="mascot" viewBox="0 0 140 112" role="img" aria-label="吉祥物問問"><use href="#mascot"/></svg>
         <h1>知識大挑戰</h1>
-        <p>六大主題、三種難度，共 <strong>${CONFIG.total}</strong> 題。每個主題的每種難度，<strong>每人只能挑戰一次</strong>！</p>
+        <p>七大主題、三種難度，共 <strong>${CONFIG.total}</strong> 題。每個主題的每種難度，<strong>每人只能挑戰一次</strong>！</p>
         ${ME.user ? "" : `<p class="login-cta"><a class="btn primary" href="${loginUrl("/")}">用 Google 帳號登入開始挑戰</a></p>`}
       </section>
       <section class="cat-grid">${cards}</section>`;

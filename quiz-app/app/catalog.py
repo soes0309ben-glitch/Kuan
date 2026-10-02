@@ -16,6 +16,7 @@ CATEGORIES = {
     "travel": "旅遊地理",
     "riddle": "猜謎",
     "animal": "動物生活",
+    "trivia": "冷知識",
 }
 MIXED = "all"  # 綜合挑戰：從所有主題出題
 TYPES = ("single", "image", "short", "qa")
