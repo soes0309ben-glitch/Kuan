@@ -337,6 +337,9 @@ details p { margin: 4px 0; }
   transition: transform .12s, border-color .12s;
 }
 .diff-pill span, .diff-pill small { white-space: nowrap; }
+/* 外文比較長：放不下時「題數」換到下一行，按鈕不撐破卡片 */
+.diff-pill { flex-wrap: wrap; min-width: 0; text-align: left; }
+.diff-pill:lang(en), .diff-pill:lang(vi), .diff-pill:lang(ms), .diff-pill:lang(th) { border-radius: 18px; }
 .diff-pill small { font-weight: 500; color: var(--muted); font-size: .76rem; }
 .diff-pill.open:hover { border-color: var(--accent); transform: scale(1.03); }
 .diff-pill.doing { border-color: var(--accent); background: var(--accent-soft); }
@@ -623,7 +626,8 @@ details p { margin: 4px 0; }
 @media (max-width: 520px) {
   .account .who { display: none; }
   .nav-links { gap: 2px; }
-  .nav-links > a[data-nav="home"] { display: none; }  /* 左上角標誌就能回首頁 */
+  .nav-links > a[data-nav] { display: none; }  /* ☰ 選單裡都有，外文比較長，手機上省掉 */
+  .account .link, .account a { white-space: nowrap; font-size: .9rem; }
   .account { gap: 4px; }
   .cat-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .nav-links a[data-nav] { padding: 6px 8px; }
