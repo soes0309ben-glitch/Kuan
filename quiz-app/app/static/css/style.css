@@ -142,7 +142,24 @@ main { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
 .cat-card[data-cat="biology"] { --tint: var(--c-biology); }
 .cat-card[data-cat="health"] { --tint: var(--c-health); }
 .cat-card[data-cat="all"] { --tint: var(--c-all); }
-.mixed-grid { grid-template-columns: minmax(0, 420px); justify-content: center; }
+/* ---------- 綜合挑戰頁 ---------- */
+.mixed-hero { position: relative; }
+.mixed-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 22px; align-items: start; }
+.mixed-col { display: grid; gap: 12px; }
+.mixed-title { margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 6px; }
+.mixed-info { display: grid; gap: 10px; padding: 16px; border-radius: 22px; background: var(--surface); border: 3px dashed var(--line); }
+.mixed-topics { display: flex; flex-wrap: wrap; gap: 6px; }
+.mini-chip { padding: 4px 10px; border-radius: 999px; background: var(--surface-2); font-size: .85rem; font-weight: 700; }
+.mix-psy-card { text-align: center; justify-items: center; gap: 10px; }
+.mix-emojis { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; font-size: 1.7rem; }
+.mix-emojis i { font-style: normal; display: inline-block; animation: mix-bob 1.8s ease-in-out infinite; }
+@keyframes mix-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.mix-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; justify-items: start; text-align: left; font-size: .92rem; color: var(--muted); font-weight: 700; }
+.mix-parts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+.mix-part { display: grid; gap: 3px; padding: 12px; border-radius: 16px; background: var(--surface-2); border: 2px solid var(--line); }
+.mix-part small { color: var(--muted); font-weight: 700; }
+.mix-part span { font-weight: 900; color: var(--accent-deep); }
+@media (prefers-reduced-motion: reduce) { .mix-emojis i { animation: none; } }
 .cat-icon {
   font-size: 1.8rem; width: 56px; height: 56px; display: grid; place-items: center;
   background: var(--surface); border-radius: 50%; margin-bottom: 6px;
@@ -485,6 +502,12 @@ details p { margin: 4px 0; }
 }
 .menu a { padding: 10px 14px; border-radius: 12px; text-decoration: none; color: var(--text); font-weight: 700; }
 .menu a:hover { background: var(--accent-soft); color: var(--accent-deep); }
+.menu-lang { margin-top: 6px; padding: 10px 14px 4px; border-top: 2px dashed var(--line); }
+.menu-lang label { display: grid; gap: 6px; font-weight: 700; color: var(--muted); font-size: .9rem; }
+.menu-lang select {
+  font: inherit; font-weight: 700; color: var(--text); background: var(--surface-2);
+  border: 2px solid var(--line); border-radius: 12px; padding: 8px 10px;
+}
 
 /* ---------- 組隊 ---------- */
 .team-list { display: grid; gap: 8px; }

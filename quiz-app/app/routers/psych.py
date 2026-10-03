@@ -17,6 +17,19 @@ from app.psych_data import DISCLAIMER, TESTS
 router = APIRouter(prefix="/api/psych")
 
 
+# 綜合心理測驗：從每個測驗各抽幾題（16 型每個維度兩題），題目 id 編成「測驗序號 × 1000 + 原 id」
+MIX = "mix"
+MIX_PICK = {"lovebrain": 3, "lovetype": 3, "animal": 3, "type16": 8, "match": 3, "career": 3, "psychopath": 3, "taiwan": 3}
+MIX_ORDER = list(MIX_PICK)
+MIX_INFO = {
+    "title": "綜合心理測驗",
+    "subtitle": "8 個測驗一次測完，看見完整的你",
+    "emoji": "🔮",
+    "theme": "sunny",
+    "intro": "從戀愛腦、戀愛類型、動物性格、16 型人格、默契、職涯、心理變態指數和台灣風景 8 個測驗各抽幾題，一次拼出你的性格全貌！",
+}
+
+
 def _test(slug: str) -> dict:
     test = TESTS.get(slug)
     if not test:
@@ -37,6 +50,8 @@ def _illust_url(slug: str, illusts: dict) -> str | None:
 def list_tests(db: Session = Depends(get_db)):
     illusts = _illusts(db)
     return {
+        "mix": {**MIX_INFO, "slug": MIX, "count": sum(MIX_PICK.values()),
+                "emojis": [TESTS[s]["emoji"] for s in MIX_ORDER]},
         "tests": [
             {"slug": slug, "title": t["title"], "subtitle": t["subtitle"], "emoji": t["emoji"],
              "theme": t["theme"], "count": len(t["questions"]), "illust": _illust_url(slug, illusts)}
@@ -57,19 +72,11 @@ def illust(slug: str, db: Session = Depends(get_db)):
 @router.get("/{slug}")
 def get_test(slug: str, n: int = 0, seed: int | None = None, db: Session = Depends(get_db)):
     """n=0 代表全部題目；其他數字代表隨機抽 n 題。選項只給文字，計分留在伺服器。"""
-    test = _test(slug)
-    questions = list(test["questions"])
     rng = random.Random(seed)
-    if 0 < n < len(questions):
-        if test["kind"] == "dimension":
-            # 16 型：每個維度平均抽題，避免某個維度沒有題目
-            per = max(1, n // len(test["pairs"]))
-            groups = {}
-            for q in questions:
-                groups.setdefault(next(iter(q["options"][0]["s"])) + next(iter(q["options"][1]["s"])), []).append(q)
-            questions = [q for g in groups.values() for q in rng.sample(g, min(per, len(g)))]
-        else:
-            questions = rng.sample(questions, n)
+    if slug == MIX:
+        return _mix_test(rng)
+    test = _test(slug)
+    questions = _sample(test, n, rng)
     rng.shuffle(questions)
     return {
         "slug": slug,
@@ -84,6 +91,73 @@ def get_test(slug: str, n: int = 0, seed: int | None = None, db: Session = Depen
         "axes": test.get("axes"),
         "illust": _illust_url(slug, _illusts(db)),
         "questions": [{"id": q["id"], "q": q["q"], "options": [o["t"] for o in q["options"]]} for q in questions],
+    }
+
+
+def _sample(test: dict, n: int, rng: random.Random) -> list[dict]:
+    questions = list(test["questions"])
+    if 0 < n < len(questions):
+        if test["kind"] == "dimension":
+            # 16 型：每個維度平均抽題，避免某個維度沒有題目
+            per = max(1, n // len(test["pairs"]))
+            groups = {}
+            for q in questions:
+                groups.setdefault(next(iter(q["options"][0]["s"])) + next(iter(q["options"][1]["s"])), []).append(q)
+            questions = [q for g in groups.values() for q in rng.sample(g, min(per, len(g)))]
+        else:
+            questions = rng.sample(questions, n)
+    return questions
+
+
+def _mix_test(rng: random.Random) -> dict:
+    questions = []
+    for i, slug in enumerate(MIX_ORDER):
+        for q in _sample(TESTS[slug], MIX_PICK[slug], rng):
+            questions.append({"id": (i + 1) * 1000 + q["id"], "q": q["q"], "options": [o["t"] for o in q["options"]]})
+    rng.shuffle(questions)
+    return {**MIX_INFO, "slug": MIX, "kind": MIX, "disclaimer": DISCLAIMER, "total": len(questions), "fixed": True,
+            "axes": None, "illust": None, "questions": questions}
+
+
+def score_mix(answers: list[tuple[int, int]]) -> dict:
+    """把作答拆回各測驗分別計分，再組成一份綜合結果。"""
+    groups: dict[str, list[tuple[int, int]]] = {}
+    for qid, idx in answers:
+        i = qid // 1000 - 1
+        if not 0 <= i < len(MIX_ORDER):
+            raise HTTPException(400, "作答資料不正確")
+        groups.setdefault(MIX_ORDER[i], []).append((qid % 1000, idx))
+    if not groups:
+        raise HTTPException(400, "請至少回答一題")
+    parts = {slug: score(slug, groups[slug]) for slug in MIX_ORDER if slug in groups}
+    summary = []
+    for slug, r in parts.items():
+        extra = f"{r['index']}%" if r["kind"] == "index" else r.get("holland") or (r["type_key"] if r["kind"] == "dimension" else None)
+        summary.append({"slug": slug, "title": TESTS[slug]["title"], "emoji": TESTS[slug]["emoji"],
+                        "type": {"name": r["type"]["name"], "emoji": r["type"]["emoji"]}, "extra": extra})
+
+    def dim_pct(letter: str) -> int:
+        dims = parts.get("type16", {}).get("dims", [])
+        # 每個維度只有兩題，分數很跳；收斂到 15～85%，表示「偏向」而不是絕對
+        return round(15 + 0.7 * next((d["a_pct"] for d in dims if d["a"] == letter), 50))
+
+    axes = [
+        ("love", "戀愛腦", "談戀愛時投入的程度", parts["lovebrain"]["index"] if "lovebrain" in parts else 50),
+        ("dark", "黑暗面", "冷靜、自我、敢衝的那一面", parts["psychopath"]["index"] if "psychopath" in parts else 50),
+        ("extra", "外向", "從人群中獲得能量", dim_pct("E")),
+        ("logic", "理性", "用邏輯做決定", dim_pct("T")),
+        ("plan", "計畫性", "喜歡事先安排好", dim_pct("J")),
+    ]
+    animal = parts.get("animal") or next(iter(parts.values()))
+    t16 = parts.get("type16")
+    name = animal["type"]["name"] + (f" × {t16['type']['name']}" if t16 else "")
+    desc = "、".join(f"{s['emoji']}{s['type']['name']}" for s in summary)
+    return {
+        "slug": MIX, "kind": MIX, "title": MIX_INFO["title"], "theme": MIX_INFO["theme"], "answered": len(answers),
+        "type_key": animal["type_key"],
+        "type": {"name": name, "emoji": animal["type"]["emoji"], "desc": f"你的綜合人格由這些結果組成：{desc}。"},
+        "axes": [{"key": k, "name": n, "desc": d, "pct": v} for k, n, d, v in axes],
+        "parts": summary,
     }
 
 
@@ -174,7 +248,8 @@ class SubmitBody(BaseModel):
 
 @router.post("/{slug}/submit", dependencies=[Depends(require_json)])
 def submit(slug: str, body: SubmitBody, user: User | None = Depends(get_current_user), db: Session = Depends(get_db)):
-    result = score(slug, [(a.q, a.o) for a in body.answers])
+    pairs = [(a.q, a.o) for a in body.answers]
+    result = score_mix(pairs) if slug == MIX else score(slug, pairs)
     if body.with_code:
         partner = db.scalar(select(PsychResult).where(PsychResult.code == body.with_code))
         if partner and partner.slug == slug == "match":
@@ -205,6 +280,6 @@ def my_results(user: User = Depends(require_user), db: Session = Depends(get_db)
     rows = db.scalars(
         select(PsychResult).where(PsychResult.user_id == user.id).order_by(PsychResult.created_at.desc()).limit(30)
     )
-    return {"results": [{"code": r.code, "slug": r.slug, "title": TESTS.get(r.slug, {}).get("title", r.slug),
+    return {"results": [{"code": r.code, "slug": r.slug, "title": MIX_INFO["title"] if r.slug == MIX else TESTS.get(r.slug, {}).get("title", r.slug),
                          "type": r.result.get("type"), "index": r.result.get("index"),
                          "created_at": r.created_at.isoformat()} for r in rows]}

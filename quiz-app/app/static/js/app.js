@@ -3,24 +3,38 @@
   "use strict";
 
   const $app = document.getElementById("app");
+
+  /* ---------- 介面語言：以中文原文當 key 查 i18n.js 的翻譯 ---------- */
+  const LANGS = { zh: "繁體中文", en: "English", ja: "日本語", ko: "한국어", vi: "Tiếng Việt", ms: "Bahasa Melayu", th: "ไทย" };
+  const HTML_LANG = { zh: "zh-Hant", en: "en", ja: "ja", ko: "ko", vi: "vi", ms: "ms", th: "th" };
+  const LOCALE = { zh: "zh-TW", en: "en-US", ja: "ja-JP", ko: "ko-KR", vi: "vi-VN", ms: "ms-MY", th: "th-TH" };
+  const LANG = (() => {
+    let l = null;
+    try { l = localStorage.getItem("quiz-lang"); } catch { /* 忽略 */ }
+    // 題目內容目前是中文，所以沒選過語言時一律用中文
+    return LANGS[l] ? l : "zh";
+  })();
+  const DICT = (window.QUIZ_I18N || {})[LANG] || {};
+  // {0}、{1} 換成參數；查不到翻譯就顯示中文原文
+  const T = (zh, ...args) => String(DICT[zh] ?? zh).replace(/\{(\d)\}/g, (_, i) => args[i]);
   const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", language: "🌏", japan: "🎎", korea: "🎤", biology: "🧬", health: "🩺", all: "🎲" };
   const CAT_DESC = {
-    anime: "日本動漫、吉卜力、經典角色",
-    life: "健康、安全、節慶與日常",
-    history: "中外歷史事件、人物與古蹟",
-    travel: "世界景點、首都與地理",
-    riddle: "字謎、腦筋急轉彎、成語圖謎",
-    animal: "動物習性、冷知識、認動物",
-    trivia: "顛覆常識的科學、歷史、生活冷知識",
-    language: "英日韓越馬泰，多國語言大考驗",
-    japan: "節慶、和食、傳統藝能與日本生活",
-    korea: "K-pop、韓劇、韓食與韓國文化",
-    biology: "細胞、遺傳、演化與生態",
-    health: "疾病預防、急救、營養與健保",
-    all: "從所有主題隨機出題",
+    anime: T("日本動漫、吉卜力、經典角色"),
+    life: T("健康、安全、節慶與日常"),
+    history: T("中外歷史事件、人物與古蹟"),
+    travel: T("世界景點、首都與地理"),
+    riddle: T("字謎、腦筋急轉彎、成語圖謎"),
+    animal: T("動物習性、冷知識、認動物"),
+    trivia: T("顛覆常識的科學、歷史、生活冷知識"),
+    language: T("英日韓越馬泰，多國語言大考驗"),
+    japan: T("節慶、和食、傳統藝能與日本生活"),
+    korea: T("K-pop、韓劇、韓食與韓國文化"),
+    biology: T("細胞、遺傳、演化與生態"),
+    health: T("疾病預防、急救、營養與健保"),
+    all: T("從所有主題隨機出題"),
   };
-  const DIFF = { easy: { name: "簡單", icon: "🌱" }, medium: { name: "中等", icon: "🌟" }, hard: { name: "困難", icon: "🔥" } };
-  const TYPES = { single: { name: "單選題", icon: "🔘" }, image: { name: "圖片題", icon: "🖼️" }, short: { name: "簡答題", icon: "✏️" }, qa: { name: "問答題", icon: "💬" } };
+  const DIFF = { easy: { name: T("簡單"), icon: "🌱" }, medium: { name: T("中等"), icon: "🌟" }, hard: { name: T("困難"), icon: "🔥" } };
+  const TYPES = { single: { name: T("單選題"), icon: "🔘" }, image: { name: T("圖片題"), icon: "🖼️" }, short: { name: T("簡答題"), icon: "✏️" }, qa: { name: T("問答題"), icon: "💬" } };
 
   let CONFIG = null; // /api/config
   let ME = { user: null, attempts: [] }; // /api/me
@@ -28,14 +42,14 @@
   /* ---------- 小工具 ---------- */
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmt = (n) => (Number.isInteger(n) ? n : Number(n).toFixed(1));
-  const catName = (c) => (c === "all" ? "綜合挑戰" : CONFIG.categories[c]);
+  const catName = (c) => (c === "all" ? T("綜合挑戰") : T(CONFIG.categories[c]));
 
   async function api(path, body) {
     const opts = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
     const res = await fetch(path, opts);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const err = new Error(data.detail || "發生錯誤，請稍後再試");
+      const err = new Error(typeof data.detail === "string" ? T(data.detail) : T("發生錯誤，請稍後再試"));
       err.status = res.status;
       throw err;
     }
@@ -86,7 +100,7 @@
 
   // 送出答案後先「揭曉中…」吊一下胃口，再公布結果
   async function suspense(promise) {
-    const bar = Object.assign(document.createElement("div"), { className: "suspense", innerHTML: "揭曉中<span>.</span><span>.</span><span>.</span>" });
+    const bar = Object.assign(document.createElement("div"), { className: "suspense", innerHTML: `${T("揭曉中")}<span>.</span><span>.</span><span>.</span>` });
     $app.querySelector(".answer-area").after(bar);
     const ticks = setInterval(() => sound.tick(), 220);
     try {
@@ -106,12 +120,12 @@
     setTimeout(() => el.remove(), 3500);
   }
 
-  function confirmDialog(html, okText = "確定") {
+  function confirmDialog(html, okText = T("確定")) {
     return new Promise((resolve) => {
       const wrap = document.createElement("div");
       wrap.className = "modal-backdrop";
       wrap.innerHTML = `<div class="modal panel" role="dialog" aria-modal="true">${html}
-        <div class="actions"><button class="btn cancel">再想想</button><button class="btn primary ok">${esc(okText)}</button></div></div>`;
+        <div class="actions"><button class="btn cancel">${T("再想想")}</button><button class="btn primary ok">${esc(okText)}</button></div></div>`;
       document.body.append(wrap);
       const done = (v) => { wrap.remove(); resolve(v); };
       wrap.querySelector(".ok").addEventListener("click", () => done(true));
@@ -124,13 +138,13 @@
   function renderNav() {
     const u = ME.user;
     document.getElementById("account").innerHTML = u
-      ? `<a href="#" class="me-link" data-nav="profile" title="個人檔案">${avatarHtml(32)}
+      ? `<a href="#" class="me-link" data-nav="profile" title="${T("個人檔案")}">${avatarHtml(32)}
            <span class="who">${esc(displayName())}</span></a>
-         ${u.is_admin ? `<a href="#" data-nav="admin">管理</a>` : ""}
-         <button class="link" id="logout">登出</button>`
-      : `<a class="btn google" href="${loginUrl()}"><span class="g">G</span> Google 登入</a>`;
+         ${u.is_admin ? `<a href="#" data-nav="admin">${T("管理")}</a>` : ""}
+         <button class="link" id="logout">${T("登出")}</button>`
+      : `<a class="btn google" href="${loginUrl()}"><span class="g">G</span> ${T("Google 登入")}</a>`;
     document.getElementById("account").insertAdjacentHTML("afterbegin",
-      `<button class="link sound-toggle" title="音效開關">${sound.on ? "🔊" : "🔇"}</button>`);
+      `<button class="link sound-toggle" title="${T("音效開關")}">${sound.on ? "🔊" : "🔇"}</button>`);
     document.querySelector(".sound-toggle").addEventListener("click", (e) => {
       sound.on = !sound.on;
       try { localStorage.setItem("quiz-sound", sound.on ? "on" : "off"); } catch { /* 忽略 */ }
@@ -144,8 +158,8 @@
   }
 
   /* ---------- 個人外觀 ---------- */
-  const FRAMES = { none: "無", ribbon: "蝴蝶結", heart: "愛心", star: "星星", flower: "花朵", crown: "皇冠", rainbow: "彩虹" };
-  const COLORS = { pink: "粉紅", lavender: "薰衣草", mint: "薄荷", sky: "天空藍", peach: "蜜桃", lemon: "檸檬" };
+  const FRAMES = { none: T("無"), ribbon: T("蝴蝶結"), heart: T("愛心"), star: T("星星"), flower: T("花朵"), crown: T("皇冠"), rainbow: T("彩虹") };
+  const COLORS = { pink: T("粉紅"), lavender: T("薰衣草"), mint: T("薄荷"), sky: T("天空藍"), peach: T("蜜桃"), lemon: T("檸檬") };
   const AVATAR_EMOJIS = ["🐰", "🐱", "🐶", "🐻", "🐼", "🐨", "🦊", "🐹", "🐧", "🦄", "🐸", "🐥",
     "🌸", "🌈", "⭐", "🍓", "🍰", "🧁", "🍡", "🎀", "💖", "☁️", "🌙", "🍀"];
 
@@ -177,7 +191,7 @@
         const webp = canvas.toDataURL("image/webp", 0.85);
         resolve(webp.startsWith("data:image/webp") ? webp : canvas.toDataURL("image/jpeg", 0.85));
       };
-      img.onerror = () => reject(new Error("無法讀取這張圖片，請換一張試試"));
+      img.onerror = () => reject(new Error(T("無法讀取這張圖片，請換一張試試")));
       img.src = URL.createObjectURL(file);
     });
   }
@@ -190,37 +204,37 @@
     const draft = { ...ME.profile };
     $app.innerHTML = `
       <section class="panel profile">
-        <h2>🎀 個人檔案</h2>
+        <h2>${T("🎀 個人檔案")}</h2>
         <div class="profile-preview">
           <div id="pv-avatar"></div>
           <div><b id="pv-name"></b><p class="hint">${esc(ME.user.email)}</p></div>
         </div>
         <fieldset>
-          <legend>暱稱</legend>
-          <input id="nickname" class="text-input" maxlength="20" placeholder="${esc(ME.user.name || "取個可愛的名字")}" value="${esc(draft.nickname)}">
+          <legend>${T("暱稱")}</legend>
+          <input id="nickname" class="text-input" maxlength="20" placeholder="${esc(ME.user.name || T("取個可愛的名字"))}" value="${esc(draft.nickname)}">
         </fieldset>
         <fieldset>
-          <legend>頭像</legend>
+          <legend>${T("頭像")}</legend>
           <div class="chips">
-            <label class="chip"><input type="radio" name="atype" value="google"> Google 大頭貼</label>
-            <label class="chip"><input type="radio" name="atype" value="emoji"> 可愛圖案</label>
-            <label class="chip"><input type="radio" name="atype" value="upload"> 上傳圖片</label>
+            <label class="chip"><input type="radio" name="atype" value="google"> ${T("Google 大頭貼")}</label>
+            <label class="chip"><input type="radio" name="atype" value="emoji"> ${T("可愛圖案")}</label>
+            <label class="chip"><input type="radio" name="atype" value="upload"> ${T("上傳圖片")}</label>
           </div>
           <div class="emoji-grid" id="emoji-grid">${AVATAR_EMOJIS.map((e) => `<button type="button" class="emoji-pick" data-e="${e}">${e}</button>`).join("")}</div>
           <div id="upload-box" class="upload-box">
-            <label class="btn">📷 選擇圖片<input type="file" id="avatar-file" accept="image/png,image/jpeg,image/webp" hidden></label>
-            <span class="hint">支援 PNG、JPG、WebP，會自動裁成正方形</span>
+            <label class="btn">${T("📷 選擇圖片")}<input type="file" id="avatar-file" accept="image/png,image/jpeg,image/webp" hidden></label>
+            <span class="hint">${T("支援 PNG、JPG、WebP，會自動裁成正方形")}</span>
           </div>
         </fieldset>
         <fieldset>
-          <legend>頭像框</legend>
+          <legend>${T("頭像框")}</legend>
           <div class="frame-grid">${Object.entries(FRAMES).map(([k, v]) => `<button type="button" class="frame-pick" data-f="${k}"><span class="fp-avatar"></span><small>${v}</small></button>`).join("")}</div>
         </fieldset>
         <fieldset>
-          <legend>主題顏色</legend>
+          <legend>${T("主題顏色")}</legend>
           <div class="color-grid">${Object.entries(COLORS).map(([k, v]) => `<button type="button" class="color-pick c-${k}" data-c="${k}"><span></span><small>${v}</small></button>`).join("")}</div>
         </fieldset>
-        <div class="actions"><button class="btn" id="cancel">取消</button><button class="btn primary" id="save">儲存</button></div>
+        <div class="actions"><button class="btn" id="cancel">${T("取消")}</button><button class="btn primary" id="save">${T("儲存")}</button></div>
       </section>`;
 
     const refresh = () => {
@@ -256,7 +270,7 @@
         const p = await api("/api/profile/avatar", { data_url: await resizeImage(file) });
         Object.assign(draft, { avatar_type: "upload", avatar_url: p.avatar_url, has_upload: true });
         ME.profile = { ...ME.profile, avatar_url: p.avatar_url, has_upload: true, avatar_type: "upload" };
-        toast("圖片上傳成功，記得按「儲存」");
+        toast(T("圖片上傳成功，記得按「儲存」"));
         refresh();
       } catch (err) {
         toast(err.message);
@@ -271,7 +285,7 @@
           frame: draft.frame, color: draft.color,
         });
         renderNav();
-        toast("💖 已儲存你的個人檔案");
+        toast(T("💖 已儲存你的個人檔案"));
         go("home");
         return;
       } catch (err) {
@@ -328,10 +342,10 @@
         ? Object.keys(CONFIG.categories).reduce((s, k) => s + (CONFIG.counts[`${k}:${d}`] || 0), 0)
         : CONFIG.counts[`${c}:${d}`] || 0;
       const a = attemptFor(c, d);
-      let state = "open", label = `${n} 題`;
-      if (a?.finished) { state = "done"; label = `${fmt(a.score)} / ${a.total} 分`; }
-      else if (a) { state = "doing"; label = `繼續 ${a.answered}/${a.total}`; }
-      else if (!n) { state = "empty"; label = "準備中"; }
+      let state = "open", label = T("{0} 題", n);
+      if (a?.finished) { state = "done"; label = T("{0} / {1} 分", fmt(a.score), a.total); }
+      else if (a) { state = "doing"; label = T("繼續 {0}/{1}", a.answered, a.total); }
+      else if (!n) { state = "empty"; label = T("準備中"); }
       return `<button class="diff-pill ${state}" data-cat="${c}" data-diff="${d}" ${state === "done" || state === "empty" ? "disabled" : ""}>
         <span>${DIFF[d].icon} ${DIFF[d].name}</span><small>${label}</small></button>`;
     }).join("");
@@ -349,14 +363,50 @@
     );
   }
 
-  function renderMixed() {
+  async function renderMixed() {
+    const cats = Object.keys(CONFIG.categories);
+    const total = Object.values(CONFIG.counts).reduce((s, n) => s + n, 0);
     $app.innerHTML = `
-      <section class="psy-hero">
-        <h1>🎲 綜合挑戰</h1>
-        <p>從所有主題隨機出題，考驗你的全方位知識！每種難度一樣限挑戰一次。</p>
+      <section class="psy-hero mixed-hero">
+        <span class="sparkle s1">🎲</span><span class="sparkle s2">🔮</span><span class="sparkle s3">✨</span>
+        <h1>🎲 ${T("綜合挑戰")}</h1>
+        <p>${T("知識題從所有主題隨機出，心理測驗從所有測驗各抽幾題，一次玩個過癮！")}</p>
       </section>
-      <section class="cat-grid mixed-grid">${topicCard("all")}</section>`;
+      <section class="mixed-layout">
+        <div class="mixed-col">
+          <h2 class="mixed-title">🧠 ${T("綜合知識挑戰")}</h2>
+          ${topicCard("all")}
+          <div class="mixed-info">
+            <b>${T("題目來自 {0} 大主題・共 {1} 題", cats.length, total)}</b>
+            <div class="mixed-topics">${cats.map((c) => `<span class="mini-chip" data-cat="${c}">${CAT_ICON[c]} ${esc(catName(c))}</span>`).join("")}</div>
+            <small class="hint">${T("每種難度限挑戰一次，答完可以在題庫總覽看答案。")}</small>
+          </div>
+        </div>
+        <div class="mixed-col">
+          <h2 class="mixed-title">🔮 ${T("綜合心理測驗")}</h2>
+          <div class="cat-card mix-psy-card" id="mix-psy-card"><span class="mix-emojis">🔮</span><span class="cat-desc">${T("載入中…")}</span></div>
+        </div>
+      </section>`;
     bindPills();
+    let mix;
+    try {
+      ({ mix } = await api("/api/psych"));
+    } catch (e) {
+      return toast(e.message);
+    }
+    const card = document.getElementById("mix-psy-card");
+    if (!card) return;
+    card.innerHTML = `
+      <span class="mix-emojis">${mix.emojis.map((e, i) => `<i style="animation-delay:${i * 0.15}s">${e}</i>`).join("")}</span>
+      <span class="cat-name">${esc(T(mix.title))}</span>
+      <span class="cat-desc">${esc(T(mix.subtitle))}</span>
+      <ul class="mix-list">
+        <li>💘 ${T("戀愛腦與戀愛類型")}</li><li>🐾 ${T("動物性格與 16 型人格")}</li>
+        <li>💼 ${T("職涯適性與默契類型")}</li><li>🩸 ${T("心理變態指數與台灣風景")}</li>
+      </ul>
+      <button class="btn primary big" id="mix-psy-start">${T("開始測驗")}・${T("{0} 題", mix.count)}</button>
+      <small class="hint">${T("不限次數，結果可以做成像素圖分享")}</small>`;
+    document.getElementById("mix-psy-start").addEventListener("click", () => renderPsychIntro("mix"));
   }
 
   function renderHome() {
@@ -365,14 +415,14 @@
     $app.innerHTML = `
       <section class="hero">
         <span class="sparkle s1">✨</span><span class="sparkle s2">💖</span><span class="sparkle s3">⭐</span>
-        <svg class="mascot" viewBox="0 0 140 112" role="img" aria-label="吉祥物問問"><use href="#mascot"/></svg>
-        <h1>知識大挑戰</h1>
-        <p class="tagline">${Object.keys(CONFIG.categories).length} 大主題 × 三種難度，共 <strong>${CONFIG.total}</strong> 題！</p>
+        <svg class="mascot" viewBox="0 0 140 112" role="img" aria-label="${T("吉祥物問問")}"><use href="#mascot"/></svg>
+        <h1>${T("知識大挑戰")}</h1>
+        <p class="tagline">${T("{0} 大主題 × 三種難度，共 <strong>{1}</strong> 題！", Object.keys(CONFIG.categories).length, CONFIG.total)}</p>
         <div class="rules">
-          <span>🎯 個人挑戰：每個主題的每種難度限一次</span>
-          <a href="#" class="rule-team">👥 組隊挑戰：不限次數，找朋友一起來！</a>
+          <span>${T("🎯 個人挑戰：每個主題的每種難度限一次")}</span>
+          <a href="#" class="rule-team">${T("👥 組隊挑戰：不限次數，找朋友一起來！")}</a>
         </div>
-        ${ME.user ? "" : `<p class="login-cta"><a class="btn primary" href="${loginUrl("/")}">用 Google 帳號登入開始挑戰</a></p>`}
+        ${ME.user ? "" : `<p class="login-cta"><a class="btn primary" href="${loginUrl("/")}">${T("用 Google 帳號登入開始挑戰")}</a></p>`}
       </section>
       <section class="cat-grid">${cards}</section>`;
 
@@ -389,8 +439,8 @@
     if (!existing) {
       const ok = await confirmDialog(
         `<h2>${CAT_ICON[cat]} ${esc(catName(cat))}・${DIFF[diff].icon} ${DIFF[diff].name}</h2>
-         <p>共 ${CONFIG.per_attempt} 題。<strong>每個主題的每種難度只能挑戰一次</strong>，按下開始就算使用這次機會，中途離開可以回來繼續，但不能重來。</p>`,
-        "開始挑戰"
+         <p>${T("共 {0} 題。<strong>每個主題的每種難度只能挑戰一次</strong>，按下開始就算使用這次機會，中途離開可以回來繼續，但不能重來。", CONFIG.per_attempt)}</p>`,
+        T("開始挑戰")
       );
       if (!ok) return;
     }
@@ -423,7 +473,7 @@
   });
 
   const runTeamQuiz = (code) => runQuiz({
-    base: `/api/teams/${code}`, load: `/api/teams/${code}/play`, label: "👥 組隊・",
+    base: `/api/teams/${code}`, load: `/api/teams/${code}/play`, label: T("👥 組隊・"),
     done: () => renderTeam(code), reload: () => runTeamQuiz(code),
   });
 
@@ -435,28 +485,28 @@
     const pending = data.results[q.id]; // 問答題已作答、還沒自評
 
     let media = "";
-    if (q.img) media = `<figure class="q-img"><img src="${esc(q.img)}" alt="題目圖片"></figure>`;
-    if (q.emoji) media = `<div class="q-emoji" aria-label="表情符號圖謎">${esc(q.emoji)}</div>`;
+    if (q.img) media = `<figure class="q-img"><img src="${esc(q.img)}" alt="${T("題目圖片")}"></figure>`;
+    if (q.emoji) media = `<div class="q-emoji" aria-label="${T("表情符號圖謎")}">${esc(q.emoji)}</div>`;
 
     let body = "";
     if (q.type === "single" || q.type === "image") {
       body = `<div class="options">${q.options.map((o) => `<button class="option" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
     } else if (q.type === "short") {
-      body = `<form class="short-form"><input class="text-input" name="ans" autocomplete="off" placeholder="輸入你的答案" maxlength="100"><button class="btn primary" type="submit">送出</button></form>`;
+      body = `<form class="short-form"><input class="text-input" name="ans" autocomplete="off" placeholder="${T("輸入你的答案")}" maxlength="100"><button class="btn primary" type="submit">${T("送出")}</button></form>`;
     } else {
-      body = `<textarea class="text-input area" maxlength="2000" placeholder="寫下你的想法，送出後會顯示參考答案">${esc(pending?.given || "")}</textarea>
-              <button class="btn primary reveal" type="button" ${pending ? "hidden" : ""}>送出並看參考答案</button>`;
+      body = `<textarea class="text-input area" maxlength="2000" placeholder="${T("寫下你的想法，送出後會顯示參考答案")}">${esc(pending?.given || "")}</textarea>
+              <button class="btn primary reveal" type="button" ${pending ? "hidden" : ""}>${T("送出並看參考答案")}</button>`;
     }
 
     $app.innerHTML = `
       <section class="panel quiz">
         <header class="quiz-head">
-          <button class="link quit">← 回首頁</button>
+          <button class="link quit">${T("← 回首頁")}</button>
           <span>${current.src.label}${CAT_ICON[data.category]} ${esc(catName(data.category))}・${DIFF[data.difficulty].icon} ${DIFF[data.difficulty].name}</span>
-          <span class="score-pill">得分 ${fmt(score)}</span>
+          <span class="score-pill">${T("得分 {0}", fmt(score))}</span>
         </header>
         <div class="progress"><div style="width:${(index / total) * 100}%"></div></div>
-        <div class="q-intro">第 ${index + 1} 題${streak >= 2 ? `<span class="streak">🔥 連對 ${streak} 題</span>` : ""}</div>
+        <div class="q-intro">${T("第 {0} 題", index + 1)}${streak >= 2 ? `<span class="streak">${T("🔥 連對 {0} 題", streak)}</span>` : ""}</div>
         <div class="q-meta">
           <span class="badge">${TYPES[q.type].icon} ${TYPES[q.type].name}</span>
           ${data.category === "all" ? `<span class="badge soft">${CAT_ICON[q.cat]} ${esc(catName(q.cat))}</span>` : ""}
@@ -529,8 +579,8 @@
     }
   }
 
-  const CHEERS = ["答對了！", "太神啦！", "完全正確！", "你是天才嗎！", "漂亮！"];
-  const OOPS = ["差一點點！", "哎呀～", "沒想到吧！", "被騙了吧！"];
+  const CHEERS = ["答對了！", "太神啦！", "完全正確！", "你是天才嗎！", "漂亮！"].map((x) => T(x));
+  const OOPS = ["差一點點！", "哎呀～", "沒想到吧！", "被騙了吧！"].map((x) => T(x));
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
   function showFeedback(r) {
@@ -547,9 +597,9 @@
     fb.hidden = false;
     fb.className = "feedback pop " + (r.score ? "good" : "bad");
     fb.innerHTML = `
-      <h3>${r.score ? `🎉 ${pick(CHEERS)}${streak >= 2 ? `　🔥 連對 ${streak} 題` : ""}` : `😵 ${pick(OOPS)}正確答案是：${esc(r.correct_answer)}`}</h3>
-      ${r.explain ? `<div class="fact-card"><b>🤯 冷知識</b><p>${esc(r.explain)}</p></div>` : ""}
-      <button class="btn primary next">${current.index + 1 < current.data.questions.length ? "下一題 →" : "看結果 →"}</button>`;
+      <h3>${r.score ? `🎉 ${pick(CHEERS)}${streak >= 2 ? `　${T("🔥 連對 {0} 題", streak)}` : ""}` : `😵 ${pick(OOPS)}${T("正確答案是：{0}", esc(r.correct_answer))}`}</h3>
+      ${r.explain ? `<div class="fact-card"><b>${T("🤯 冷知識")}</b><p>${esc(r.explain)}</p></div>` : ""}
+      <button class="btn primary next">${current.index + 1 < current.data.questions.length ? T("下一題 →") : T("看結果 →")}</button>`;
     const btn = fb.querySelector(".next");
     btn.addEventListener("click", next);
     btn.focus();
@@ -562,12 +612,12 @@
     fb.hidden = false;
     fb.className = "feedback neutral";
     fb.innerHTML = `
-      <h3>📖 參考答案</h3><p>${esc(r.ref)}</p>
-      <p class="self-label">對照一下，你覺得自己答得如何？（誠實自評喔）</p>
+      <h3>${T("📖 參考答案")}</h3><p>${esc(r.ref)}</p>
+      <p class="self-label">${T("對照一下，你覺得自己答得如何？（誠實自評喔）")}</p>
       <div class="self-grade">
-        <button class="btn" data-s="1">😎 大致答對</button>
-        <button class="btn" data-s="0.5">🤔 答對一部分</button>
-        <button class="btn" data-s="0">😅 沒答出來</button>
+        <button class="btn" data-s="1">${T("😎 大致答對")}</button>
+        <button class="btn" data-s="0.5">${T("🤔 答對一部分")}</button>
+        <button class="btn" data-s="0">${T("😅 沒答出來")}</button>
       </div>`;
     fb.querySelectorAll(".self-grade button").forEach((b) =>
       b.addEventListener("click", async () => {
@@ -595,23 +645,23 @@
   /* ---------- 結果 ---------- */
   function renderResult(data) {
     const pct = data.total ? Math.round((data.score / data.total) * 100) : 0;
-    const msg = pct >= 90 ? "太強了，知識王！🏆" : pct >= 70 ? "表現很棒！🎉" : pct >= 50 ? "不錯喔，再接再厲！💪" : "下次換個主題試試看！📚";
+    const msg = T(pct >= 90 ? "太強了，知識王！🏆" : pct >= 70 ? "表現很棒！🎉" : pct >= 50 ? "不錯喔，再接再厲！💪" : "下次換個主題試試看！📚");
     const rows = data.questions.map((q, i) => {
       const r = data.results[q.id] || {};
       const mark = r.score === 1 ? "✅" : r.score > 0 ? "🟡" : "❌";
       const answer = r.correct_answer;
       return `<li class="review-item"><span class="mark">${mark}</span>
         <div><p class="rq">${i + 1}. ${esc(q.q)} ${q.emoji ? esc(q.emoji) : ""}</p>
-        <p class="ra">你的答案：${esc(r.given || "—")}　｜　正解：${esc(answer)}</p></div></li>`;
+        <p class="ra">${T("你的答案：{0}　｜　正解：{1}", esc(r.given || "—"), esc(answer))}</p></div></li>`;
     }).join("");
     $app.innerHTML = `
       <section class="panel result">
         <div class="score-ring" style="--pct:${pct}"><span>${pct}<small>%</small></span></div>
         <h2>${msg}</h2>
-        <p>${CAT_ICON[data.category]} ${esc(catName(data.category))}・${DIFF[data.difficulty].icon} ${DIFF[data.difficulty].name}：${data.total} 題中得到 ${fmt(data.score)} 分</p>
-        <p class="hint">這個組合已挑戰完成，換個主題或難度繼續吧！</p>
-        <div class="actions"><button class="btn primary home">選下一個挑戰</button><button class="btn bank">看題庫總覽</button></div>
-        <h3>答題回顧</h3>
+        <p>${CAT_ICON[data.category]} ${esc(catName(data.category))}・${DIFF[data.difficulty].icon} ${DIFF[data.difficulty].name}：${T("{0} 題中得到 {1} 分", data.total, fmt(data.score))}</p>
+        <p class="hint">${T("這個組合已挑戰完成，換個主題或難度繼續吧！")}</p>
+        <div class="actions"><button class="btn primary home">${T("選下一個挑戰")}</button><button class="btn bank">${T("看題庫總覽")}</button></div>
+        <h3>${T("答題回顧")}</h3>
         <ol class="review">${rows}</ol>
       </section>`;
     $app.querySelector(".home").addEventListener("click", () => go("home"));
@@ -624,26 +674,26 @@
 
 
   /* ---------- 組隊挑戰 ---------- */
-  const STATUS = (t) => t.all_finished ? "🏆 已公布排名" : t.members.length < 2 ? "⏳ 等待隊友加入" : "✏️ 作答中";
+  const STATUS = (t) => T(t.all_finished ? "🏆 已公布排名" : t.members.length < 2 ? "⏳ 等待隊友加入" : "✏️ 作答中");
 
   async function renderTeams() {
-    if (!ME.user) return renderLoginNeeded("組隊挑戰", "/?view=teams");
+    if (!ME.user) return renderLoginNeeded(T("組隊挑戰"), "/?view=teams");
     const cats = [...Object.keys(CONFIG.categories), "all"];
     $app.innerHTML = `
       <section class="panel teams">
-        <h2>👥 組隊挑戰</h2>
-        <p class="hint">開一個隊伍、把邀請連結傳給朋友，最多 3 人答同一組 ${CONFIG.per_attempt} 題，大家各自有空就作答；全員完成後公布隊內排名。組隊不會用掉個人挑戰的次數。</p>
+        <h2>👥 ${T("組隊挑戰")}</h2>
+        <p class="hint">${T("開一個隊伍、把邀請連結傳給朋友，最多 3 人答同一組 {0} 題，大家各自有空就作答；全員完成後公布隊內排名。組隊不會用掉個人挑戰的次數。", CONFIG.per_attempt)}</p>
         <fieldset>
-          <legend>選擇主題</legend>
+          <legend>${T("選擇主題")}</legend>
           <div class="chips">${cats.map((c, i) => `<label class="chip"><input type="radio" name="tcat" value="${c}" ${i === 0 ? "checked" : ""}> ${CAT_ICON[c]} ${esc(catName(c))}</label>`).join("")}</div>
         </fieldset>
         <fieldset>
-          <legend>選擇難度</legend>
+          <legend>${T("選擇難度")}</legend>
           <div class="chips">${CONFIG.difficulties.map((d, i) => `<label class="chip"><input type="radio" name="tdiff" value="${d}" ${i === 0 ? "checked" : ""}> ${DIFF[d].icon} ${DIFF[d].name}</label>`).join("")}</div>
         </fieldset>
-        <button class="btn primary big" id="create-team">建立隊伍並取得邀請連結</button>
-        <h3>我的隊伍</h3>
-        <div id="my-teams" class="team-list"><p class="hint">載入中…</p></div>
+        <button class="btn primary big" id="create-team">${T("建立隊伍並取得邀請連結")}</button>
+        <h3>${T("我的隊伍")}</h3>
+        <div id="my-teams" class="team-list"><p class="hint">${T("載入中…")}</p></div>
       </section>`;
     document.getElementById("create-team").addEventListener("click", async (e) => {
       e.target.disabled = true;
@@ -665,13 +715,13 @@
       ? teams.map((t) => `
           <div class="team-row">
             <button class="team-open" data-code="${esc(t.code)}">
-              <span>${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}${t.is_owner ? ` <small class="badge soft">隊長</small>` : ""}</span>
+              <span>${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}${t.is_owner ? ` <small class="badge soft">${T("隊長")}</small>` : ""}</span>
               <span class="team-avatars">${t.members.map((m) => avatarHtml(28, m.profile)).join("")}</span>
               <small>${STATUS(t)}</small>
             </button>
-            <button class="team-delete" data-code="${esc(t.code)}" data-owner="${t.is_owner ? 1 : 0}" title="${t.is_owner ? "刪除隊伍" : "退出隊伍"}" aria-label="${t.is_owner ? "刪除隊伍" : "退出隊伍"}">🗑️</button>
+            <button class="team-delete" data-code="${esc(t.code)}" data-owner="${t.is_owner ? 1 : 0}" title="${T(t.is_owner ? "刪除隊伍" : "退出隊伍")}" aria-label="${T(t.is_owner ? "刪除隊伍" : "退出隊伍")}">🗑️</button>
           </div>`).join("")
-      : `<p class="hint">還沒有隊伍，建立一個邀請朋友吧！</p>`;
+      : `<p class="hint">${T("還沒有隊伍，建立一個邀請朋友吧！")}</p>`;
     box.querySelectorAll(".team-open").forEach((b) => b.addEventListener("click", () => renderTeam(b.dataset.code)));
     box.querySelectorAll(".team-delete").forEach((b) => b.addEventListener("click", async () => {
       if (await leaveTeam(b.dataset.code, b.dataset.owner === "1")) renderTeams();
@@ -681,13 +731,13 @@
   // 隊長刪除整個隊伍；隊員退出隊伍
   async function leaveTeam(code, isOwner) {
     const ok = await confirmDialog(isOwner
-      ? `<h2>🗑️ 刪除這個隊伍？</h2><p>所有成員的作答紀錄都會一起刪除，而且無法復原。</p>`
-      : `<h2>👋 退出這個隊伍？</h2><p>你的作答紀錄會被移除，其他隊友不受影響。</p>`,
-    isOwner ? "刪除隊伍" : "退出隊伍");
+      ? `<h2>${T("🗑️ 刪除這個隊伍？")}</h2><p>${T("所有成員的作答紀錄都會一起刪除，而且無法復原。")}</p>`
+      : `<h2>${T("👋 退出這個隊伍？")}</h2><p>${T("你的作答紀錄會被移除，其他隊友不受影響。")}</p>`,
+    T(isOwner ? "刪除隊伍" : "退出隊伍"));
     if (!ok) return false;
     try {
       await api(`/api/teams/${encodeURIComponent(code)}/leave`, {});
-      toast(isOwner ? "已刪除隊伍" : "已退出隊伍");
+      toast(T(isOwner ? "已刪除隊伍" : "已退出隊伍"));
       return true;
     } catch (err) {
       toast(err.message);
@@ -700,19 +750,19 @@
       <section class="panel paywall">
         <svg class="mascot small" viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg>
         <h2>${esc(title)}</h2>
-        <p>每位參加的朋友都需要先用 Google 帳號登入喔！</p>
-        <a class="btn primary big" href="${loginUrl(next)}">用 Google 帳號登入</a>
+        <p>${T("每位參加的朋友都需要先用 Google 帳號登入喔！")}</p>
+        <a class="btn primary big" href="${loginUrl(next)}">${T("用 Google 帳號登入")}</a>
       </section>`;
   }
 
   async function renderTeam(code) {
     history.replaceState(null, "", `/?team=${encodeURIComponent(code)}`);
-    if (!ME.user) return renderLoginNeeded("👥 朋友邀請你一起組隊挑戰！", `/?team=${encodeURIComponent(code)}`);
+    if (!ME.user) return renderLoginNeeded(T("👥 朋友邀請你一起組隊挑戰！"), `/?team=${encodeURIComponent(code)}`);
     let t;
     try {
       t = await api(`/api/teams/${encodeURIComponent(code)}`);
     } catch (e) {
-      $app.innerHTML = `<section class="panel"><h2>找不到隊伍</h2><p>${esc(e.message)}</p><button class="btn primary" id="back">回組隊頁</button></section>`;
+      $app.innerHTML = `<section class="panel"><h2>${T("找不到隊伍")}</h2><p>${esc(e.message)}</p><button class="btn primary" id="back">${T("回組隊頁")}</button></section>`;
       document.getElementById("back").addEventListener("click", () => go("teams"));
       return;
     }
@@ -720,21 +770,21 @@
     const memberRows = t.members.map((m) => `
       <li class="member">
         ${avatarHtml(44, m.profile)}
-        <div><b>${esc(m.name)}</b>${m.user_id === t.members[0].user_id ? ` <small class="badge soft">隊長</small>` : ""}${m.user_id === t.me ? ` <small class="badge">我</small>` : ""}
-          <p class="ra">${m.finished ? "✅ 已完成" : `作答中 ${m.answered} / ${t.total}`}${m.score !== null ? `・${fmt(m.score)} 分` : ""}</p></div>
+        <div><b>${esc(m.name)}</b>${m.user_id === t.members[0].user_id ? ` <small class="badge soft">${T("隊長")}</small>` : ""}${m.user_id === t.me ? ` <small class="badge">${T("我")}</small>` : ""}
+          <p class="ra">${m.finished ? T("✅ 已完成") : T("作答中 {0} / {1}", m.answered, t.total)}${m.score !== null ? `・${T("{0} 分", fmt(m.score))}` : ""}</p></div>
       </li>`).join("");
-    const slots = Array.from({ length: t.max_members - t.members.length }, () => `<li class="member empty"><span class="avatar-wrap" style="--s:44px"><span class="avatar-img emoji">＋</span></span><div><b>等待加入</b></div></li>`).join("");
+    const slots = Array.from({ length: t.max_members - t.members.length }, () => `<li class="member empty"><span class="avatar-wrap" style="--s:44px"><span class="avatar-img emoji">＋</span></span><div><b>${T("等待加入")}</b></div></li>`).join("");
 
     let action = "";
     if (!t.is_member) {
       action = t.members.length < t.max_members
-        ? `<button class="btn primary big" id="join">加入這個隊伍</button>`
-        : `<p class="hint">這個隊伍已經滿 ${t.max_members} 人了。</p>`;
+        ? `<button class="btn primary big" id="join">${T("加入這個隊伍")}</button>`
+        : `<p class="hint">${T("這個隊伍已經滿 {0} 人了。", t.max_members)}</p>`;
     } else if (!t.my_finished) {
       const answered = t.my_answered;
-      action = `<button class="btn primary big" id="play">${answered ? `繼續作答（${answered} / ${t.total}）` : "開始作答"}</button>`;
+      action = `<button class="btn primary big" id="play">${answered ? T("繼續作答（{0} / {1}）", answered, t.total) : T("開始作答")}</button>`;
     } else if (!t.all_finished) {
-      action = `<p class="hint">你已經完成了！等隊友都答完就會公布排名。</p><button class="btn" id="refresh">🔄 更新進度</button>`;
+      action = `<p class="hint">${T("你已經完成了！等隊友都答完就會公布排名。")}</p><button class="btn" id="refresh">${T("🔄 更新進度")}</button>`;
     }
 
     let ranking = "";
@@ -744,12 +794,12 @@
         <div class="podium">${t.ranking.map((r) => {
           // 同分同名次
           const rank = 1 + t.ranking.filter((x) => x.score > r.score).length;
-          return `<div class="place p${rank}">${medals[rank - 1] || ""}<b>${esc(r.name)}</b><span>${fmt(r.score)} 分</span></div>`;
+          return `<div class="place p${rank}">${medals[rank - 1] || ""}<b>${esc(r.name)}</b><span>${T("{0} 分", fmt(r.score))}</span></div>`;
         }).join("")}</div>
-        <h3>每題作答結果</h3>
+        <h3>${T("每題作答結果")}</h3>
         <div class="breakdown"><table>
-          <thead><tr><th>題目</th>${t.members.map((m) => `<th>${avatarHtml(26, m.profile)}</th>`).join("")}</tr></thead>
-          <tbody>${t.breakdown.map((b, i) => `<tr><td><span class="rq">${i + 1}. ${esc(b.q)} ${b.emoji ? esc(b.emoji) : ""}</span><span class="ra">正解：${esc(b.answer)}</span></td>${t.members.map((m) => {
+          <thead><tr><th>${T("題目")}</th>${t.members.map((m) => `<th>${avatarHtml(26, m.profile)}</th>`).join("")}</tr></thead>
+          <tbody>${t.breakdown.map((b, i) => `<tr><td><span class="rq">${i + 1}. ${esc(b.q)} ${b.emoji ? esc(b.emoji) : ""}</span><span class="ra">${T("正解：{0}", esc(b.answer))}</span></td>${t.members.map((m) => {
             const v = b.scores[m.user_id];
             return `<td class="mark">${v === 1 ? "✅" : v > 0 ? "🟡" : v === 0 ? "❌" : "—"}</td>`;
           }).join("")}</tr>`).join("")}</tbody>
@@ -759,17 +809,17 @@
     $app.innerHTML = `
       <section class="panel team">
         <div class="team-top">
-          <button class="link back-teams">← 我的隊伍</button>
-          ${t.is_member ? `<button class="link danger" id="leave-team">${t.is_owner ? "🗑️ 刪除隊伍" : "👋 退出隊伍"}</button>` : ""}
+          <button class="link back-teams">${T("← 我的隊伍")}</button>
+          ${t.is_member ? `<button class="link danger" id="leave-team">${T(t.is_owner ? "🗑️ 刪除隊伍" : "👋 退出隊伍")}</button>` : ""}
         </div>
         <h2>👥 ${CAT_ICON[t.category]} ${esc(catName(t.category))}・${DIFF[t.difficulty].icon} ${DIFF[t.difficulty].name}</h2>
-        <p class="hint">${STATUS(t)}・每人 ${t.total} 題・最多 ${t.max_members} 人</p>
+        <p class="hint">${STATUS(t)}・${T("每人 {0} 題・最多 {1} 人", t.total, t.max_members)}</p>
         ${t.is_member && t.members.length < t.max_members ? `
         <div class="invite">
-          <b>📨 邀請朋友（還可以再邀 ${t.max_members - t.members.length} 人）</b>
+          <b>${T("📨 邀請朋友（還可以再邀 {0} 人）", t.max_members - t.members.length)}</b>
           <div class="invite-row"><input class="text-input" id="invite-link" readonly value="${esc(link)}">
-            <button class="btn" id="copy">複製連結</button>${navigator.share ? `<button class="btn primary" id="share">分享</button>` : ""}</div>
-          <small class="hint">朋友打開連結、登入 Google 後就能加入。</small>
+            <button class="btn" id="copy">${T("複製連結")}</button>${navigator.share ? `<button class="btn primary" id="share">${T("分享")}</button>` : ""}</div>
+          <small class="hint">${T("朋友打開連結、登入 Google 後就能加入。")}</small>
         </div>` : ""}
         <ul class="members">${memberRows}${t.is_member ? slots : ""}</ul>
         ${action}
@@ -783,19 +833,19 @@
     document.getElementById("copy")?.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(link);
-        toast("已複製邀請連結，貼給朋友吧！");
+        toast(T("已複製邀請連結，貼給朋友吧！"));
       } catch {
         document.getElementById("invite-link").select();
-        toast("請手動複製連結");
+        toast(T("請手動複製連結"));
       }
     });
     document.getElementById("share")?.addEventListener("click", () =>
-      navigator.share({ title: "知識大挑戰・組隊邀請", text: `一起來挑戰「${catName(t.category)}・${DIFF[t.difficulty].name}」！`, url: link }).catch(() => {}));
+      navigator.share({ title: T("知識大挑戰・組隊邀請"), text: T("一起來挑戰「{0}」！", `${catName(t.category)}・${DIFF[t.difficulty].name}`), url: link }).catch(() => {}));
     document.getElementById("join")?.addEventListener("click", async (e) => {
       e.target.disabled = true;
       try {
         await api(`/api/teams/${encodeURIComponent(t.code)}/join`, {});
-        toast("🎉 已加入隊伍！");
+        toast(T("🎉 已加入隊伍！"));
         renderTeam(t.code);
       } catch (err) {
         toast(err.message);
@@ -842,22 +892,22 @@
     ]);
     $app.innerHTML = `
       <section class="psy-hero">
-        <h1>🔮 心理測驗</h1>
-        <p>沒有對錯、可以一直重測！憑直覺作答，結果還能做成可愛像素圖分享給朋友。</p>
+        <h1>🔮 ${T("心理測驗")}</h1>
+        <p>${T("沒有對錯、可以一直重測！憑直覺作答，結果還能做成可愛像素圖分享給朋友。")}</p>
       </section>
       <section class="psy-grid">${tests.map((t) => `
         <button class="psy-card theme-${t.theme}" data-slug="${t.slug}">
           ${t.illust ? `<img class="psy-illust-thumb" src="${esc(t.illust)}" alt="">` : `<span class="psy-emoji">${t.emoji}</span>`}
           <b>${esc(t.title)}</b>
           <small>${esc(t.subtitle)}</small>
-          <span class="psy-count">題庫 ${t.count} 題</span>
+          <span class="psy-count">${T("題庫 {0} 題", t.count)}</span>
         </button>`).join("")}
       </section>
-      ${tests.some((t) => t.illust) ? `<p class="credits">插畫：<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
+      ${tests.some((t) => t.illust) ? `<p class="credits">${T("插畫：")}<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
       ${mine.results.length ? `
       <section class="panel psy-history">
-        <h3>📒 我的測驗紀錄</h3>
-        <ul>${mine.results.map((r) => `<li><a href="#" data-code="${esc(r.code)}">${esc(r.title)}：${r.type ? `${r.type.emoji || ""} ${esc(r.type.name)}` : ""}${r.index != null ? `（${r.index}%）` : ""}</a><small>${new Date(r.created_at).toLocaleDateString("zh-TW")}</small></li>`).join("")}</ul>
+        <h3>${T("📒 我的測驗紀錄")}</h3>
+        <ul>${mine.results.map((r) => `<li><a href="#" data-code="${esc(r.code)}">${esc(r.title)}：${r.type ? `${r.type.emoji || ""} ${esc(r.type.name)}` : ""}${r.index != null ? `（${r.index}%）` : ""}</a><small>${new Date(r.created_at).toLocaleDateString(LOCALE[LANG])}</small></li>`).join("")}</ul>
       </section>` : ""}`;
     $app.querySelectorAll(".psy-card").forEach((b) => b.addEventListener("click", () => renderPsychIntro(b.dataset.slug)));
     $app.querySelectorAll(".psy-history a").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); renderPsychShared(a.dataset.code); }));
@@ -868,19 +918,19 @@
     const t = await api(`/api/psych/${slug}?n=0`);
     let partner = null;
     if (withCode) partner = await api(`/api/psych/r/${encodeURIComponent(withCode)}`).catch(() => null);
-    const counts = t.total > 12 ? [12, 0] : [0];
+    const counts = t.total > 12 && !t.fixed ? [12, 0] : [0];
     $app.innerHTML = `
       <section class="panel psy-intro theme-${t.theme}">
-        <button class="link back-psy">← 所有心理測驗</button>
+        <button class="link back-psy">${T("← 所有心理測驗")}</button>
         ${t.illust ? `<img class="psy-illust" src="${esc(t.illust)}" alt="">` : `<div class="psy-cover">${t.emoji}</div>`}
         <h2>${esc(t.title)}</h2>
         <p class="psy-sub">${esc(t.subtitle)}</p>
-        ${partner ? `<div class="invite">💌 <b>${esc(partner.owner)}</b> 邀請你來測默契！完成後就能看到你們的默契指數。</div>` : ""}
+        ${partner ? `<div class="invite">💌 ${T("<b>{0}</b> 邀請你來測默契！完成後就能看到你們的默契指數。", esc(partner.owner))}</div>` : ""}
         <p>${esc(t.intro)}</p>
-        <fieldset><legend>題數</legend><div class="chips">${counts.map((n, i) => `<label class="chip"><input type="radio" name="psy-n" value="${n}" ${i === 0 ? "checked" : ""}> ${n ? `隨機 ${n} 題` : `全部 ${t.total} 題`}</label>`).join("")}</div></fieldset>
-        <p class="hint">⚠️ ${esc(t.disclaimer)}${ME.user ? "" : " 登入後結果會保存，並可產生分享連結。"}</p>
-        <button class="btn primary big" id="psy-start">開始測驗</button>
-        ${t.illust ? `<p class="credits">插畫：<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
+        <fieldset><legend>${T("題數")}</legend><div class="chips">${counts.map((n, i) => `<label class="chip"><input type="radio" name="psy-n" value="${n}" ${i === 0 ? "checked" : ""}> ${n ? T("隨機 {0} 題", n) : T("全部 {0} 題", t.total)}</label>`).join("")}</div></fieldset>
+        <p class="hint">⚠️ ${esc(t.disclaimer)}${ME.user ? "" : ` ${T("登入後結果會保存，並可產生分享連結。")}`}</p>
+        <button class="btn primary big" id="psy-start">${T("開始測驗")}</button>
+        ${t.illust ? `<p class="credits">${T("插畫：")}<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
       </section>`;
     $app.querySelector(".back-psy").addEventListener("click", () => go("psych"));
     document.getElementById("psy-start").addEventListener("click", async () => {
@@ -897,12 +947,12 @@
       $app.innerHTML = `
         <section class="panel psy-q theme-${test.theme}">
           <header class="quiz-head">
-            <button class="link quit">✕ 離開</button><span>${test.emoji} ${esc(test.title)}</span><span class="q-count">${state.idx + 1} / ${test.questions.length}</span>
+            <button class="link quit">${T("✕ 離開")}</button><span>${test.emoji} ${esc(test.title)}</span><span class="q-count">${state.idx + 1} / ${test.questions.length}</span>
           </header>
           <div class="progress"><div style="width:${(state.idx / test.questions.length) * 100}%"></div></div>
           <h2 class="q-text">${esc(q.q)}</h2>
           <div class="psy-options">${q.options.map((o, i) => `<button class="psy-option" data-i="${i}">${esc(o)}</button>`).join("")}</div>
-          ${state.idx ? `<button class="link psy-back">← 上一題</button>` : ""}
+          ${state.idx ? `<button class="link psy-back">${T("← 上一題")}</button>` : ""}
         </section>`;
       $app.querySelector(".quit").addEventListener("click", () => go("psych"));
       $app.querySelector(".psy-back")?.addEventListener("click", () => { state.idx--; state.answers.pop(); draw(); });
@@ -912,7 +962,7 @@
         state.answers.push({ q: q.id, o: Number(b.dataset.i) });
         await new Promise((r) => setTimeout(r, 180));
         if (++state.idx < test.questions.length) return draw();
-        $app.innerHTML = `<section class="panel psy-q theme-${test.theme}"><div class="suspense">分析中<span>.</span><span>.</span><span>.</span></div></section>`;
+        $app.innerHTML = `<section class="panel psy-q theme-${test.theme}"><div class="suspense">${T("分析中")}<span>.</span><span>.</span><span>.</span></div></section>`;
         try {
           const [result] = await Promise.all([
             api(`/api/psych/${test.slug}/submit`, { answers: state.answers, with_code: withCode || null }),
@@ -933,7 +983,7 @@
     try {
       renderPsychResult(await api(`/api/psych/r/${encodeURIComponent(code)}`), true);
     } catch (e) {
-      $app.innerHTML = `<section class="panel"><h2>找不到測驗結果</h2><p>${esc(e.message)}</p></section>`;
+      $app.innerHTML = `<section class="panel"><h2>${T("找不到測驗結果")}</h2><p>${esc(e.message)}</p></section>`;
     }
   }
 
@@ -944,7 +994,7 @@
       return [cx + Math.cos(a) * R * v, cy + Math.sin(a) * R * v];
     };
     const ring = (v) => axes.map((_, i) => pt(i, v).join(",")).join(" ");
-    return `<svg class="radar" viewBox="0 0 260 240" role="img" aria-label="特性雷達圖">
+    return `<svg class="radar" viewBox="0 0 260 240" role="img" aria-label="${T("特性雷達圖")}">
       ${[0.25, 0.5, 0.75, 1].map((v) => `<polygon points="${ring(v)}" class="radar-grid"/>`).join("")}
       ${axes.map((_, i) => `<line x1="${cx}" y1="${cy}" x2="${pt(i, 1)[0]}" y2="${pt(i, 1)[1]}" class="radar-grid"/>`).join("")}
       <polygon points="${axes.map((a, i) => pt(i, Math.max(0.04, a.pct / 100)).join(",")).join(" ")}" fill="${color}" fill-opacity=".35" stroke="${color}" stroke-width="2.5"/>
@@ -960,69 +1010,73 @@
     if (r.kind === "index") {
       main = `<div class="psy-index"><span class="big">${r.index}<small>%</small></span><b>${r.level.emoji} ${esc(r.level.name)}</b></div>
               <p>${esc(r.level.desc)}</p>
-              <div class="psy-typebox"><span>${r.type.emoji}</span><div><small>你的類型</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>`;
+              <div class="psy-typebox"><span>${r.type.emoji}</span><div><small>${T("你的類型")}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>`;
     } else if (r.kind === "dimension") {
       main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${esc(r.type_key)}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>
               <div class="dims">${r.dims.map((d) => `<div class="dim"><span class="${d.pick === d.a ? "on" : ""}">${d.a} ${esc(d.a_name)}</span>
                 <div class="dim-bar"><div style="width:${d.a_pct}%"></div></div><span class="${d.pick === d.b ? "on" : ""}">${esc(d.b_name)} ${d.b}</span></div>`).join("")}</div>`;
+    } else if (r.kind === "mix") {
+      main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${T("你的綜合人格")}</small><b>${esc(r.type.name)}</b></div></div>
+              <div class="mix-parts">${r.parts.map((p) => `<div class="mix-part"><small>${p.emoji} ${esc(p.title)}</small>
+                <b>${p.type.emoji} ${esc(p.type.name)}</b>${p.extra ? `<span>${esc(p.extra)}</span>` : ""}</div>`).join("")}</div>`;
     } else if (r.kind === "holland") {
-      main = `<div class="psy-index"><span class="big code">${esc(r.holland)}</span><b>你的職業興趣代碼</b></div>
-              ${r.top.map((t, i) => `<div class="psy-typebox"><span>${t.emoji}</span><div><small>第 ${i + 1} 名</small><b>${esc(t.name)}</b><p>${esc(t.desc)}</p><p class="careers">💼 ${t.careers.map(esc).join("、")}</p></div></div>`).join("")}`;
+      main = `<div class="psy-index"><span class="big code">${esc(r.holland)}</span><b>${T("你的職業興趣代碼")}</b></div>
+              ${r.top.map((t, i) => `<div class="psy-typebox"><span>${t.emoji}</span><div><small>${T("第 {0} 名", i + 1)}</small><b>${esc(t.name)}</b><p>${esc(t.desc)}</p><p class="careers">💼 ${t.careers.map(esc).join("、")}</p></div></div>`).join("")}`;
     } else {
-      main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>你的類型</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p>${r.type.tip ? `<p class="hint">💡 ${esc(r.type.tip)}</p>` : ""}</div></div>`;
+      main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${T("你的類型")}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p>${r.type.tip ? `<p class="hint">💡 ${esc(r.type.tip)}</p>` : ""}</div></div>`;
       if (r.kind === "match") {
         main += r.partner
-          ? `<div class="psy-index"><span class="big">${r.partner.compat}<small>%</small></span><b>你和 ${esc(r.partner.name)}（${r.partner.type.emoji} ${esc(r.partner.type.name)}）的默契指數</b></div>`
+          ? `<div class="psy-index"><span class="big">${r.partner.compat}<small>%</small></span><b>${T("你和 {0}（{1}）的默契指數", esc(r.partner.name), `${r.partner.type.emoji} ${esc(r.partner.type.name)}`)}</b></div>`
           : "";
-        main += `<p><b>最合拍的類型：</b>${r.best.map((b) => `${b.emoji} ${esc(b.name)}`).join("、")}</p>`;
+        main += `<p><b>${T("最合拍的類型：")}</b>${r.best.map((b) => `${b.emoji} ${esc(b.name)}`).join("、")}</p>`;
       }
     }
     $app.innerHTML = `
       <section class="panel psy-result theme-${r.theme}" style="--psy-bg:${pal.bg};--psy-accent:${pal.accent}">
-        <button class="link back-psy">← 所有心理測驗</button>
-        <p class="psy-sub">${esc(r.title)}${shared && r.owner ? `・${esc(r.owner)} 的結果` : ""}</p>
+        <button class="link back-psy">${T("← 所有心理測驗")}</button>
+        <p class="psy-sub">${esc(r.title)}${shared && r.owner ? `・${T("{0} 的結果", esc(r.owner))}` : ""}</p>
         ${r.illust ? `<img class="psy-illust small" src="${esc(r.illust)}" alt="">` : ""}
         ${main}
         ${r.axes && r.axes.length >= 3 ? radarSvg(r.axes, pal.accent) : ""}
         ${r.axes ? `<div class="psy-bars">${r.axes.map((a) => `<div class="psy-bar"><span>${esc(a.name)}</span><div><i style="width:${a.pct}%"></i></div><b>${a.pct}%</b></div>`).join("")}</div>` : ""}
-        <h3>🎨 像素結果圖</h3>
+        <h3>${T("🎨 像素結果圖")}</h3>
         <div class="pixel-wrap"><canvas id="pixel-card"></canvas></div>
         <div class="actions">
-          <button class="btn primary" id="px-share">📤 分享結果圖</button>
-          <button class="btn" id="px-save">⬇️ 下載圖片</button>
-          ${shareUrl ? `<button class="btn" id="copy-result">🔗 複製結果連結</button>` : ""}
-          ${r.kind === "match" && r.code && !shared ? `<button class="btn" id="invite-match">💌 邀朋友測默契</button>` : ""}
-          <button class="btn" id="retry">${shared ? "我也要測" : "再測一次"}</button>
+          <button class="btn primary" id="px-share">${T("📤 分享結果圖")}</button>
+          <button class="btn" id="px-save">${T("⬇️ 下載圖片")}</button>
+          ${shareUrl ? `<button class="btn" id="copy-result">${T("🔗 複製結果連結")}</button>` : ""}
+          ${r.kind === "match" && r.code && !shared ? `<button class="btn" id="invite-match">${T("💌 邀朋友測默契")}</button>` : ""}
+          <button class="btn" id="retry">${T(shared ? "我也要測" : "再測一次")}</button>
         </div>
-        <p class="hint">⚠️ 本測驗僅供娛樂與自我探索，不是醫學、心理學或專業的診斷。</p>
-        ${r.illust ? `<p class="credits">插畫：<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
+        <p class="hint">⚠️ ${T("本測驗僅供娛樂與自我探索，不是醫學、心理學或專業的診斷。")}</p>
+        ${r.illust ? `<p class="credits">${T("插畫：")}<a href="https://shigureni.com/" target="_blank" rel="noopener">shigureni free illust</a></p>` : ""}
       </section>`;
     const canvas = document.getElementById("pixel-card");
     drawPixelCard(canvas, r, pal);
     if (!shared && (r.kind !== "index" || r.level_no >= 3)) confetti();
     $app.querySelector(".back-psy").addEventListener("click", () => go("psych"));
     document.getElementById("retry").addEventListener("click", () => renderPsychIntro(r.slug));
-    const fileName = `${r.title}-${r.type ? r.type.name : "結果"}.png`;
+    const fileName = `${r.title}-${r.type ? r.type.name : T("結果")}.png`;
     document.getElementById("px-save").addEventListener("click", () => {
       const a = Object.assign(document.createElement("a"), { href: canvas.toDataURL("image/png"), download: fileName });
       a.click();
     });
     document.getElementById("px-share").addEventListener("click", () => canvas.toBlob(async (blob) => {
       const file = new File([blob], fileName, { type: "image/png" });
-      const text = `我在「${r.title}」測出：${r.type ? r.type.name : ""}${r.index != null ? `（${r.index}%）` : ""}！你也來測測看～`;
+      const text = T("我在「{0}」測出：{1}！你也來測測看～", r.title, `${r.type ? r.type.name : ""}${r.index != null ? `（${r.index}%）` : ""}`);
       if (navigator.canShare?.({ files: [file] })) {
         navigator.share({ files: [file], title: r.title, text: shareUrl ? `${text} ${shareUrl}` : text }).catch(() => {});
       } else {
         document.getElementById("px-save").click();
-        toast("你的瀏覽器不支援直接分享，已改為下載圖片");
+        toast(T("你的瀏覽器不支援直接分享，已改為下載圖片"));
       }
     }, "image/png"));
     const copy = async (url, msg) => {
       try { await navigator.clipboard.writeText(url); toast(msg); } catch { toast(url); }
     };
-    document.getElementById("copy-result")?.addEventListener("click", () => copy(shareUrl, "已複製結果連結！"));
+    document.getElementById("copy-result")?.addEventListener("click", () => copy(shareUrl, T("已複製結果連結！")));
     document.getElementById("invite-match")?.addEventListener("click", () =>
-      copy(`${location.origin}/?psych=match&with=${encodeURIComponent(r.code)}`, "已複製邀請連結，傳給朋友一起測默契吧！"));
+      copy(`${location.origin}/?psych=match&with=${encodeURIComponent(r.code)}`, T("已複製邀請連結，傳給朋友一起測默契吧！")));
   }
 
   /* ---------- 可愛像素風結果圖：先畫在小畫布，再以不平滑的方式放大 ---------- */
@@ -1094,13 +1148,13 @@
     rect(g, cx + 2, cy + 2, cw - 4, 18, pal.accent);
     for (let x = cx + 2; x < cx + cw - 2; x += 6) rect(g, x, cy + 20, 3, 2, pal.accent);
     // 文字：畫在小畫布後二值化，讓字也變成清楚的像素
-    const text = (str, x, y, size, color, align = "center", weight = "700") => {
+    const text = (str, x, y, size, color, align = "center", weight = "700", maxW = cw - 12) => {
       const layer = document.createElement("canvas");
       layer.width = W; layer.height = size + 6;
       const lg = layer.getContext("2d");
       lg.font = `${weight} ${size}px "Noto Sans TC", "PingFang TC", sans-serif`;
       lg.textAlign = align; lg.textBaseline = "top"; lg.fillStyle = color;
-      lg.fillText(str, x, 2, cw - 12);
+      lg.fillText(str, x, 2, maxW);
       const im = lg.getImageData(0, 0, layer.width, layer.height);
       for (let i = 3; i < im.data.length; i += 4) im.data[i] = im.data[i] >= 90 ? 255 : 0;
       lg.putImageData(im, 0, 0);
@@ -1130,7 +1184,7 @@
     } else if (r.kind === "dimension") {
       text(r.type_key, W / 2, y, 12, pal.accent); y += 16;
     } else if (r.kind === "match" && r.partner) {
-      text(`默契指數 ${r.partner.compat}%`, W / 2, y, 11, pal.accent); y += 15;
+      text(T("默契指數 {0}%", r.partner.compat), W / 2, y, 11, pal.accent); y += 15;
     }
     y += 3;
     // 特性長條（像素方塊）
@@ -1142,6 +1196,18 @@
       for (let i = 0; i < 10; i++) rect(g, cx + 68 + i * 8, y + 2, 6, 7, i < filled ? pal.accent : pal.soft);
       y += 14;
     });
+    // 綜合心理測驗：兩欄列出 8 個測驗的結果
+    if (r.kind === "mix" && r.parts) {
+      y += 4;
+      rect(g, cx + 8, y, cw - 16, 1, pal.soft);
+      y += 5;
+      r.parts.forEach((p, i) => {
+        const col = i % 2, x = cx + 8 + col * ((cw - 16) / 2);
+        rect(g, x, y + 4, 3, 3, pal.accent);
+        text(p.type.name, x + 6, y, 10, pal.ink, "left", "700", (cw - 16) / 2 - 8);
+        if (col) y += 13;
+      });
+    }
     // 草地（小動物遊行的舞台）
     const ground = cy + ch - 22;
     rect(g, cx + 3, ground, cw - 6, 2, "#8fd694");
@@ -1149,7 +1215,7 @@
     // 頁尾：問問雲朵吉祥物＋網站名稱
     bitmap(g, PX_CLOUD, cx + 8, cy + ch - 16, "#ffffff");
     bitmap(g, PX_HEART, cx + 15, cy + ch - 13, "#ff6fa3");
-    text("知識大挑戰", cx + 28, cy + ch - 16, 10, pal.ink, "left");
+    text(T("知識大挑戰"), cx + 28, cy + ch - 16, 10, pal.ink, "left");
     bitmap(g, PX_STAR, cx + cw - 16, cy + ch - 15, pal.accent);
 
     // 小動物夥伴：大貓、大狗陪在主角旁邊，下方再一排小動物遊行
@@ -1201,9 +1267,9 @@
     $app.innerHTML = `
       <section class="panel paywall">
         <svg class="mascot small" viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg>
-        <h2>📚 題庫總覽</h2>
-        <p>登入後就能<strong>免費</strong>瀏覽全部 <strong>${CONFIG.total}</strong> 題、篩選與搜尋；訂閱會員可看全部答案並匯出 PDF。</p>
-        <a class="btn primary big" href="${loginUrl("/?view=bank")}">用 Google 帳號登入</a>
+        <h2>📚 ${T("題庫總覽")}</h2>
+        <p>${T("登入後就能<strong>免費</strong>瀏覽全部 <strong>{0}</strong> 題、篩選與搜尋；訂閱會員可看全部答案並匯出 PDF。", CONFIG.total)}</p>
+        <a class="btn primary big" href="${loginUrl("/?view=bank")}">${T("用 Google 帳號登入")}</a>
       </section>`;
   }
 
@@ -1212,10 +1278,10 @@
     return `
       <div class="sub-banner">
         <div>
-          <b>🔓 訂閱解鎖全部答案與解說</b>
-          <p>每月 NT$${CONFIG.price_twd}，隨時可以取消。訂閱後可看全部答案，並匯出含答案與解說的 PDF 題本。</p>
+          <b>${T("🔓 訂閱解鎖全部答案與解說")}</b>
+          <p>${T("每月 NT${0}，隨時可以取消。訂閱後可看全部答案，並匯出含答案與解說的 PDF 題本。", CONFIG.price_twd)}</p>
         </div>
-        <button class="btn primary" id="subscribe">訂閱 NT$${CONFIG.price_twd} / 月</button>
+        <button class="btn primary" id="subscribe">${T("訂閱 NT${0} / 月", CONFIG.price_twd)}</button>
       </div>`;
   }
 
@@ -1238,30 +1304,30 @@
     $app.innerHTML = `
       <section class="panel bank">
         <div class="bank-head">
-          <h2>📚 題庫總覽</h2>
-          ${subscribed ? `<button class="link" id="portal">管理訂閱</button>` : ""}
+          <h2>📚 ${T("題庫總覽")}</h2>
+          ${subscribed ? `<button class="link" id="portal">${T("管理訂閱")}</button>` : ""}
         </div>
         ${subscribed
-          ? `<p class="hint">💖 你是訂閱會員，可以看到全部答案與解說。</p>`
-          : subscribeBanner() + `<p class="hint">免費瀏覽所有題目；你已挑戰完成的「主題 × 難度」也會顯示答案。</p>`}
+          ? `<p class="hint">${T("💖 你是訂閱會員，可以看到全部答案與解說。")}</p>`
+          : subscribeBanner() + `<p class="hint">${T("免費瀏覽所有題目；你已挑戰完成的「主題 × 難度」也會顯示答案。")}</p>`}
         <div class="filters">
-          <select id="f-cat"><option value="">全部主題</option>${opt(CONFIG.categories, bankFilters.cat, (k, v) => `${CAT_ICON[k]} ${v}`)}</select>
-          <select id="f-diff"><option value="">全部難度</option>${opt(DIFF, bankFilters.difficulty, (k, v) => `${v.icon} ${v.name}`)}</select>
-          <select id="f-type"><option value="">全部題型</option>${opt(TYPES, bankFilters.type, (k, v) => `${v.icon} ${v.name}`)}</select>
-          <input id="f-q" class="text-input" placeholder="搜尋題目關鍵字" value="${esc(bankFilters.q)}">
+          <select id="f-cat"><option value="">${T("全部主題")}</option>${opt(CONFIG.categories, bankFilters.cat, (k, v) => `${CAT_ICON[k]} ${T(v)}`)}</select>
+          <select id="f-diff"><option value="">${T("全部難度")}</option>${opt(DIFF, bankFilters.difficulty, (k, v) => `${v.icon} ${v.name}`)}</select>
+          <select id="f-type"><option value="">${T("全部題型")}</option>${opt(TYPES, bankFilters.type, (k, v) => `${v.icon} ${v.name}`)}</select>
+          <input id="f-q" class="text-input" placeholder="${T("搜尋題目關鍵字")}" value="${esc(bankFilters.q)}">
           ${subscribed
-            ? `<a class="btn primary" id="export">📄 匯出 PDF</a>`
-            : `<button class="btn" id="export-locked" type="button">🔒 匯出 PDF（訂閱會員）</button>`}
+            ? `<a class="btn primary" id="export">${T("📄 匯出 PDF")}</a>`
+            : `<button class="btn" id="export-locked" type="button">${T("🔒 匯出 PDF（訂閱會員）")}</button>`}
         </div>
-        <p class="hint" id="bank-count">載入中…</p>
+        <p class="hint" id="bank-count">${T("載入中…")}</p>
         <ol class="bank-list"></ol>
         <div class="pager"></div>
-        <p class="credits">圖片來源：Wikimedia Commons／Wikipedia（自由授權）。</p>
+        <p class="credits">${T("圖片來源：Wikimedia Commons／Wikipedia（自由授權）。")}</p>
       </section>`;
 
     bindSubscribe();
     document.getElementById("export-locked")?.addEventListener("click", () => {
-      toast("匯出 PDF 是訂閱會員功能，訂閱後可下載含全部答案與解說的題本");
+      toast(T("匯出 PDF 是訂閱會員功能，訂閱後可下載含全部答案與解說的題本"));
       window.scrollTo({ top: 0, behavior: "smooth" });
       document.getElementById("subscribe")?.focus();
     });
@@ -1289,18 +1355,18 @@
       } catch (e) {
         return toast(e.message);
       }
-      document.getElementById("bank-count").textContent = `共 ${data.total} 題・第 ${data.page} / ${data.pages} 頁`;
+      document.getElementById("bank-count").textContent = T("共 {0} 題・第 {1} / {2} 頁", data.total, data.page, data.pages);
       $app.querySelector(".bank-list").innerHTML = data.questions.map((q) => {
         const answer = q.answer === undefined
-          ? `<p class="locked">🔒 答案為訂閱會員內容<button class="link unlock">　訂閱解鎖 →</button></p>`
-          : `<details><summary>看答案</summary><p>${esc(q.answer)}</p>${q.explain ? `<p class="ra">${esc(q.explain)}</p>` : ""}</details>`;
+          ? `<p class="locked">${T("🔒 答案為訂閱會員內容")}<button class="link unlock">　${T("訂閱解鎖 →")}</button></p>`
+          : `<details><summary>${T("看答案")}</summary><p>${esc(q.answer)}</p>${q.explain ? `<p class="ra">${esc(q.explain)}</p>` : ""}</details>`;
         return `<li>
           <div class="q-meta"><span class="badge">${TYPES[q.type].icon} ${TYPES[q.type].name}</span>
             <span class="badge soft">${CAT_ICON[q.cat]} ${esc(catName(q.cat))}</span>
             <span class="badge diff-${q.difficulty}">${DIFF[q.difficulty].icon} ${DIFF[q.difficulty].name}</span></div>
           <p class="rq">${esc(q.q)} ${q.emoji ? `<span class="inline-emoji">${esc(q.emoji)}</span>` : ""}</p>
           ${q.img ? `<img class="thumb" src="${esc(q.img)}" alt="" loading="lazy">` : ""}
-          ${q.options ? `<p class="ra">選項：${q.options.map(esc).join("、")}</p>` : ""}
+          ${q.options ? `<p class="ra">${T("選項：{0}", q.options.map(esc).join("、"))}</p>` : ""}
           ${answer}
         </li>`;
       }).join("");
@@ -1310,8 +1376,8 @@
       }));
       const pager = $app.querySelector(".pager");
       pager.innerHTML = data.pages > 1
-        ? `<button class="btn" data-p="${data.page - 1}" ${data.page <= 1 ? "disabled" : ""}>← 上一頁</button>
-           <button class="btn" data-p="${data.page + 1}" ${data.page >= data.pages ? "disabled" : ""}>下一頁 →</button>`
+        ? `<button class="btn" data-p="${data.page - 1}" ${data.page <= 1 ? "disabled" : ""}>${T("← 上一頁")}</button>
+           <button class="btn" data-p="${data.page + 1}" ${data.page >= data.pages ? "disabled" : ""}>${T("下一頁 →")}</button>`
         : "";
       pager.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
         bankFilters.page = Number(b.dataset.p);
@@ -1426,7 +1492,24 @@
     renderNav();
   }
 
+  // index.html 裡標了 data-i18n 的文字，以及 ☰ 選單底部的語言切換
+  function setupLanguage() {
+    document.documentElement.lang = HTML_LANG[LANG];
+    document.title = T("知識大挑戰");
+    document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = T(el.dataset.i18n); });
+    document.querySelectorAll("[data-i18n-label]").forEach((el) => el.setAttribute("aria-label", T(el.dataset.i18nLabel)));
+    const box = document.getElementById("menu-lang");
+    box.innerHTML = `<label>🌐 ${T("介面語言")}<select id="lang-select">${Object.entries(LANGS).map(([k, v]) =>
+      `<option value="${k}" ${k === LANG ? "selected" : ""}>${v}</option>`).join("")}</select></label>`;
+    box.addEventListener("click", (e) => e.stopPropagation());
+    document.getElementById("lang-select").addEventListener("change", (e) => {
+      try { localStorage.setItem("quiz-lang", e.target.value); } catch { /* 忽略 */ }
+      location.reload();
+    });
+  }
+
   async function boot() {
+    setupLanguage();
     bindNav(document.querySelector(".nav-links"));
     document.querySelector(".brand").addEventListener("click", (e) => { e.preventDefault(); go("home"); });
     setupMenu();
@@ -1436,14 +1519,14 @@
       try {
         const r = await api("/api/billing/sync", { session_id: params.get("session_id") });
         await loadMe();
-        toast(r.subscribed ? "🎉 訂閱成功！歡迎使用題庫總覽" : "付款處理中，稍後重新整理即可");
+        toast(T(r.subscribed ? "🎉 訂閱成功！歡迎使用題庫總覽" : "付款處理中，稍後重新整理即可"));
       } catch (e) {
         toast(e.message);
       }
     } else if (params.get("checkout") === "cancelled") {
-      toast("已取消付款");
+      toast(T("已取消付款"));
     } else if (params.get("login") === "cancelled") {
-      toast("已取消登入");
+      toast(T("已取消登入"));
     }
     if (params.get("team")) return renderTeam(params.get("team"));
     if (params.get("psych_result")) return renderPsychShared(params.get("psych_result"));
@@ -1452,6 +1535,6 @@
   }
 
   boot().catch((e) => {
-    $app.innerHTML = `<section class="panel"><h2>載入失敗</h2><p>${esc(e.message)}</p></section>`;
+    $app.innerHTML = `<section class="panel"><h2>${T("載入失敗")}</h2><p>${esc(e.message)}</p></section>`;
   });
 })();
