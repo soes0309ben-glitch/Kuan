@@ -17,7 +17,7 @@
   const DICT = (window.QUIZ_I18N || {})[LANG] || {};
   // {0}、{1} 換成參數；查不到翻譯就顯示中文原文
   const T = (zh, ...args) => String(DICT[zh] ?? zh).replace(/\{(\d)\}/g, (_, i) => args[i]);
-  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", language: "🌏", japan: "🎎", korea: "🎤", biology: "🧬", health: "🩺", all: "🎲" };
+  const CAT_ICON = { anime: "🎬", life: "🏠", history: "📜", travel: "✈️", riddle: "🧩", animal: "🐾", trivia: "🤯", language: "🌏", japan: "🎎", korea: "🎤", biology: "🧬", health: "🩺", taiwan: "🧋", math: "🔢", movie: "🍿", sports: "🏅", all: "🎲" };
   const CAT_DESC = {
     anime: T("日本動漫、吉卜力、經典角色"),
     life: T("健康、安全、節慶與日常"),
@@ -31,6 +31,10 @@
     korea: T("K-pop、韓劇、韓食與韓國文化"),
     biology: T("細胞、遺傳、演化與生態"),
     health: T("疾病預防、急救、營養與健保"),
+    taiwan: T("夜市小吃、廟會節慶、原住民族與台灣日常"),
+    math: T("算式謎題、數字規律與生活數學"),
+    movie: T("好萊塢經典、華語與日韓電影、動畫與奧斯卡"),
+    sports: T("球類規則、奧運、世界盃與台灣之光"),
     all: T("從所有主題隨機出題"),
   };
   const DIFF = { easy: { name: T("簡單"), icon: "🌱" }, medium: { name: T("中等"), icon: "🌟" }, hard: { name: T("困難"), icon: "🔥" } };
@@ -255,7 +259,15 @@
 
   /* ---------- 個人外觀 ---------- */
   const FRAMES = { none: T("無"), ribbon: T("蝴蝶結"), heart: T("愛心"), star: T("星星"), flower: T("花朵"), crown: T("皇冠"), rainbow: T("彩虹") };
-  const COLORS = { pink: T("粉紅"), lavender: T("薰衣草"), mint: T("薄荷"), sky: T("天空藍"), peach: T("蜜桃"), lemon: T("檸檬") };
+  // 主題顏色：[名稱, 色碼]
+  const COLORS = {
+    pink: [T("粉紅"), "#ff6fa3"], lavender: [T("薰衣草"), "#9b7bff"], mint: [T("薄荷"), "#2fbf9b"],
+    sky: [T("天空藍"), "#4aa8ff"], peach: [T("蜜桃"), "#ff8a5c"], lemon: [T("檸檬"), "#f2b600"],
+    coral: [T("珊瑚橘"), "#ff6b6b"], cherry: [T("櫻桃紅"), "#e8436b"], rosegold: [T("玫瑰金"), "#d4918a"],
+    orange: [T("橘子汽水"), "#ff9f1c"], caramel: [T("焦糖"), "#c58b4b"], cocoa: [T("可可"), "#8d6e63"],
+    matcha: [T("抹茶"), "#6aa84f"], teal: [T("湖水綠"), "#14b8a6"], ocean: [T("海洋藍"), "#2f80ed"],
+    midnight: [T("午夜藍"), "#3f51b5"], grape: [T("葡萄紫"), "#8e5bd6"], slate: [T("石板灰"), "#64748b"],
+  };
   const AVATAR_EMOJIS = ["🐰", "🐱", "🐶", "🐻", "🐼", "🐨", "🦊", "🐹", "🐧", "🦄", "🐸", "🐥",
     "🌸", "🌈", "⭐", "🍓", "🍰", "🧁", "🍡", "🎀", "💖", "☁️", "🌙", "🍀"];
 
@@ -328,7 +340,7 @@
         </fieldset>
         <fieldset>
           <legend>${T("主題顏色")}</legend>
-          <div class="color-grid">${Object.entries(COLORS).map(([k, v]) => `<button type="button" class="color-pick c-${k}" data-c="${k}"><span></span><small>${v}</small></button>`).join("")}</div>
+          <div class="color-grid">${Object.entries(COLORS).map(([k, [name, hex]]) => `<button type="button" class="color-pick c-${k}" data-c="${k}" title="${name} ${hex}"><span></span><small>${name}</small><code>${hex}</code></button>`).join("")}</div>
         </fieldset>
         <div class="actions"><button class="btn" id="cancel">${T("取消")}</button><button class="btn primary" id="save">${T("儲存")}</button></div>
       </section>`;

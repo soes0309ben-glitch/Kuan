@@ -15,7 +15,8 @@ from app.models import Profile, User
 router = APIRouter(prefix="/api/profile")
 
 FRAMES = ("none", "ribbon", "heart", "star", "flower", "crown", "rainbow")
-COLORS = ("pink", "lavender", "mint", "sky", "peach", "lemon")
+COLORS = ("pink", "lavender", "mint", "sky", "peach", "lemon",
+          "coral", "cherry", "rosegold", "orange", "caramel", "cocoa", "matcha", "teal", "ocean", "midnight", "grape", "slate")
 AVATAR_TYPES = ("google", "emoji", "upload")
 MAX_AVATAR_BYTES = 300 * 1024
 # 只接受常見圖片格式，並用檔頭確認真的是圖片

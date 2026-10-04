@@ -22,6 +22,10 @@ CATEGORIES = {
     "korea": "韓系潮流",
     "biology": "生物科學",
     "health": "醫療保健",
+    "taiwan": "台灣文化",
+    "math": "數學猜謎",
+    "movie": "電影",
+    "sports": "體育",
 }
 MIXED = "all"  # 綜合挑戰：從所有主題出題
 TYPES = ("single", "image", "short", "qa")
