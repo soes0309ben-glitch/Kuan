@@ -19,6 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import get_db
+from app.billing import music_subscribed
 from app.dependencies import require_json, require_user
 from app.models import MusicAnswer, MusicPlayer, MusicRoom, Profile, User
 from app.routers.profile import profile_dict
@@ -91,6 +92,28 @@ def check(body: CheckBody):
     if not q:
         raise HTTPException(404, "找不到這一題")
     return {"correct": body.given == q["answer"], **_reveal(q)}
+
+
+# ------------------------------------------------------------------ 音樂題庫（月訂閱）
+@router.get("/bank")
+def music_bank(mode: str = "mix", region: str = "all", q: str = "", page: int = 1,
+               user: User = Depends(require_user), db: Session = Depends(get_db)):
+    """登入就能瀏覽全部題目；訂閱音樂題庫的會員才看得到答案。"""
+    items = _pool(mode, region)
+    if q.strip():
+        key = q.strip().lower()
+        items = [x for x in items if key in x["q"].lower() or key in (x.get("song") or "").lower() or key in (x.get("artist") or "").lower()]
+    per = 20
+    pages = max(1, (len(items) + per - 1) // per)
+    page = min(max(1, page), pages)
+    show = music_subscribed(db, user)
+    rows = []
+    for x in items[(page - 1) * per: page * per]:
+        row = {**_public(x), "region_name": REGIONS[x["region"]], "mode_name": MODES[x["mode"]]}
+        if show:
+            row.update(_reveal(x))
+        rows.append(row)
+    return {"total": len(items), "page": page, "pages": pages, "subscribed": show, "questions": rows}
 
 
 # ------------------------------------------------------------------ 組隊對戰

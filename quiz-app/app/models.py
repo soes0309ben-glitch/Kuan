@@ -227,3 +227,18 @@ class MusicAnswer(Base):
     points: Mapped[int] = mapped_column(Integer, default=0)
 
     room: Mapped[MusicRoom] = relationship(back_populates="answers")
+
+
+class MusicSubscription(Base):
+    """音樂品味題庫的月訂閱（和知識題庫的訂閱分開計費）。"""
+
+    __tablename__ = "quiz_music_subscriptions"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("quiz_users.id"), primary_key=True)
+    stripe_subscription_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="none")
+    period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    @property
+    def active(self) -> bool:
+        return self.status in ACTIVE_SUBSCRIPTION_STATUSES

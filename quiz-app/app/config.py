@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     stripe_price_id: str = ""
     # 沒設定 STRIPE_PRICE_ID 時使用的月費（新台幣）
     monthly_price_twd: int = 399
+    # 音樂品味題庫：另外訂閱，沒設定 STRIPE_MUSIC_PRICE_ID 時用這個月費
+    stripe_music_price_id: str = ""
+    music_price_twd: int = 99
 
     admin_emails: str = ""
     # 選填：設定後可用 X-Import-Token 標頭匯入題庫（不需登入），用完請從環境變數刪除

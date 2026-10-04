@@ -537,3 +537,29 @@ def test_psych_senses_and_stress(db):
     high = _answer_all(c, "stress", lambda q: 0).json()
     assert high["index"] == 100 and "1925" in high["level"]["desc"] and high["type"]["cure"]
     assert _answer_all(c, "stress", lambda q: 3).json()["level"]["name"] == "輕鬆自在"
+
+
+def test_music_bank_requires_music_subscription(make_client, db, monkeypatch):
+    _fake_music_bank(monkeypatch)
+    from app.models import MusicSubscription
+    free, uid = make_client("free-music@example.com", subscribed=True)  # 知識題庫訂閱不包含音樂題庫
+    data = free.get("/api/music/bank?region=zh").json()
+    assert data["total"] == 30 and not data["subscribed"] and all("answer" not in q for q in data["questions"])
+    db.add(MusicSubscription(user_id=uid, status="active"))
+    db.commit()
+    data = free.get("/api/music/bank?region=zh&q=歌曲1").json()
+    assert data["subscribed"] and all(q["answer"].startswith("對") for q in data["questions"])
+    assert free.get("/api/me").json()["user"]["music_subscribed"]
+
+
+def test_webhook_music_plan_is_separate(make_client, db):
+    from app.models import MusicSubscription
+    client, uid = make_client("musicsub@example.com")
+    event = {"id": "evt_m", "object": "event", "type": "customer.subscription.created",
+             "data": {"object": {"id": "sub_music", "object": "subscription", "customer": "cus_musicsub@example.com",
+                                 "status": "active", "metadata": {"plan": "music"},
+                                 "items": {"data": [{"current_period_end": int(time.time()) + 86400}]}}}}
+    body, sig = _signed(event)
+    assert client.post("/stripe/webhook", content=body, headers={"stripe-signature": sig}).status_code == 200
+    db.expire_all()
+    assert db.get(MusicSubscription, uid).active and not db.get(User, uid).is_subscribed

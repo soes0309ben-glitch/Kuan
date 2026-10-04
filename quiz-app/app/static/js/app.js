@@ -436,7 +436,7 @@
   function go(view) {
     history.replaceState(null, "", view === "home" ? "/" : `/?view=${view}`);
     closeMenu();
-    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams, psych: renderPsychList, mixed: renderMixed, music: renderMusic }[view] || renderHome)();
+    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams, psych: renderPsychList, mixed: renderMixed, music: renderMusic, "music-bank": renderMusicBank }[view] || renderHome)();
     window.scrollTo(0, 0);
   }
 
@@ -1037,6 +1037,10 @@
           <small class="hint">${T("最佳 {0} 分", musicBest(`kill-${musicFilter.region}`))}</small>
         </button>
       </section>
+      <button class="sub-banner music-bank-link" id="mb-bank">
+        <div><b>📚 ${T("音樂題庫")}</b><p>${T("瀏覽全部 {0} 題音樂題目與答案，可依地區、模式和歌名歌手搜尋。", MUSIC.total)}</p></div>
+        <span class="btn primary">${ME.user?.music_subscribed ? T("進入題庫 →") : T("每月 NT${0}", CONFIG.music_price_twd)}</span>
+      </button>
       <section class="panel music-battle">
         <h2>⚔️ ${T("組隊對戰")}</h2>
         <p class="hint">${T("紅藍兩隊同時搶答同一組 {0} 題，每題 {1} 秒，答越快分數越高！", MUSIC.round, MUSIC.answer_seconds)}</p>
@@ -1051,6 +1055,7 @@
     $app.querySelectorAll("[data-region]").forEach((b) => b.addEventListener("click", () => { musicFilter.region = b.dataset.region; renderMusic(); }));
     $app.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => runMusicSolo(b.dataset.mode, musicFilter.region)));
     $app.querySelector("[data-kill]").addEventListener("click", () => runMusicKill(musicFilter.region));
+    document.getElementById("mb-bank").addEventListener("click", () => go("music-bank"));
     document.getElementById("mb-create").addEventListener("click", async (e) => {
       if (!ME.user) return renderLoginNeeded(T("⚔️ 組隊對戰"), "/?view=music");
       e.target.disabled = true;
@@ -1066,6 +1071,69 @@
         e.target.disabled = false;
       }
     });
+  }
+
+  // 音樂題庫：登入可瀏覽題目，訂閱（每月另計）才看得到答案
+  const musicBankFilter = { mode: "mix", region: "all", q: "", page: 1 };
+  async function renderMusicBank() {
+    if (!ME.user) return renderLoginNeeded(T("📚 音樂題庫"), "/?view=music-bank");
+    MUSIC = MUSIC || await api("/api/music/meta");
+    const subscribed = ME.user.music_subscribed;
+    const opt = (obj, sel) => Object.entries(obj).map(([k, v]) => `<option value="${k}" ${sel === k ? "selected" : ""}>${esc(T(v))}</option>`).join("");
+    $app.innerHTML = `
+      <section class="panel bank">
+        <div class="bank-head">
+          <button class="link back-music">${T("← 音樂品味")}</button>
+          <h2>📚 ${T("音樂題庫")}</h2>
+          ${subscribed ? `<button class="link" id="mb-portal">${T("管理訂閱")}</button>` : ""}
+        </div>
+        ${subscribed ? `<p class="hint">${T("💖 你是音樂題庫訂閱會員，可以看到全部答案。")}</p>` : `
+        <div class="sub-banner">
+          <div><b>${T("🔓 訂閱音樂題庫")}</b><p>${T("每月 NT${0}，隨時可以取消。和知識題庫的訂閱分開計費。", CONFIG.music_price_twd)}</p></div>
+          <button class="btn primary" id="mb-subscribe">${T("訂閱 NT${0} / 月", CONFIG.music_price_twd)}</button>
+        </div>`}
+        <div class="filters">
+          <select id="mbf-region">${opt(MUSIC.regions, musicBankFilter.region)}</select>
+          <select id="mbf-mode">${opt(MUSIC.modes, musicBankFilter.mode)}</select>
+          <input id="mbf-q" class="text-input" placeholder="${T("搜尋歌名或歌手")}" value="${esc(musicBankFilter.q)}">
+        </div>
+        <p class="hint" id="mbf-count">${T("載入中…")}</p>
+        <ol class="bank-list"></ol>
+        <div class="pager"></div>
+      </section>`;
+    $app.querySelector(".back-music").addEventListener("click", () => go("music"));
+    document.getElementById("mb-subscribe")?.addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      try { location.href = (await api("/api/billing/checkout", { plan: "music" })).url; } catch (err) { toast(err.message); e.target.disabled = false; }
+    });
+    document.getElementById("mb-portal")?.addEventListener("click", async () => {
+      try { location.href = (await api("/api/billing/portal", { plan: "music" })).url; } catch (err) { toast(err.message); }
+    });
+    const draw = async () => {
+      const qs = new URLSearchParams(Object.entries(musicBankFilter).filter(([, v]) => v !== "")).toString();
+      let data;
+      try { data = await api(`/api/music/bank?${qs}`); } catch (err) { return toast(err.message); }
+      document.getElementById("mbf-count").textContent = T("共 {0} 題・第 {1} / {2} 頁", data.total, data.page, data.pages);
+      $app.querySelector(".bank-list").innerHTML = data.questions.map((q) => `<li>
+          <div class="q-meta"><span class="badge">${esc(T(q.mode_name))}</span><span class="badge soft">${esc(T(q.region_name))}</span></div>
+          <p class="rq">${esc(q.q)} ${q.emoji ? `<span class="inline-emoji">${esc(q.emoji)}</span>` : ""}</p>
+          <p class="ra">${T("選項：{0}", q.options.map(esc).join("、"))}</p>
+          ${q.answer === undefined ? `<p class="locked">${T("🔒 答案為訂閱會員內容")}</p>`
+            : `<details><summary>${T("看答案")}</summary><p>${esc(q.answer)}</p>${q.explain ? `<p class="ra">${esc(q.explain)}</p>` : ""}${youtubeLink(q)}</details>`}
+        </li>`).join("");
+      const pager = $app.querySelector(".pager");
+      pager.innerHTML = data.pages > 1 ? `<button class="btn" data-p="${data.page - 1}" ${data.page <= 1 ? "disabled" : ""}>${T("← 上一頁")}</button>
+        <button class="btn" data-p="${data.page + 1}" ${data.page >= data.pages ? "disabled" : ""}>${T("下一頁 →")}</button>` : "";
+      pager.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { musicBankFilter.page = Number(b.dataset.p); draw(); window.scrollTo(0, 0); }));
+    };
+    let timer;
+    [["mbf-region", "region"], ["mbf-mode", "mode"], ["mbf-q", "q"]].forEach(([id, key]) => document.getElementById(id).addEventListener("input", (e) => {
+      musicBankFilter[key] = e.target.value.trim();
+      musicBankFilter.page = 1;
+      clearTimeout(timer);
+      timer = setTimeout(draw, key === "q" ? 300 : 0);
+    }));
+    draw();
   }
 
   // 單人：10 題一回合
@@ -2000,7 +2068,8 @@
       try {
         const r = await api("/api/billing/sync", { session_id: params.get("session_id") });
         await loadMe();
-        toast(T(r.subscribed ? "🎉 訂閱成功！歡迎使用題庫總覽" : "付款處理中，稍後重新整理即可"));
+        const isMusic = params.get("view") === "music-bank";
+        toast(T((isMusic ? r.music_subscribed : r.subscribed) ? (isMusic ? "🎉 訂閱成功！歡迎使用音樂題庫" : "🎉 訂閱成功！歡迎使用題庫總覽") : "付款處理中，稍後重新整理即可"));
       } catch (e) {
         toast(e.message);
       }

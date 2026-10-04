@@ -12,7 +12,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app import catalog, pdf_export
+from app import billing, catalog, pdf_export
 from app.config import get_settings
 from app.db import get_db
 from app.dependencies import get_current_user, require_json, require_user
@@ -49,6 +49,7 @@ def config(db: Session = Depends(get_db)):
         "total": sum(counts.values()),
         "per_attempt": catalog.QUESTIONS_PER_ATTEMPT,
         "per_attempt_mixed": catalog.MIXED_PER_ATTEMPT,
+        "music_price_twd": get_settings().music_price_twd,
         "price_twd": get_settings().monthly_price_twd,
     }
 
@@ -64,6 +65,7 @@ def me(user: User | None = Depends(get_current_user), db: Session = Depends(get_
             "email": user.email,
             "picture": user.picture,
             "subscribed": user.is_subscribed,
+            "music_subscribed": billing.music_subscribed(db, user),
             "subscription_status": user.subscription_status,
             "period_end": user.subscription_period_end.isoformat() if user.subscription_period_end else None,
             "is_admin": user.email.lower() in get_settings().admin_email_set,

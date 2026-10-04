@@ -21,25 +21,31 @@ def _require_stripe() -> None:
         raise HTTPException(503, "金流尚未設定完成（缺 STRIPE_SECRET_KEY）")
 
 
+class PlanBody(BaseModel):
+    plan: str = "bank"
+
+
 @router.post("/api/billing/checkout", dependencies=[Depends(require_json)])
-def checkout(request: Request, user: User = Depends(require_user), db: Session = Depends(get_db)):
+def checkout(request: Request, body: PlanBody, user: User = Depends(require_user), db: Session = Depends(get_db)):
     _require_stripe()
-    if user.is_subscribed:
+    if body.plan not in billing.PLANS:
+        raise HTTPException(400, "沒有這個訂閱方案")
+    if (body.plan == "bank" and user.is_subscribed) or (body.plan == "music" and billing.music_subscribed(db, user)):
         raise HTTPException(409, "你已經是訂閱會員了")
     try:
-        return {"url": billing.create_checkout_url(db, user, public_base_url(request))}
+        return {"url": billing.create_checkout_url(db, user, public_base_url(request), body.plan)}
     except stripe.StripeError:
         logger.exception("建立 Checkout Session 失敗")
         raise HTTPException(502, "暫時無法連線到付款服務，請稍後再試")
 
 
 @router.post("/api/billing/portal", dependencies=[Depends(require_json)])
-def portal(request: Request, user: User = Depends(require_user)):
+def portal(request: Request, body: PlanBody, user: User = Depends(require_user)):
     _require_stripe()
     if not user.stripe_customer_id:
         raise HTTPException(400, "你還沒有訂閱紀錄")
     try:
-        return {"url": billing.create_portal_url(user, public_base_url(request))}
+        return {"url": billing.create_portal_url(user, public_base_url(request), body.plan if body.plan in billing.PLANS else "bank")}
     except stripe.StripeError:
         logger.exception("建立 Customer Portal 失敗")
         raise HTTPException(502, "暫時無法開啟訂閱管理，請稍後再試")
@@ -61,7 +67,7 @@ def sync_after_checkout(body: SyncBody, user: User = Depends(require_user), db: 
         raise HTTPException(403, "這筆付款不屬於目前登入的帳號")
     billing.sync_customer(db, session.customer)
     db.refresh(user)
-    return {"subscribed": user.is_subscribed}
+    return {"subscribed": user.is_subscribed, "music_subscribed": billing.music_subscribed(db, user)}
 
 
 @router.post("/stripe/webhook")

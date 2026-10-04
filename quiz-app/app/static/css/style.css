@@ -590,6 +590,7 @@ details p { margin: 4px 0; }
 .psy-keys { margin-top: 14px; font-size: .8rem; }
 @media (hover: none) { .psy-keys, .psy-option kbd { display: none; } }
 @media (prefers-reduced-motion: reduce) { .psy-stage.in { animation: none; } .psy-progress > div { transition: none; } }
+.music-bank-link { width: 100%; margin-bottom: 18px; cursor: pointer; font: inherit; text-align: left; border: 0; }
 .menu-lang { margin-top: 6px; padding: 10px 14px 4px; border-top: 2px dashed var(--line); }
 .menu-lang label { display: grid; gap: 6px; font-weight: 700; color: var(--muted); font-size: .9rem; }
 .menu-lang select {
