@@ -48,6 +48,7 @@ def config(db: Session = Depends(get_db)):
         "counts": counts,
         "total": sum(counts.values()),
         "per_attempt": catalog.QUESTIONS_PER_ATTEMPT,
+        "per_attempt_mixed": catalog.MIXED_PER_ATTEMPT,
         "price_twd": get_settings().monthly_price_twd,
     }
 

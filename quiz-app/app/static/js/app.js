@@ -436,7 +436,7 @@
   function go(view) {
     history.replaceState(null, "", view === "home" ? "/" : `/?view=${view}`);
     closeMenu();
-    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams, psych: renderPsychList, mixed: renderMixed }[view] || renderHome)();
+    ({ home: renderHome, bank: renderBank, admin: renderAdmin, profile: renderProfile, teams: renderTeams, psych: renderPsychList, mixed: renderMixed, music: renderMusic }[view] || renderHome)();
     window.scrollTo(0, 0);
   }
 
@@ -487,7 +487,7 @@
           <div class="mixed-info">
             <b>${T("題目來自 {0} 大主題・共 {1} 題", cats.length, total)}</b>
             <div class="mixed-topics">${cats.map((c) => `<span class="mini-chip" data-cat="${c}">${CAT_ICON[c]} ${esc(catName(c))}</span>`).join("")}</div>
-            <small class="hint">${T("每種難度限挑戰一次，答完可以在題庫總覽看答案。")}</small>
+            <small class="hint">${T("綜合挑戰為 {0} 題。", CONFIG.per_attempt_mixed)}${T("每種難度限挑戰一次，答完可以在題庫總覽看答案。")}</small>
           </div>
         </div>
         <div class="mixed-col">
@@ -548,7 +548,7 @@
     if (!existing) {
       const ok = await confirmDialog(
         `<h2>${CAT_ICON[cat]} ${esc(catName(cat))}・${DIFF[diff].icon} ${DIFF[diff].name}</h2>
-         <p>${T("共 {0} 題。<strong>每個主題的每種難度只能挑戰一次</strong>，按下開始就算使用這次機會，中途離開可以回來繼續，但不能重來。", CONFIG.per_attempt)}</p>`,
+         <p>${T("共 {0} 題。<strong>每個主題的每種難度只能挑戰一次</strong>，按下開始就算使用這次機會，中途離開可以回來繼續，但不能重來。", cat === "all" ? CONFIG.per_attempt_mixed : CONFIG.per_attempt)}</p>`,
         T("開始挑戰")
       );
       if (!ok) return;
@@ -791,7 +791,7 @@
     $app.innerHTML = `
       <section class="panel teams">
         <h2>👥 ${T("組隊挑戰")}</h2>
-        <p class="hint">${T("開一個隊伍、把邀請連結傳給朋友，最多 3 人答同一組 {0} 題，大家各自有空就作答；全員完成後公布隊內排名。組隊不會用掉個人挑戰的次數。", CONFIG.per_attempt)}</p>
+        <p class="hint">${T("開一個隊伍、把邀請連結傳給朋友，最多 3 人答同一組 {0} 題，大家各自有空就作答；全員完成後公布隊內排名。組隊不會用掉個人挑戰的次數。", CONFIG.per_attempt)}${T("綜合挑戰為 {0} 題。", CONFIG.per_attempt_mixed)}</p>
         <fieldset>
           <legend>${T("選擇主題")}</legend>
           <div class="chips">${cats.map((c, i) => `<label class="chip"><input type="radio" name="tcat" value="${c}" ${i === 0 ? "checked" : ""}> ${CAT_ICON[c]} ${esc(catName(c))}</label>`).join("")}</div>
@@ -998,6 +998,316 @@
     return "#" + pa.map((v, i) => Math.round(v + (pb[i] - v) * t).toString(16).padStart(2, "0")).join("");
   }
 
+  /* ---------- 音樂品味：單人猜歌、音樂殺、紅藍隊對戰 ---------- */
+  let MUSIC = null; // /api/music/meta
+  const musicFilter = { region: "all" };
+  const MUSIC_MODE_DESC = {
+    emoji: "看表情符號猜歌名", singer: "看歌名猜是誰唱的", year: "猜猜這首歌是哪一年發行", title: "從歌手猜他唱過哪一首", anime: "動畫、電影的主題曲與插曲",
+  };
+  const musicBest = (key, val) => {
+    try {
+      const old = Number(localStorage.getItem(`music-best-${key}`) || 0);
+      if (val !== undefined && val > old) localStorage.setItem(`music-best-${key}`, String(val));
+      return Math.max(old, val || 0);
+    } catch { return val || 0; }
+  };
+  const youtubeLink = (r) => r.search ? `<a class="btn small" href="${esc(r.search)}" target="_blank" rel="noopener">🔎 ${T("在 YouTube 聽這首歌")}</a>` : "";
+
+  async function renderMusic() {
+    MUSIC = MUSIC || await api("/api/music/meta");
+    const regions = Object.entries(MUSIC.regions).map(([k, v]) =>
+      `<button class="chip-btn ${musicFilter.region === k ? "on" : ""}" data-region="${k}">${esc(T(v))}</button>`).join("");
+    const modes = Object.entries(MUSIC.modes).filter(([k]) => k !== "mix").map(([k, v]) => `
+      <button class="cat-card music-card" data-mode="${k}">
+        <span class="cat-name">${esc(T(v))}</span>
+        <span class="cat-desc">${esc(T(MUSIC_MODE_DESC[k] || ""))}</span>
+        <small class="hint">${T("題庫 {0} 題", MUSIC.counts[k] || 0)}・${T("最佳 {0} 分", musicBest(`${k}-${musicFilter.region}`))}</small>
+      </button>`).join("");
+    $app.innerHTML = `
+      <section class="psy-hero">
+        <h1>🎵 ${T("音樂品味")}</h1>
+        <p>${T("猜歌手、猜年代、emoji 猜歌、動漫歌，還能紅藍兩隊組隊對戰！")}</p>
+      </section>
+      <div class="music-regions">${regions}</div>
+      <section class="music-grid">
+        ${modes}
+        <button class="cat-card music-card kill" data-kill="1">
+          <span class="cat-name">⚡ ${T("音樂殺")}</span>
+          <span class="cat-desc">${T("60 秒、3 條命，連續答對有連擊加分！")}</span>
+          <small class="hint">${T("最佳 {0} 分", musicBest(`kill-${musicFilter.region}`))}</small>
+        </button>
+      </section>
+      <section class="panel music-battle">
+        <h2>⚔️ ${T("組隊對戰")}</h2>
+        <p class="hint">${T("紅藍兩隊同時搶答同一組 {0} 題，每題 {1} 秒，答越快分數越高！", MUSIC.round, MUSIC.answer_seconds)}</p>
+        <div class="filters">
+          <select id="mb-size">${MUSIC.team_sizes.map((n) => `<option value="${n}">${T("{0} 對 {0}", n)}</option>`).join("")}</select>
+          <select id="mb-mode">${Object.entries(MUSIC.modes).map(([k, v]) => `<option value="${k}">${esc(T(v))}</option>`).join("")}</select>
+          <select id="mb-region">${Object.entries(MUSIC.regions).map(([k, v]) => `<option value="${k}" ${k === musicFilter.region ? "selected" : ""}>${esc(T(v))}</option>`).join("")}</select>
+          <button class="btn primary" id="mb-create">${T("建立對戰房間")}</button>
+        </div>
+      </section>
+      <p class="credits">${T("題目只使用歌名、歌手、年份等公開資料（Wikidata），不收錄歌詞、錄音或 MV。")}</p>`;
+    $app.querySelectorAll("[data-region]").forEach((b) => b.addEventListener("click", () => { musicFilter.region = b.dataset.region; renderMusic(); }));
+    $app.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => runMusicSolo(b.dataset.mode, musicFilter.region)));
+    $app.querySelector("[data-kill]").addEventListener("click", () => runMusicKill(musicFilter.region));
+    document.getElementById("mb-create").addEventListener("click", async (e) => {
+      if (!ME.user) return renderLoginNeeded(T("⚔️ 組隊對戰"), "/?view=music");
+      e.target.disabled = true;
+      try {
+        const { code } = await api("/api/music/rooms", {
+          team_size: Number(document.getElementById("mb-size").value),
+          mode: document.getElementById("mb-mode").value,
+          region: document.getElementById("mb-region").value,
+        });
+        renderMusicRoom(code);
+      } catch (err) {
+        toast(err.message);
+        e.target.disabled = false;
+      }
+    });
+  }
+
+  // 單人：10 題一回合
+  async function runMusicSolo(mode, region) {
+    let qs;
+    try {
+      ({ questions: qs } = await api(`/api/music/questions?mode=${mode}&region=${region}&n=10`));
+    } catch (e) {
+      return toast(e.message);
+    }
+    let i = 0, score = 0;
+    const draw = () => {
+      const q = qs[i];
+      $app.innerHTML = `
+        <section class="panel quiz music-q">
+          <header class="quiz-head"><button class="link quit">${T("✕ 離開")}</button><span>🎵 ${esc(T(MUSIC.modes[mode]))}</span><span class="q-count">${i + 1} / ${qs.length}</span></header>
+          <div class="progress"><div style="width:${(i / qs.length) * 100}%"></div></div>
+          <h2 class="q-text">${esc(q.q)}</h2>
+          ${q.emoji ? `<div class="q-emoji">${esc(q.emoji)}</div>` : ""}
+          <div class="options">${q.options.map((o) => `<button class="option" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+          <div class="feedback" hidden></div>
+        </section>`;
+      $app.querySelector(".quit").addEventListener("click", () => go("music"));
+      $app.querySelectorAll(".option").forEach((b) => b.addEventListener("click", async () => {
+        $app.querySelectorAll(".option").forEach((x) => (x.disabled = true));
+        let r;
+        try {
+          r = await api("/api/music/check", { id: q.id, given: b.dataset.v });
+        } catch (e) {
+          return toast(e.message);
+        }
+        $app.querySelectorAll(".option").forEach((x) => x.dataset.v === r.answer && x.classList.add("correct"));
+        if (r.correct) { score += 10; sound.correct(); } else { b.classList.add("wrong"); sound.wrong(); }
+        const fb = $app.querySelector(".feedback");
+        fb.hidden = false;
+        fb.className = "feedback pop " + (r.correct ? "good" : "bad");
+        fb.innerHTML = `<h3>${r.correct ? `🎉 ${T("答對了！")}` : `😵 ${T("正確答案是：{0}", esc(r.answer))}`}</h3>
+          ${r.explain ? `<p>${esc(r.explain)}</p>` : ""}
+          <div class="actions">${youtubeLink(r)}<button class="btn primary next">${i + 1 < qs.length ? T("下一題 →") : T("看結果 →")}</button></div>`;
+        fb.querySelector(".next").addEventListener("click", () => (++i < qs.length ? draw() : done()));
+        fb.querySelector(".next").focus();
+      }));
+    };
+    const done = () => {
+      const best = musicBest(`${mode}-${region}`, score);
+      $app.innerHTML = `
+        <section class="panel result">
+          <div class="score-ring" style="--pct:${score}"><span>${score}<small>${T("分")}</small></span></div>
+          <h2>${score >= 80 ? T("音樂達人！🎧") : score >= 50 ? T("耳朵很靈！🎶") : T("多聽幾首再來挑戰！🎵")}</h2>
+          <p>${T("最佳紀錄：{0} 分", best)}</p>
+          <div class="actions"><button class="btn primary again">${T("再玩一次")}</button><button class="btn back">${T("回音樂品味")}</button></div>
+        </section>`;
+      if (score >= 80) confetti();
+      $app.querySelector(".again").addEventListener("click", () => runMusicSolo(mode, region));
+      $app.querySelector(".back").addEventListener("click", () => go("music"));
+    };
+    draw();
+  }
+
+  // 音樂殺：60 秒、3 條命、連擊加分
+  async function runMusicKill(region) {
+    let qs;
+    try {
+      ({ questions: qs } = await api(`/api/music/questions?mode=mix&region=${region}&n=50`));
+    } catch (e) {
+      return toast(e.message);
+    }
+    let i = 0, score = 0, lives = 3, combo = 0, locked = false;
+    const end = Date.now() + 60000;
+    const timer = setInterval(() => {
+      const bar = document.getElementById("kill-time");
+      if (!bar) return clearInterval(timer);
+      const left = Math.max(0, end - Date.now());
+      bar.style.width = `${left / 600}%`;
+      document.getElementById("kill-sec").textContent = Math.ceil(left / 1000);
+      if (!left) finish();
+    }, 100);
+    const finish = () => {
+      clearInterval(timer);
+      const best = musicBest(`kill-${region}`, score);
+      $app.innerHTML = `
+        <section class="panel result">
+          <h2>⚡ ${T("音樂殺結束！")}</h2>
+          <div class="score-ring" style="--pct:${Math.min(100, score / 20)}"><span>${score}</span></div>
+          <p>${T("最佳紀錄：{0} 分", best)}</p>
+          <div class="actions"><button class="btn primary again">${T("再玩一次")}</button><button class="btn back">${T("回音樂品味")}</button></div>
+        </section>`;
+      if (score >= best && score > 0) confetti();
+      $app.querySelector(".again").addEventListener("click", () => runMusicKill(region));
+      $app.querySelector(".back").addEventListener("click", () => go("music"));
+    };
+    const draw = () => {
+      if (i >= qs.length) return finish();
+      const q = qs[i];
+      $app.innerHTML = `
+        <section class="panel quiz music-q kill">
+          <header class="quiz-head"><button class="link quit">${T("✕ 離開")}</button>
+            <span>${"❤️".repeat(lives)}${"🤍".repeat(3 - lives)}</span><span class="score-pill">${score}${combo >= 2 ? `・🔥×${combo}` : ""}</span></header>
+          <div class="progress kill-bar"><div id="kill-time" style="width:${Math.max(0, end - Date.now()) / 600}%"></div></div>
+          <p class="hint"><b id="kill-sec">60</b> ${T("秒")}</p>
+          <h2 class="q-text">${esc(q.q)}</h2>
+          ${q.emoji ? `<div class="q-emoji">${esc(q.emoji)}</div>` : ""}
+          <div class="options">${q.options.map((o) => `<button class="option" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+        </section>`;
+      $app.querySelector(".quit").addEventListener("click", () => { clearInterval(timer); go("music"); });
+      $app.querySelectorAll(".option").forEach((b) => b.addEventListener("click", async () => {
+        if (locked) return;
+        locked = true;
+        const r = await api("/api/music/check", { id: q.id, given: b.dataset.v }).catch(() => null);
+        $app.querySelectorAll(".option").forEach((x) => x.dataset.v === r?.answer && x.classList.add("correct"));
+        if (r?.correct) { combo++; score += 100 + combo * 10; sound.correct(); } else { combo = 0; lives--; b.classList.add("wrong"); sound.wrong(); }
+        await new Promise((res) => setTimeout(res, 450));
+        locked = false;
+        i++;
+        if (lives <= 0) return finish();
+        draw();
+      }));
+    };
+    draw();
+  }
+
+  // 組隊對戰房間：每秒輪詢；只有狀態改變時才重畫，倒數條另外更新
+  async function renderMusicRoom(code) {
+    history.replaceState(null, "", `/?music_room=${encodeURIComponent(code)}`);
+    if (!ME.user) return renderLoginNeeded(T("⚔️ 朋友邀請你參加音樂對戰！"), `/?music_room=${encodeURIComponent(code)}`);
+    let lastKey = "", deadline = 0, poll = null, busy = false;
+    const link = `${location.origin}/?music_room=${encodeURIComponent(code)}`;
+    const teamName = { red: `🔴 ${T("紅隊")}`, blue: `🔵 ${T("藍隊")}` };
+    const memberHtml = (p, st, extra = "") => `<li class="member${st.round_correct?.includes(p.user_id) ? " got" : ""}">${avatarHtml(36, p.profile)}<div><b>${esc(p.name)}</b>${extra}
+      ${st.status !== "waiting" ? `<p class="ra">${T("{0} 分", p.score)}</p>` : ""}</div></li>`;
+    const teamCol = (st, t) => {
+      const ps = st.players.filter((p) => p.team === t);
+      const empty = Array.from({ length: Math.max(0, st.team_size - ps.length) }, () =>
+        `<li class="member empty"><span class="avatar-wrap" style="--s:36px"><span class="avatar-img emoji">＋</span></span><div><b>${T("等待加入")}</b></div></li>`).join("");
+      return `<div class="team-col ${t}"><h3>${teamName[t]}${st.status !== "waiting" ? `<span class="team-score">${st.teams[t]}</span>` : ""}</h3>
+        <ul class="members">${ps.map((p) => memberHtml(p, st, st.status === "done" && st.mvp === p.user_id ? " 👑 MVP" : "")).join("")}${st.status === "waiting" ? empty : ""}</ul>
+        ${st.status === "waiting" && st.me?.team !== t ? `<button class="btn join-team" data-team="${t}">${st.me ? T("換到這隊") : T("加入這隊")}</button>` : ""}</div>`;
+    };
+    const tick = () => {
+      const bar = document.getElementById("mb-time");
+      if (!bar) return;
+      const left = Math.max(0, deadline - Date.now() / 1000);
+      const sec = document.getElementById("mb-sec");
+      if (sec) sec.textContent = Math.ceil(left);
+      bar.style.width = `${Math.min(100, (left / (bar.dataset.total || 15)) * 100)}%`;
+    };
+    const draw = (st) => {
+      deadline = Date.now() / 1000 + (st.remaining || 0);
+      const key = [st.status, st.index, st.phase, !!st.my_answer, st.players.map((p) => p.user_id + p.team + p.score).join()].join("|");
+      if (key === lastKey) return tick();
+      lastKey = key;
+      let main = "";
+      if (st.status === "waiting") {
+        main = `<div class="invite"><b>📨 ${T("把邀請連結傳給朋友，登入後就能選隊加入")}</b>
+            <div class="invite-row"><input class="text-input" id="mb-link" readonly value="${esc(link)}"><button class="btn" id="mb-copy">${T("複製連結")}</button></div></div>
+          ${st.is_owner ? `<button class="btn primary big" id="mb-start">▶ ${T("開始對戰")}</button>` : `<p class="hint">${T("等待房主開始對戰…")}</p>`}
+          ${st.me ? `<button class="link danger" id="mb-leave">${st.is_owner ? T("🗑️ 解散房間") : T("👋 退出房間")}</button>` : ""}`;
+      } else if (st.status === "countdown") {
+        main = `<div class="mb-countdown"><span id="mb-sec">${Math.ceil(st.remaining)}</span><small>${T("準備開始！")}</small></div>`;
+      } else if (st.status === "playing") {
+        const q = st.question;
+        const rv = st.reveal;
+        main = `<div class="q-intro">${T("第 {0} 題", st.index + 1)} / ${st.total}<span class="mb-sec"><b id="mb-sec">${Math.ceil(st.remaining)}</b> ${T("秒")}</span></div>
+          <div class="progress kill-bar"><div id="mb-time" data-total="${st.phase === "answer" ? st.answer_seconds : st.reveal_seconds}"></div></div>
+          <h2 class="q-text">${esc(q.q)}</h2>${q.emoji ? `<div class="q-emoji">${esc(q.emoji)}</div>` : ""}
+          <div class="options">${q.options.map((o) => `<button class="option ${rv && o === rv.answer ? "correct" : ""}" data-v="${esc(o)}" ${st.my_answer || rv || !st.me ? "disabled" : ""}>${esc(o)}</button>`).join("")}</div>
+          ${rv ? `<div class="feedback pop ${st.my_answer?.correct ? "good" : "bad"}"><h3>${st.my_answer?.correct ? `🎉 ${T("答對了！")}＋${st.my_answer.points}` : `😵 ${T("正確答案是：{0}", esc(rv.answer))}`}</h3>${rv.explain ? `<p>${esc(rv.explain)}</p>` : ""}</div>`
+            : st.my_answer ? `<p class="hint">✅ ${T("已作答，等待公布答案…")}</p>` : ""}`;
+      } else {
+        const win = st.winner;
+        main = `<div class="mb-winner ${win}">${win === "draw" ? `🤝 ${T("平手！")}` : `🏆 ${T("{0} 獲勝！", teamName[win])}`}</div>
+          <h3>${T("答題回顧")}</h3>
+          <ol class="review">${st.review.map((r) => `<li class="review-item"><div><p class="rq">${esc(r.q)} ${r.emoji ? esc(r.emoji) : ""}</p><p class="ra">${T("正解：{0}", esc(r.answer))}</p>${youtubeLink(r)}</div></li>`).join("")}</ol>
+          <div class="actions"><button class="btn primary" id="mb-again">${T("再開一局")}</button><button class="btn" id="mb-back">${T("回音樂品味")}</button></div>`;
+        if (st.me && st.winner === st.me.team) confetti();
+        clearInterval(poll);
+      }
+      $app.innerHTML = `
+        <section class="panel music-room">
+          <div class="team-top"><button class="link back-music">${T("← 音樂品味")}</button><span class="hint">${esc(T(st.mode_name))}・${esc(T(st.region_name))}・${T("{0} 對 {0}", st.team_size)}</span></div>
+          <div class="team-cols">${teamCol(st, "red")}<div class="vs">VS</div>${teamCol(st, "blue")}</div>
+          ${main}
+        </section>`;
+      tick();
+      $app.querySelector(".back-music").addEventListener("click", () => { clearInterval(poll); go("music"); });
+      $app.querySelectorAll(".join-team").forEach((b) => b.addEventListener("click", () => act(`/api/music/rooms/${encodeURIComponent(code)}/join`, { team: b.dataset.team })));
+      document.getElementById("mb-start")?.addEventListener("click", () => act(`/api/music/rooms/${encodeURIComponent(code)}/start`, {}));
+      document.getElementById("mb-leave")?.addEventListener("click", async () => {
+        await act(`/api/music/rooms/${encodeURIComponent(code)}/leave`, {}, false);
+        clearInterval(poll);
+        go("music");
+      });
+      document.getElementById("mb-copy")?.addEventListener("click", async () => {
+        try { await navigator.clipboard.writeText(link); toast(T("已複製邀請連結，貼給朋友吧！")); } catch { document.getElementById("mb-link").select(); }
+      });
+      document.getElementById("mb-again")?.addEventListener("click", async () => {
+        try {
+          const { code: next } = await api("/api/music/rooms", { team_size: st.team_size, mode: st.mode, region: st.region });
+          renderMusicRoom(next);
+        } catch (err) { toast(err.message); }
+      });
+      document.getElementById("mb-back")?.addEventListener("click", () => go("music"));
+      $app.querySelectorAll(".music-room .option:not([disabled])").forEach((b) => b.addEventListener("click", async () => {
+        $app.querySelectorAll(".music-room .option").forEach((x) => (x.disabled = true));
+        b.classList.add("picked");
+        sound.tick();
+        await act(`/api/music/rooms/${encodeURIComponent(code)}/answer`, { index: st.index, given: b.dataset.v });
+      }));
+    };
+    const act = async (path, body, refresh = true) => {
+      try {
+        await api(path, body);
+      } catch (err) {
+        toast(err.message);
+      }
+      if (refresh) await load();
+    };
+    const load = async () => {
+      if (busy) return;
+      busy = true;
+      try {
+        const st = await api(`/api/music/rooms/${encodeURIComponent(code)}`);
+        if (!document.body.contains($app) || !location.search.includes(code)) return clearInterval(poll);
+        draw(st);
+      } catch (err) {
+        clearInterval(poll);
+        $app.innerHTML = `<section class="panel"><h2>${T("找不到對戰房間")}</h2><p>${esc(err.message)}</p><button class="btn primary" id="mb-back">${T("回音樂品味")}</button></section>`;
+        document.getElementById("mb-back").addEventListener("click", () => go("music"));
+      } finally {
+        busy = false;
+      }
+    };
+    await load();
+    // 每 250ms 更新倒數條，每秒向伺服器拿一次最新狀態；離開房間頁就停止
+    let n = 0;
+    poll = setInterval(() => {
+      if (!document.querySelector(".music-room") || !location.search.includes(code)) return clearInterval(poll);
+      tick();
+      if (++n % 4 === 0) load();
+    }, 250);
+  }
+
   async function renderPsychList() {
     const [{ tests }, mine] = await Promise.all([
       api("/api/psych"),
@@ -1047,47 +1357,100 @@
       </section>`;
     $app.querySelector(".back-psy").addEventListener("click", () => go("psych"));
     document.getElementById("psy-start").addEventListener("click", async () => {
+      psySave(slug, null);
       const n = Number($app.querySelector("input[name=psy-n]:checked").value);
       const test = n ? await api(`/api/psych/${slug}?n=${n}`) : t;
       runPsych(test, withCode);
     });
+    const saved = psySaved(slug);
+    if (saved?.test?.questions && saved.idx > 0 && saved.idx < saved.test.questions.length) {
+      const box = document.createElement("div");
+      box.className = "invite psy-resume";
+      box.innerHTML = `<b>📌 ${T("上次做到第 {0} / {1} 題", saved.idx + 1, saved.test.questions.length)}</b>
+        <div class="actions"><button class="btn primary" id="psy-resume">${T("接著做")}</button><button class="btn" id="psy-restart">${T("重新開始")}</button></div>`;
+      document.getElementById("psy-start").before(box);
+      document.getElementById("psy-resume").addEventListener("click", () => runPsych(null, null, saved));
+      document.getElementById("psy-restart").addEventListener("click", () => { psySave(slug, null); box.remove(); });
+    }
   }
 
-  function runPsych(test, withCode) {
-    const state = { test, idx: 0, answers: [] };
-    const draw = () => {
+  // 作答進度存在瀏覽器裡：中途離開或重新整理，下次可以接著做
+  const psyKey = (slug) => `psy-progress-${slug}`;
+  const psySaved = (slug) => { try { return JSON.parse(localStorage.getItem(psyKey(slug)) || "null"); } catch { return null; } };
+  const psySave = (slug, data) => { try { data ? localStorage.setItem(psyKey(slug), JSON.stringify(data)) : localStorage.removeItem(psyKey(slug)); } catch { /* 忽略 */ } };
+
+  function runPsych(test, withCode, resume) {
+    const state = resume || { test, idx: 0, answers: [], withCode: withCode || null };
+    test = state.test;
+    const total = test.questions.length;
+    const parts = new Set(test.questions.map((q) => q.from).filter(Boolean)).size;
+    let locked = false;
+    $app.innerHTML = `
+      <section class="panel psy-q theme-${test.theme}">
+        <header class="quiz-head">
+          <button class="link quit">${T("✕ 離開")}</button><span>${test.emoji} ${esc(test.title)}</span><span class="q-count" id="psy-count"></span>
+        </header>
+        <div class="progress psy-progress"><div id="psy-bar"></div></div>
+        <div class="psy-stage" id="psy-stage"></div>
+        <p class="hint psy-keys">${T("小提示：可以按數字鍵 1～4 作答，← 回上一題，進度會自動保存")}</p>
+      </section>`;
+    const stage = document.getElementById("psy-stage");
+    const draw = (dir = 1) => {
       const q = test.questions[state.idx];
-      $app.innerHTML = `
-        <section class="panel psy-q theme-${test.theme}">
-          <header class="quiz-head">
-            <button class="link quit">${T("✕ 離開")}</button><span>${test.emoji} ${esc(test.title)}</span><span class="q-count">${state.idx + 1} / ${test.questions.length}</span>
-          </header>
-          <div class="progress"><div style="width:${(state.idx / test.questions.length) * 100}%"></div></div>
-          <h2 class="q-text">${esc(q.q)}</h2>
-          <div class="psy-options">${q.options.map((o, i) => `<button class="psy-option" data-i="${i}">${esc(o)}</button>`).join("")}</div>
-          ${state.idx ? `<button class="link psy-back">${T("← 上一題")}</button>` : ""}
-        </section>`;
-      $app.querySelector(".quit").addEventListener("click", () => go("psych"));
-      $app.querySelector(".psy-back")?.addEventListener("click", () => { state.idx--; state.answers.pop(); draw(); });
-      $app.querySelectorAll(".psy-option").forEach((b) => b.addEventListener("click", async () => {
-        b.classList.add("picked");
-        sound.tick();
-        state.answers.push({ q: q.id, o: Number(b.dataset.i) });
-        await new Promise((r) => setTimeout(r, 180));
-        if (++state.idx < test.questions.length) return draw();
-        $app.innerHTML = `<section class="panel psy-q theme-${test.theme}"><div class="suspense">${T("分析中")}<span>.</span><span>.</span><span>.</span></div></section>`;
-        try {
-          const [result] = await Promise.all([
-            api(`/api/psych/${test.slug}/submit`, { answers: state.answers, with_code: withCode || null }),
-            new Promise((r) => setTimeout(r, 1200)),
-          ]);
-          renderPsychResult(result);
-        } catch (err) {
-          toast(err.message);
-          go("psych");
-        }
-      }));
+      document.getElementById("psy-count").textContent = `${state.idx + 1} / ${total}`;
+      document.getElementById("psy-bar").style.width = `${(state.idx / total) * 100}%`;
+      stage.classList.remove("in", "back");
+      void stage.offsetWidth; // 重新觸發淡入動畫
+      stage.classList.add("in", dir < 0 ? "back" : "fwd");
+      stage.innerHTML = `
+        ${q.from ? `<span class="psy-from">${esc(q.from)}${parts > 1 ? `・${T("第 {0} / {1} 部分", q.part, parts)}` : ""}</span>` : ""}
+        <h2 class="q-text">${esc(q.q)}</h2>
+        <div class="psy-options">${q.options.map((o, i) => `<button class="psy-option" data-i="${i}"><kbd>${i + 1}</kbd>${esc(o)}</button>`).join("")}</div>
+        ${state.idx ? `<button class="link psy-back">${T("← 上一題")}</button>` : ""}`;
+      stage.querySelector(".psy-back")?.addEventListener("click", back);
+      stage.querySelectorAll(".psy-option").forEach((b) => b.addEventListener("click", () => pick(Number(b.dataset.i))));
     };
+    const back = () => {
+      if (locked || !state.idx) return;
+      state.idx--;
+      state.answers.pop();
+      psySave(test.slug, state);
+      draw(-1);
+    };
+    const pick = async (i) => {
+      const q = test.questions[state.idx];
+      if (locked || !q || i >= q.options.length) return;
+      locked = true; // 避免手機連點跳過下一題
+      stage.querySelector(`.psy-option[data-i="${i}"]`)?.classList.add("picked");
+      sound.tick();
+      state.answers.push({ q: q.id, o: i });
+      state.idx++;
+      psySave(test.slug, state);
+      await new Promise((r) => setTimeout(r, 160));
+      locked = false;
+      if (state.idx < total) return draw();
+      document.removeEventListener("keydown", keys);
+      document.getElementById("psy-bar").style.width = "100%";
+      stage.innerHTML = `<div class="suspense">${T("分析中")}<span>.</span><span>.</span><span>.</span></div>`;
+      try {
+        const [result] = await Promise.all([
+          api(`/api/psych/${test.slug}/submit`, { answers: state.answers, with_code: state.withCode }),
+          new Promise((r) => setTimeout(r, 900)),
+        ]);
+        psySave(test.slug, null);
+        renderPsychResult(result);
+      } catch (err) {
+        toast(err.message);
+        go("psych");
+      }
+    };
+    const keys = (e) => {
+      if (!document.getElementById("psy-stage")) return document.removeEventListener("keydown", keys);
+      if (/^[1-9]$/.test(e.key)) pick(Number(e.key) - 1);
+      else if (e.key === "ArrowLeft" || e.key === "Backspace") back();
+    };
+    document.addEventListener("keydown", keys);
+    $app.querySelector(".quit").addEventListener("click", () => { document.removeEventListener("keydown", keys); go("psych"); });
     draw();
   }
 
@@ -1125,7 +1488,7 @@
               <p>${esc(r.level.desc)}</p>
               <div class="psy-typebox"><span>${r.type.emoji}</span><div><small>${T("你的類型")}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>
               ${r.friend ? `<div class="psy-typebox"><span>${r.friend.emoji}</span><div><small>💞 ${T("你的浪漫之友")}</small><b>${esc(r.friend.name)}</b><p>${esc(r.friend.desc)}</p></div></div>` : ""}
-              ${r.type.cure ? `<div class="psy-cure"><b>💊 ${T("你的浪漫解藥")}</b><p>${esc(r.type.cure)}</p></div>` : ""}`;
+              ${r.type.cure ? `<div class="psy-cure"><b>💊 ${r.cure_label ? esc(T(r.cure_label)) : T("你的浪漫解藥")}</b><p>${esc(r.type.cure)}</p></div>` : ""}`;
     } else if (r.kind === "dimension") {
       main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${esc(r.type_key)}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>
               <div class="dims">${r.dims.map((d) => `<div class="dim"><span class="${d.pick === d.a ? "on" : ""}">${d.a} ${esc(d.a_name)}</span>
@@ -1140,6 +1503,7 @@
     } else {
       main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${T("你的類型")}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p>${r.type.tip ? `<p class="hint">💡 ${esc(r.type.tip)}</p>` : ""}</div></div>`;
       if (r.friend) main += `<div class="psy-typebox"><span>${r.friend.emoji}</span><div><small>💞 ${T("和你最對味的類型")}</small><b>${esc(r.friend.name)}</b><p>${esc(r.friend.desc)}</p></div></div>`;
+      if (r.type.cure) main += `<div class="psy-cure"><b>🧧 ${r.cure_label ? esc(T(r.cure_label)) : ""}</b><p>${esc(r.type.cure)}</p></div>`;
       if (r.kind === "match") {
         main += r.partner
           ? `<div class="psy-index"><span class="big">${r.partner.compat}<small>%</small></span><b>${T("你和 {0}（{1}）的默契指數", esc(r.partner.name), `${r.partner.type.emoji} ${esc(r.partner.type.name)}`)}</b></div>`
@@ -1647,6 +2011,7 @@
     }
     if (params.get("team")) return renderTeam(params.get("team"));
     if (params.get("psych_result")) return renderPsychShared(params.get("psych_result"));
+    if (params.get("music_room")) return renderMusicRoom(params.get("music_room"));
     if (params.get("psych")) return renderPsychIntro(params.get("psych"), params.get("with"));
     go(params.get("view") || "home");
   }

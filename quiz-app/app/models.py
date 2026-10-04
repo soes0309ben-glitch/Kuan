@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, LargeBinary, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, Integer, LargeBinary, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -178,3 +178,52 @@ class PsychIllust(Base):
     mime: Mapped[str] = mapped_column(String(20))
     data: Mapped[bytes] = mapped_column(LargeBinary)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class MusicRoom(Base):
+    """音樂品味組隊對戰：紅藍兩隊（每隊 3～5 人）同步搶答同一組題目。"""
+
+    __tablename__ = "quiz_music_rooms"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    code: Mapped[str] = mapped_column(String(16), unique=True, index=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("quiz_users.id"))
+    team_size: Mapped[int] = mapped_column(Integer, default=3)
+    mode: Mapped[str] = mapped_column(String(20), default="mix")
+    region: Mapped[str] = mapped_column(String(10), default="all")
+    question_ids: Mapped[list] = mapped_column(JSON)
+    # 開始時間用 Unix 秒數存，避免 SQLite／Postgres 時區處理不同
+    started_at: Mapped[float | None] = mapped_column(Float, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    players: Mapped[list["MusicPlayer"]] = relationship(
+        back_populates="room", order_by="MusicPlayer.id", cascade="all, delete-orphan"
+    )
+    answers: Mapped[list["MusicAnswer"]] = relationship(back_populates="room", cascade="all, delete-orphan")
+
+
+class MusicPlayer(Base):
+    __tablename__ = "quiz_music_players"
+    __table_args__ = (UniqueConstraint("room_id", "user_id", name="uq_quiz_music_player"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    room_id: Mapped[int] = mapped_column(ForeignKey("quiz_music_rooms.id"), index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("quiz_users.id"), index=True)
+    team: Mapped[str] = mapped_column(String(10))  # red / blue
+
+    room: Mapped[MusicRoom] = relationship(back_populates="players")
+    user: Mapped[User] = relationship()
+
+
+class MusicAnswer(Base):
+    __tablename__ = "quiz_music_answers"
+    __table_args__ = (UniqueConstraint("room_id", "user_id", "q_index", name="uq_quiz_music_answer_once"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    room_id: Mapped[int] = mapped_column(ForeignKey("quiz_music_rooms.id"), index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("quiz_users.id"))
+    q_index: Mapped[int] = mapped_column(Integer)
+    correct: Mapped[bool] = mapped_column(Boolean, default=False)
+    points: Mapped[int] = mapped_column(Integer, default=0)
+
+    room: Mapped[MusicRoom] = relationship(back_populates="answers")

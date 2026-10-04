@@ -34,6 +34,13 @@ CHOICE_TYPES = ("single", "image")
 # 每次挑戰的題數與題型配比（不足時用其他題型補滿）
 QUESTIONS_PER_ATTEMPT = 30
 TYPE_MIX = {"single": 15, "image": 6, "short": 6, "qa": 3}
+# 綜合挑戰（所有主題）每次 50 題，題型比例同樣放大
+MIXED_PER_ATTEMPT = 50
+MIXED_TYPE_MIX = {"single": 25, "image": 10, "short": 10, "qa": 5}
+
+
+def per_attempt(category: str) -> int:
+    return MIXED_PER_ATTEMPT if category == MIXED else QUESTIONS_PER_ATTEMPT
 
 
 class ImportError_(ValueError):
@@ -108,11 +115,11 @@ def pick_questions(db: Session, category: str, difficulty: str, rng: random.Rand
     for qid, qtype in rows:
         by_type[qtype].append(qid)
     chosen: list[int] = []
-    for qtype, n in TYPE_MIX.items():
+    for qtype, n in (MIXED_TYPE_MIX if category == MIXED else TYPE_MIX).items():
         pool = by_type[qtype]
         chosen += rng.sample(pool, min(n, len(pool)))
     leftovers = [qid for qid, _ in rows if qid not in set(chosen)]
-    chosen += rng.sample(leftovers, min(QUESTIONS_PER_ATTEMPT - len(chosen), len(leftovers)))
+    chosen += rng.sample(leftovers, min(per_attempt(category) - len(chosen), len(leftovers)))
     rng.shuffle(chosen)
     return chosen
 

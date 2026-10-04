@@ -3,6 +3,7 @@ import time
 
 import stripe
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
 from app.catalog import check_short
 from app.main import app
@@ -359,7 +360,7 @@ def _answer_all(client, slug, pick_index, n=0):
 def test_psych_list_and_no_scores_leaked(db):
     c = TestClient(app)
     tests = c.get("/api/psych").json()["tests"]
-    assert {t["slug"] for t in tests} == {"lovebrain", "lovetype", "animal", "type16", "match", "career", "psychopath", "romance", "scent", "cat", "taiwan"}
+    assert {t["slug"] for t in tests} == {"lovebrain", "lovetype", "animal", "type16", "match", "career", "psychopath", "romance", "scent", "cat", "senses", "stress", "taiwan"}
     t = c.get("/api/psych/lovebrain?n=10").json()
     assert len(t["questions"]) == 10 and all(isinstance(o, str) for q in t["questions"] for o in q["options"])
 
@@ -456,3 +457,83 @@ def test_psych_romance_and_scent(db):
 
     r = _answer_all(c, "cat", lambda q: 0).json()
     assert r["type"]["name"].endswith("貓") and r["friend"]["name"].endswith("貓")
+
+
+def test_mixed_challenge_has_50_questions(make_client):
+    # 綜合挑戰每次 50 題；測試資料只有 2 個主題、每格 11 題，所以全部 22 題都會出
+    from app import catalog
+    assert catalog.per_attempt("all") == 50 and sum(catalog.MIXED_TYPE_MIX.values()) == 50
+    assert catalog.per_attempt("anime") == 30
+    client, _ = make_client()
+    aid = start(client, "all", "easy").json()["attempt_id"]
+    assert len(client.get(f"/api/attempts/{aid}").json()["questions"]) == 22
+    assert client.get("/api/config").json()["per_attempt_mixed"] == 50
+
+
+def _fake_music_bank(monkeypatch):
+    from app.routers import music
+    bank = {i: {"id": i, "mode": "singer" if i % 2 else "year", "region": "zh", "q": f"歌曲{i}是誰唱的？", "emoji": None,
+                "options": [f"對{i}", "錯A", "錯B", "錯C"], "answer": f"對{i}", "song": f"歌曲{i}", "artist": "歌手", "explain": None}
+            for i in range(1, 31)}
+    monkeypatch.setattr(music, "bank", lambda: bank)
+    return music
+
+
+def test_music_solo_questions_hide_answers(db, monkeypatch):
+    _fake_music_bank(monkeypatch)
+    c = TestClient(app)
+    qs = c.get("/api/music/questions?mode=singer&region=zh&n=5").json()["questions"]
+    assert len(qs) == 5 and all("answer" not in q for q in qs) and {q["mode"] for q in qs} == {"singer"}
+    r = c.post("/api/music/check", json={"id": qs[0]["id"], "given": f"對{qs[0]['id']}"}).json()
+    assert r["correct"] and r["search"].startswith("https://www.youtube.com/results?search_query=")
+    assert c.get("/api/music/questions?mode=nope").status_code == 400
+
+
+def test_music_team_battle(make_client, monkeypatch):
+    music = _fake_music_bank(monkeypatch)
+    from app.db import SessionLocal
+    from app.models import MusicRoom
+    host, host_id = make_client("host@example.com")
+    b1, b1_id = make_client("b1@example.com")
+    r2, _ = make_client("r2@example.com")
+    assert host.post("/api/music/rooms", json={"team_size": 6}).status_code == 400
+    code = host.post("/api/music/rooms", json={"team_size": 3, "mode": "mix", "region": "zh"}).json()["code"]
+    assert b1.post(f"/api/music/rooms/{code}/join", json={}).json()["me"]["team"] == "blue"  # 自動補人少的一隊
+    assert r2.post(f"/api/music/rooms/{code}/join", json={"team": "red"}).json()["me"]["team"] == "red"
+    assert b1.post(f"/api/music/rooms/{code}/start", json={}).status_code == 403  # 只有房主能開始
+    s = host.post(f"/api/music/rooms/{code}/start", json={}).json()
+    assert s["status"] == "countdown" and "question" not in s
+    assert b1.post(f"/api/music/rooms/{code}/join", json={"team": "red"}).status_code == 409
+    # 把開始時間往前調，模擬進入第 1 題作答階段
+    with SessionLocal() as s2:
+        room = s2.scalar(select(MusicRoom).where(MusicRoom.code == code))
+        room.started_at = time.time() - 1
+        qid = room.question_ids[0]
+        s2.commit()
+    st = b1.get(f"/api/music/rooms/{code}").json()
+    assert st["status"] == "playing" and st["phase"] == "answer" and "reveal" not in st and "answer" not in st["question"]
+    assert b1.post(f"/api/music/rooms/{code}/answer", json={"index": 0, "given": f"對{qid}"}).status_code == 200
+    assert b1.post(f"/api/music/rooms/{code}/answer", json={"index": 0, "given": "錯A"}).status_code == 409
+    assert host.post(f"/api/music/rooms/{code}/answer", json={"index": 0, "given": "錯A"}).status_code == 200
+    with SessionLocal() as s2:
+        room = s2.scalar(select(MusicRoom).where(MusicRoom.code == code))
+        room.started_at = time.time() - music.ANSWER_SECONDS - 1
+        s2.commit()
+    st = b1.get(f"/api/music/rooms/{code}").json()
+    assert st["phase"] == "reveal" and st["reveal"]["answer"] == f"對{qid}" and st["my_answer"]["points"] > 100
+    assert st["teams"]["blue"] > st["teams"]["red"] == 0
+    with SessionLocal() as s2:
+        room = s2.scalar(select(MusicRoom).where(MusicRoom.code == code))
+        room.started_at = time.time() - music.SLOT * len(room.question_ids) - 1
+        s2.commit()
+    st = host.get(f"/api/music/rooms/{code}").json()
+    assert st["status"] == "done" and st["winner"] == "blue" and st["mvp"] == b1_id and len(st["review"]) == 10
+
+
+def test_psych_senses_and_stress(db):
+    c = TestClient(app)
+    r = _answer_all(c, "senses", lambda q: 0).json()
+    assert r["type"]["cure"] and r["cure_label"] == "你的專屬平安符"
+    high = _answer_all(c, "stress", lambda q: 0).json()
+    assert high["index"] == 100 and "1925" in high["level"]["desc"] and high["type"]["cure"]
+    assert _answer_all(c, "stress", lambda q: 3).json()["level"]["name"] == "輕鬆自在"

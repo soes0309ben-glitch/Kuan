@@ -556,6 +556,40 @@ details p { margin: 4px 0; }
 .bgm-toggle:not(.off) { animation: bgm-bounce 1.2s ease-in-out infinite; }
 @keyframes bgm-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px) rotate(-6deg); } }
 @media (prefers-reduced-motion: reduce) { .bgm-toggle:not(.off) { animation: none; } }
+/* ---------- 音樂品味 ---------- */
+.music-regions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 14px; }
+.chip-btn { padding: 8px 16px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); font: inherit; font-weight: 700; cursor: pointer; color: var(--text); }
+.chip-btn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.music-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 14px; margin-bottom: 18px; }
+.music-card { text-align: left; cursor: pointer; font: inherit; gap: 6px; }
+.music-card.kill { background: linear-gradient(135deg, #ffd166, #ff6fa3); color: #3a2140; }
+.music-card.kill .cat-desc, .music-card.kill .hint { color: #5a3046; }
+.music-battle .filters { flex-wrap: wrap; }
+.kill-bar > div { transition: width .25s linear; background: linear-gradient(90deg, #ff6fa3, #ffd166); }
+.team-cols { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: start; margin: 12px 0; }
+.team-col { padding: 12px; border-radius: 20px; border: 3px solid var(--line); background: var(--surface); }
+.team-col.red { border-color: #ff8a8a; } .team-col.blue { border-color: #7cb4ff; }
+.team-col h3 { display: flex; justify-content: space-between; margin: 0 0 8px; }
+.team-score { font-size: 1.4rem; color: var(--accent-deep); }
+.team-col .member.got { background: #e4f8e8; border-radius: 12px; }
+.vs { align-self: center; font-weight: 900; font-size: 1.4rem; color: var(--muted); }
+.mb-countdown { display: grid; place-items: center; gap: 6px; padding: 30px 0; }
+.mb-countdown span { font-size: 4rem; font-weight: 900; color: var(--accent); }
+.mb-sec { float: right; color: var(--accent-deep); }
+.mb-winner { text-align: center; font-size: 2rem; font-weight: 900; padding: 16px; border-radius: 20px; background: var(--accent-soft); }
+.mb-winner.red { color: #e0445c; } .mb-winner.blue { color: #2f6fd6; }
+@media (max-width: 560px) { .team-cols { grid-template-columns: 1fr; } .vs { text-align: center; } }
+/* ---------- 心理測驗作答：只換題目區塊，淡入滑動 ---------- */
+.psy-progress > div { transition: width .35s ease; }
+.psy-stage.in { animation: psy-in .28s ease-out; }
+.psy-stage.in.back { animation-name: psy-in-back; }
+@keyframes psy-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+@keyframes psy-in-back { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+.psy-from { display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); font-weight: 700; font-size: .85rem; }
+.psy-option kbd { display: inline-grid; place-items: center; min-width: 1.6em; height: 1.6em; margin-right: 8px; border-radius: 8px; background: var(--surface-2); font: inherit; font-size: .8rem; color: var(--muted); }
+.psy-keys { margin-top: 14px; font-size: .8rem; }
+@media (hover: none) { .psy-keys, .psy-option kbd { display: none; } }
+@media (prefers-reduced-motion: reduce) { .psy-stage.in { animation: none; } .psy-progress > div { transition: none; } }
 .menu-lang { margin-top: 6px; padding: 10px 14px 4px; border-top: 2px dashed var(--line); }
 .menu-lang label { display: grid; gap: 6px; font-weight: 700; color: var(--muted); font-size: .9rem; }
 .menu-lang select {

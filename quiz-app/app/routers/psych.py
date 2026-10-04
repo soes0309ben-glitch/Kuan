@@ -110,11 +110,14 @@ def _sample(test: dict, n: int, rng: random.Random) -> list[dict]:
 
 
 def _mix_test(rng: random.Random) -> dict:
+    # 依測驗分段出題（段內打散），作答時比較連貫；每題標示來自哪個測驗
     questions = []
     for i, slug in enumerate(MIX_ORDER):
-        for q in _sample(TESTS[slug], MIX_PICK[slug], rng):
-            questions.append({"id": (i + 1) * 1000 + q["id"], "q": q["q"], "options": [o["t"] for o in q["options"]]})
-    rng.shuffle(questions)
+        part = _sample(TESTS[slug], MIX_PICK[slug], rng)
+        rng.shuffle(part)
+        for q in part:
+            questions.append({"id": (i + 1) * 1000 + q["id"], "q": q["q"], "options": [o["t"] for o in q["options"]],
+                              "from": f"{TESTS[slug]['emoji']} {TESTS[slug]['title']}", "part": i + 1})
     return {**MIX_INFO, "slug": MIX, "kind": MIX, "disclaimer": DISCLAIMER, "total": len(questions), "fixed": True,
             "axes": None, "illust": None, "questions": questions}
 
@@ -182,7 +185,8 @@ def score(slug: str, answers: list[tuple[int, int]]) -> dict:
         raise HTTPException(400, "請至少回答一題")
 
     kind = test["kind"]
-    result: dict = {"slug": slug, "kind": kind, "title": test["title"], "theme": test["theme"], "answered": len(answers)}
+    result: dict = {"slug": slug, "kind": kind, "title": test["title"], "theme": test["theme"], "answered": len(answers),
+                    "cure_label": test.get("cure_label")}
 
     if kind == "dimension":
         letters, dims = "", []
