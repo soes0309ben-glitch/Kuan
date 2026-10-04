@@ -17,9 +17,9 @@ from app.psych_data import DISCLAIMER, TESTS
 router = APIRouter(prefix="/api/psych")
 
 
-# 綜合心理測驗：從 11 個測驗各抽 2～4 題，共 30 題（16 型每個維度一題），題目 id 編成「測驗序號 × 1000 + 原 id」
+# 綜合心理測驗：從 11 個測驗各抽 3～8 題，共 50 題（16 型每個維度兩題），題目 id 編成「測驗序號 × 1000 + 原 id」
 MIX = "mix"
-MIX_PICK = {"lovebrain": 3, "lovetype": 3, "animal": 3, "type16": 4, "match": 2, "career": 3, "psychopath": 3, "romance": 3, "scent": 2, "cat": 2, "taiwan": 2}
+MIX_PICK = {"lovebrain": 5, "lovetype": 4, "animal": 4, "type16": 8, "match": 4, "career": 4, "psychopath": 5, "romance": 5, "scent": 4, "cat": 4, "taiwan": 3}
 MIX_ORDER = list(MIX_PICK)
 MIX_INFO = {
     "title": "綜合心理測驗",
@@ -138,7 +138,7 @@ def score_mix(answers: list[tuple[int, int]]) -> dict:
 
     def dim_pct(letter: str) -> int:
         dims = parts.get("type16", {}).get("dims", [])
-        # 每個維度只有一題，分數只有 0 或 100；收斂到 15～85%，表示「偏向」而不是絕對
+        # 每個維度只有兩題，分數很跳；收斂到 15～85%，表示「偏向」而不是絕對
         return round(15 + 0.7 * next((d["a_pct"] for d in dims if d["a"] == letter), 50))
 
     axes = [
