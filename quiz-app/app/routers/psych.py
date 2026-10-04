@@ -19,14 +19,14 @@ router = APIRouter(prefix="/api/psych")
 
 # 綜合心理測驗：從每個測驗各抽幾題（16 型每個維度兩題），題目 id 編成「測驗序號 × 1000 + 原 id」
 MIX = "mix"
-MIX_PICK = {"lovebrain": 3, "lovetype": 3, "animal": 3, "type16": 8, "match": 3, "career": 3, "psychopath": 3, "taiwan": 3}
+MIX_PICK = {"lovebrain": 3, "lovetype": 3, "animal": 3, "type16": 8, "match": 3, "career": 3, "psychopath": 3, "romance": 3, "scent": 3, "cat": 3, "taiwan": 3}
 MIX_ORDER = list(MIX_PICK)
 MIX_INFO = {
     "title": "綜合心理測驗",
-    "subtitle": "8 個測驗一次測完，看見完整的你",
+    "subtitle": "11 個測驗一次測完，看見完整的你",
     "emoji": "🔮",
     "theme": "sunny",
-    "intro": "從戀愛腦、戀愛類型、動物性格、16 型人格、默契、職涯、心理變態指數和台灣風景 8 個測驗各抽幾題，一次拼出你的性格全貌！",
+    "intro": "從戀愛腦、戀愛類型、動物性格、16 型人格、默契、職涯、心理變態指數、浪漫症快篩、戀愛香氣、貓系人格和台灣風景 11 個測驗各抽幾題，一次拼出你的性格全貌！",
 }
 
 
@@ -144,6 +144,7 @@ def score_mix(answers: list[tuple[int, int]]) -> dict:
     axes = [
         ("love", "戀愛腦", "談戀愛時投入的程度", parts["lovebrain"]["index"] if "lovebrain" in parts else 50),
         ("dark", "黑暗面", "冷靜、自我、敢衝的那一面", parts["psychopath"]["index"] if "psychopath" in parts else 50),
+        ("romance", "浪漫", "替生活加上儀式感與小確幸", parts["romance"]["index"] if "romance" in parts else 50),
         ("extra", "外向", "從人群中獲得能量", dim_pct("E")),
         ("logic", "理性", "用邏輯做決定", dim_pct("T")),
         ("plan", "計畫性", "喜歡事先安排好", dim_pct("J")),

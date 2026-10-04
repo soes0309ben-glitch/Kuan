@@ -403,6 +403,7 @@
       <ul class="mix-list">
         <li>💘 ${T("戀愛腦與戀愛類型")}</li><li>🐾 ${T("動物性格與 16 型人格")}</li>
         <li>💼 ${T("職涯適性與默契類型")}</li><li>🩸 ${T("心理變態指數與台灣風景")}</li>
+        <li>🌙 ${T("浪漫症快篩、戀愛香氣與貓系人格")}</li>
       </ul>
       <button class="btn primary big" id="mix-psy-start">${T("開始測驗")}・${T("{0} 題", mix.count)}</button>
       <small class="hint">${T("不限次數，結果可以做成像素圖分享")}</small>`;
@@ -1137,7 +1138,8 @@
   }
 
   function drawPixelCard(canvas, r, pal) {
-    const W = 180, H = 290, S = 4;
+    // 綜合心理測驗要多列 11 個結果，卡片拉長一點
+    const W = 180, H = r.kind === "mix" ? 340 : 290, S = 4;
     const cx = 10, cy = 10, cw = W - 20, ch = H - 20;
     // 底圖（背景、卡片、文字、長條）只畫一次；動畫只重畫小動物和閃光
     const base = document.createElement("canvas");

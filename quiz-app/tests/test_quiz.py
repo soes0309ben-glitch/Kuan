@@ -433,12 +433,12 @@ def test_psych_mix(make_client):
     # 綜合心理測驗：從 8 個測驗各抽題，結果包含每個測驗的類型和 5 個綜合特性
     c = TestClient(app)
     info = c.get("/api/psych").json()["mix"]
-    assert info["count"] == 29 and len(info["emojis"]) == 8
+    assert info["count"] == 38 and len(info["emojis"]) == 11
     t = c.get("/api/psych/mix").json()
-    assert t["fixed"] and len(t["questions"]) == 29 and len({q["id"] for q in t["questions"]}) == 29
+    assert t["fixed"] and len(t["questions"]) == 38 and len({q["id"] for q in t["questions"]}) == 38
     client, _ = make_client("mix@example.com")
     r = client.post("/api/psych/mix/submit", json={"answers": [{"q": q["id"], "o": 0} for q in t["questions"]]}).json()
-    assert r["kind"] == "mix" and len(r["parts"]) == 8 and len(r["axes"]) == 5 and r["code"]
+    assert r["kind"] == "mix" and len(r["parts"]) == 11 and len(r["axes"]) == 6 and r["code"]
     assert next(p for p in r["parts"] if p["slug"] == "type16")["extra"] == "ESTJ"
     assert client.get("/api/psych/me/results").json()["results"][0]["title"] == "綜合心理測驗"
     assert c.post("/api/psych/mix/submit", json={"answers": [{"q": 99001, "o": 0}]}).status_code == 400
