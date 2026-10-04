@@ -359,7 +359,7 @@ def _answer_all(client, slug, pick_index, n=0):
 def test_psych_list_and_no_scores_leaked(db):
     c = TestClient(app)
     tests = c.get("/api/psych").json()["tests"]
-    assert {t["slug"] for t in tests} == {"lovebrain", "lovetype", "animal", "type16", "match", "career", "psychopath", "taiwan"}
+    assert {t["slug"] for t in tests} == {"lovebrain", "lovetype", "animal", "type16", "match", "career", "psychopath", "romance", "scent", "cat", "taiwan"}
     t = c.get("/api/psych/lovebrain?n=10").json()
     assert len(t["questions"]) == 10 and all(isinstance(o, str) for q in t["questions"] for o in q["options"])
 
@@ -442,3 +442,17 @@ def test_psych_mix(make_client):
     assert next(p for p in r["parts"] if p["slug"] == "type16")["extra"] == "ESTJ"
     assert client.get("/api/psych/me/results").json()["results"][0]["title"] == "綜合心理測驗"
     assert c.post("/api/psych/mix/submit", json={"answers": [{"q": 99001, "o": 0}]}).status_code == 400
+
+
+def test_psych_romance_and_scent(db):
+    # 浪漫症快篩：指數、等級、浪漫之友與解藥；戀愛香氣：類型與最對味的香調
+    c = TestClient(app)
+    high = _answer_all(c, "romance", lambda q: 0).json()
+    assert high["index"] == 100 and high["level"]["name"] == "浪漫症末期"
+    assert high["friend"]["name"] and high["type"]["cure"]
+    assert _answer_all(c, "romance", lambda q: 3).json()["level"]["name"] == "浪漫陰性（一條線）"
+    r = _answer_all(c, "scent", lambda q: 0).json()
+    assert r["type"]["name"].endswith("香") and r["friend"]["key"] != r["type_key"]
+
+    r = _answer_all(c, "cat", lambda q: 0).json()
+    assert r["type"]["name"].endswith("貓") and r["friend"]["name"].endswith("貓")

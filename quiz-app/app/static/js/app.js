@@ -864,6 +864,7 @@
     cool: { bg: "#e4efff", dot: "#c9ddfb", card: "#f7faff", ink: "#34507a", accent: "#5b8def", soft: "#d3e3fd" },
     sunny: { bg: "#fff3cf", dot: "#ffe39a", card: "#fffbef", ink: "#7a5a12", accent: "#f2a900", soft: "#ffe9a8" },
     dark: { bg: "#3a2140", dot: "#4d2b55", card: "#4a2a50", ink: "#ffe1ee", accent: "#ff5c8a", soft: "#6b3a72" },
+    dreamy: { bg: "#efe6ff", dot: "#ddd0fb", card: "#fbf8ff", ink: "#5b3f86", accent: "#a678f0", soft: "#e4d7fc" },
   };
 
   // 等級越高，畫面越「濃」：戀愛腦越粉、心理變態越暗紅
@@ -871,7 +872,10 @@
     const p = { ...PSY_THEMES[r.theme] || PSY_THEMES.love };
     if (r.kind === "index" && r.level_no) {
       const t = (r.level_no - 1) / Math.max(1, r.levels - 1);
-      if (r.theme === "dark") {
+      if (r.theme === "dreamy") {
+        // 越浪漫越夢幻：淡紫 → 粉紫
+        p.bg = mix("#f3eeff", "#e6c8ff", t); p.dot = mix("#e4dafb", "#d4a8f7", t); p.accent = mix("#b597f2", "#d15fe0", t);
+      } else if (r.theme === "dark") {
         p.bg = mix("#3a2140", "#5c0f24", t); p.dot = mix("#4d2b55", "#7a1530", t); p.card = mix("#4a2a50", "#3b0b18", t);
         p.accent = mix("#ff8fb1", "#ff2a55", t);
       } else {
@@ -1010,7 +1014,9 @@
     if (r.kind === "index") {
       main = `<div class="psy-index"><span class="big">${r.index}<small>%</small></span><b>${r.level.emoji} ${esc(r.level.name)}</b></div>
               <p>${esc(r.level.desc)}</p>
-              <div class="psy-typebox"><span>${r.type.emoji}</span><div><small>${T("你的類型")}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>`;
+              <div class="psy-typebox"><span>${r.type.emoji}</span><div><small>${T("你的類型")}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>
+              ${r.friend ? `<div class="psy-typebox"><span>${r.friend.emoji}</span><div><small>💞 ${T("你的浪漫之友")}</small><b>${esc(r.friend.name)}</b><p>${esc(r.friend.desc)}</p></div></div>` : ""}
+              ${r.type.cure ? `<div class="psy-cure"><b>💊 ${T("你的浪漫解藥")}</b><p>${esc(r.type.cure)}</p></div>` : ""}`;
     } else if (r.kind === "dimension") {
       main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${esc(r.type_key)}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p></div></div>
               <div class="dims">${r.dims.map((d) => `<div class="dim"><span class="${d.pick === d.a ? "on" : ""}">${d.a} ${esc(d.a_name)}</span>
@@ -1024,6 +1030,7 @@
               ${r.top.map((t, i) => `<div class="psy-typebox"><span>${t.emoji}</span><div><small>${T("第 {0} 名", i + 1)}</small><b>${esc(t.name)}</b><p>${esc(t.desc)}</p><p class="careers">💼 ${t.careers.map(esc).join("、")}</p></div></div>`).join("")}`;
     } else {
       main = `<div class="psy-typebox big"><span>${r.type.emoji}</span><div><small>${T("你的類型")}</small><b>${esc(r.type.name)}</b><p>${esc(r.type.desc)}</p>${r.type.tip ? `<p class="hint">💡 ${esc(r.type.tip)}</p>` : ""}</div></div>`;
+      if (r.friend) main += `<div class="psy-typebox"><span>${r.friend.emoji}</span><div><small>💞 ${T("和你最對味的類型")}</small><b>${esc(r.friend.name)}</b><p>${esc(r.friend.desc)}</p></div></div>`;
       if (r.kind === "match") {
         main += r.partner
           ? `<div class="psy-index"><span class="big">${r.partner.compat}<small>%</small></span><b>${T("你和 {0}（{1}）的默契指數", esc(r.partner.name), `${r.partner.type.emoji} ${esc(r.partner.type.name)}`)}</b></div>`

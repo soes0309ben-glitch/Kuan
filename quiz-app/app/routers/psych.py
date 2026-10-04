@@ -202,6 +202,8 @@ def score(slug: str, answers: list[tuple[int, int]]) -> dict:
     order = sorted(axes, key=lambda k: (-pct[k], list(axes).index(k)))
     result["type_key"] = order[0]
     result["type"] = test["types"][order[0]]
+    if result["type"].get("friend"):  # 浪漫之友：最合拍的類型
+        result["friend"] = {"key": result["type"]["friend"], **test["types"][result["type"]["friend"]]}
 
     if kind == "index":
         answered_axes = [k for k in axes if best.get(k)]

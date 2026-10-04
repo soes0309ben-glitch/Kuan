@@ -566,6 +566,9 @@ details p { margin: 4px 0; }
 .psy-card.theme-love { background: var(--c-anime); } .psy-card.theme-nature { background: var(--c-life); }
 .psy-card.theme-cool { background: var(--c-travel); } .psy-card.theme-sunny { background: var(--c-riddle); }
 .psy-card.theme-dark { background: #3a2140; color: #ffe1ee; }
+.psy-card.theme-dreamy { background: var(--c-language); }
+.psy-cure { margin: 12px 0; padding: 14px 16px; border-radius: 18px; border: 3px dashed var(--psy-accent, var(--accent)); background: var(--surface); }
+.psy-cure p { margin: 6px 0 0; }
 .psy-card.theme-dark small { color: #e6b8cc; }
 .psy-emoji { font-size: 2rem; width: 56px; height: 56px; display: grid; place-items: center; background: var(--surface); border-radius: 50%; }
 .psy-card small { color: var(--muted); }
@@ -590,10 +593,10 @@ details p { margin: 4px 0; }
 .psy-index .big { font-size: 3.6rem; font-weight: 900; color: var(--psy-accent); line-height: 1; }
 .psy-index .big.code { letter-spacing: .15em; }
 .psy-index .big small { font-size: 1.4rem; }
-.psy-typebox { display: flex; gap: 14px; align-items: flex-start; background: var(--psy-bg); border-radius: 20px; padding: 14px 16px; margin: 10px 0; color: var(--text); }
+.psy-typebox { display: flex; gap: 14px; align-items: flex-start; background: var(--psy-bg); border-radius: 20px; padding: 14px 16px; margin: 10px 0; color: #4a3040; }  /* 底色固定是淺粉彩，深色模式也用深色字 */
 .psy-result.theme-dark .psy-typebox { color: #ffe1ee; }
 .psy-typebox > span { font-size: 2.4rem; line-height: 1; }
-.psy-typebox small { color: var(--muted); font-weight: 700; }
+.psy-typebox small { color: #8f6a7d; font-weight: 700; }
 .psy-result.theme-dark .psy-typebox small { color: #ffb8cf; }
 .psy-typebox b { display: block; font-size: 1.25rem; }
 .psy-typebox p { margin: 4px 0 0; }
