@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_price_id: str = ""
     # 沒設定 STRIPE_PRICE_ID 時使用的月費（新台幣）
-    monthly_price_twd: int = 99
+    monthly_price_twd: int = 399
 
     admin_emails: str = ""
     # 選填：設定後可用 X-Import-Token 標頭匯入題庫（不需登入），用完請從環境變數刪除
