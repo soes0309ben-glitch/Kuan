@@ -505,6 +505,11 @@ details p { margin: 4px 0; }
 }
 .menu a { padding: 10px 14px; border-radius: 12px; text-decoration: none; color: var(--text); font-weight: 700; }
 .menu a:hover { background: var(--accent-soft); color: var(--accent-deep); }
+.bgm-toggle { transition: opacity .2s, transform .2s; }
+.bgm-toggle.off { opacity: .4; filter: grayscale(1); }
+.bgm-toggle:not(.off) { animation: bgm-bounce 1.2s ease-in-out infinite; }
+@keyframes bgm-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px) rotate(-6deg); } }
+@media (prefers-reduced-motion: reduce) { .bgm-toggle:not(.off) { animation: none; } }
 .menu-lang { margin-top: 6px; padding: 10px 14px 4px; border-top: 2px dashed var(--line); }
 .menu-lang label { display: grid; gap: 6px; font-weight: 700; color: var(--muted); font-size: .9rem; }
 .menu-lang select {

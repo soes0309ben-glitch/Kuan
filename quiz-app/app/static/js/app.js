@@ -84,6 +84,94 @@
     wrong() { this.play([[196, 0.25, "sawtooth", 0.12], [147, 0.4, "sawtooth", 0.12]]); },
   };
 
+  /* ---------- 背景輕音樂：用 Web Audio 即時合成的音樂盒旋律（不用音檔、沒有版權問題） ---------- */
+  const BGM_STEP = 0.3; // 一個八分音符的秒數
+  const BGM_BARS = [
+    // [低音, 和弦分解音, 旋律（每小節 8 個八分音符，0 表示休止）]
+    [48, [60, 64, 67], [76, 0, 79, 0, 81, 79, 76, 0]],
+    [45, [57, 60, 64], [72, 0, 76, 0, 79, 0, 76, 74]],
+    [41, [57, 60, 65], [72, 0, 74, 76, 77, 0, 76, 0]],
+    [43, [55, 59, 62], [74, 0, 79, 0, 74, 72, 74, 0]],
+    [48, [60, 64, 67], [76, 79, 84, 0, 81, 0, 79, 0]],
+    [45, [57, 60, 64], [81, 0, 79, 76, 72, 0, 76, 0]],
+    [50, [57, 62, 65], [74, 0, 77, 0, 81, 79, 77, 74]],
+    [43, [55, 59, 62], [79, 0, 74, 0, 71, 0, 0, 0]],
+  ];
+  const midiHz = (m) => 440 * 2 ** ((m - 69) / 12);
+  const bgm = {
+    on: (() => { try { return localStorage.getItem("quiz-bgm") === "on"; } catch { return false; } })(),
+    ctx: null, master: null, timer: null, step: 0, next: 0,
+    note(time, freq, len, vol, bell) {
+      const g = this.ctx.createGain();
+      g.gain.setValueAtTime(0.0001, time);
+      g.gain.exponentialRampToValueAtTime(vol, time + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, time + len);
+      g.connect(this.master);
+      // 音樂盒：基音加一點高八度的泛音
+      for (const [mul, type, part] of bell ? [[1, "sine", 1], [2, "sine", 0.25], [3, "triangle", 0.08]] : [[1, "sine", 1]]) {
+        const o = this.ctx.createOscillator(), og = this.ctx.createGain();
+        o.type = type;
+        o.frequency.value = freq * mul;
+        og.gain.value = part;
+        o.connect(og).connect(g);
+        o.start(time);
+        o.stop(time + len + 0.05);
+      }
+    },
+    schedule() {
+      while (this.next < this.ctx.currentTime + 0.25) {
+        const [bass, chord, melody] = BGM_BARS[Math.floor(this.step / 8) % BGM_BARS.length];
+        const i = this.step % 8, t = this.next;
+        if (i % 4 === 0) this.note(t, midiHz(bass), BGM_STEP * 3.5, 0.35, false);
+        if (i % 2 === 1) this.note(t, midiHz(chord[(i >> 1) % 3]), BGM_STEP * 2, 0.12, false);
+        if (melody[i]) this.note(t, midiHz(melody[i]), BGM_STEP * 3, 0.45, true);
+        this.step = (this.step + 1) % (BGM_BARS.length * 8);
+        this.next += BGM_STEP;
+      }
+    },
+    start() {
+      try {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          this.master = this.ctx.createGain();
+          this.master.connect(this.ctx.destination);
+        }
+        this.ctx.resume();
+        this.master.gain.cancelScheduledValues(this.ctx.currentTime);
+        this.master.gain.setValueAtTime(0.0001, this.ctx.currentTime);
+        this.master.gain.exponentialRampToValueAtTime(0.09, this.ctx.currentTime + 1.5); // 慢慢淡入，音量小小的
+        if (!this.timer) {
+          this.next = this.ctx.currentTime + 0.1;
+          this.timer = setInterval(() => this.schedule(), 60);
+        }
+      } catch { /* 瀏覽器不支援就算了 */ }
+    },
+    stop() {
+      clearInterval(this.timer);
+      this.timer = null;
+      if (this.ctx) {
+        this.master.gain.setTargetAtTime(0.0001, this.ctx.currentTime, 0.2);
+        setTimeout(() => !this.timer && this.ctx.suspend(), 800);
+      }
+    },
+    toggle() {
+      this.on = !this.on;
+      try { localStorage.setItem("quiz-bgm", this.on ? "on" : "off"); } catch { /* 忽略 */ }
+      this.on ? this.start() : this.stop();
+    },
+  };
+  // 瀏覽器要求使用者先互動才能出聲：上次有開，就在第一次點擊時開始播
+  if (bgm.on) {
+    const kick = () => { if (bgm.on && !bgm.timer) bgm.start(); };
+    document.addEventListener("pointerdown", kick, { once: true });
+    document.addEventListener("keydown", kick, { once: true });
+  }
+  // 切到別的分頁時暫停，省電
+  document.addEventListener("visibilitychange", () => {
+    if (!bgm.on) return;
+    if (document.hidden) bgm.stop(); else bgm.start();
+  });
+
   function confetti() {
     const colors = ["#ff6fa3", "#ffd166", "#7ad7c0", "#a78bfa", "#7cc6fe"];
     const box = Object.assign(document.createElement("div"), { className: "confetti" });
@@ -144,7 +232,15 @@
          <button class="link" id="logout">${T("登出")}</button>`
       : `<a class="btn google" href="${loginUrl()}"><span class="g">G</span> ${T("Google 登入")}</a>`;
     document.getElementById("account").insertAdjacentHTML("afterbegin",
+      `<button class="link bgm-toggle ${bgm.on ? "" : "off"}" title="${T("背景音樂")}" aria-label="${T("背景音樂")}" aria-pressed="${bgm.on}">🎶</button>` +
       `<button class="link sound-toggle" title="${T("音效開關")}">${sound.on ? "🔊" : "🔇"}</button>`);
+    document.querySelector(".bgm-toggle").addEventListener("click", (e) => {
+      e.stopPropagation(); // 不要觸發「第一次點擊就開始播」
+      bgm.toggle();
+      e.currentTarget.classList.toggle("off", !bgm.on);
+      e.currentTarget.setAttribute("aria-pressed", String(bgm.on));
+      toast(bgm.on ? T("🎶 背景音樂開啟") : T("背景音樂已關閉"));
+    });
     document.querySelector(".sound-toggle").addEventListener("click", (e) => {
       sound.on = !sound.on;
       try { localStorage.setItem("quiz-sound", sound.on ? "on" : "off"); } catch { /* 忽略 */ }
