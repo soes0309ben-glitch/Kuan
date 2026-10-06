@@ -74,7 +74,7 @@ def meta():
 
 
 @router.get("/questions")
-def questions(mode: str = "mix", region: str = "all", n: int = ROUND_QUESTIONS):
+def questions(mode: str = "mix", region: str = "all", n: int = ROUND_QUESTIONS, user: User = Depends(require_user)):
     pool = _pool(mode, region)
     if not pool:
         raise HTTPException(404, "這個組合還沒有題目")
@@ -87,7 +87,7 @@ class CheckBody(BaseModel):
 
 
 @router.post("/check", dependencies=[Depends(require_json)])
-def check(body: CheckBody):
+def check(body: CheckBody, user: User = Depends(require_user)):
     q = bank().get(body.id)
     if not q:
         raise HTTPException(404, "找不到這一題")

@@ -479,9 +479,11 @@ def _fake_music_bank(monkeypatch):
     return music
 
 
-def test_music_solo_questions_hide_answers(db, monkeypatch):
+def test_music_solo_questions_hide_answers(make_client, monkeypatch):
     _fake_music_bank(monkeypatch)
-    c = TestClient(app)
+    # 沒登入不能開始玩
+    assert TestClient(app).get("/api/music/questions?mode=singer&region=zh").status_code == 401
+    c, _ = make_client("music-solo@example.com")
     qs = c.get("/api/music/questions?mode=singer&region=zh&n=5").json()["questions"]
     assert len(qs) == 5 and all("answer" not in q for q in qs) and {q["mode"] for q in qs} == {"singer"}
     r = c.post("/api/music/check", json={"id": qs[0]["id"], "given": f"對{qs[0]['id']}"}).json()

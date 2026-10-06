@@ -1032,6 +1032,8 @@
         <h1>🎵 ${T("音樂品味")}</h1>
         <p>${T("猜歌手、猜年代、emoji 猜歌、動漫歌，還能紅藍兩隊組隊對戰！")}</p>
       </section>
+      ${ME.user ? "" : `<div class="sub-banner music-login"><div><b>🔐 ${T("登入後才能開始遊戲")}</b><p>${T("用 Google 帳號登入，就能玩所有音樂模式和組隊對戰。")}</p></div>
+        <a class="btn primary" href="${loginUrl("/?view=music")}">${T("用 Google 帳號登入")}</a></div>`}
       <div class="music-regions">${regions}</div>
       <section class="music-grid">
         ${modes}
@@ -1057,11 +1059,13 @@
       </section>
       <p class="credits">${T("題目只使用歌名、歌手、年份等公開資料（Wikidata），不收錄歌詞、錄音或 MV。")}</p>`;
     $app.querySelectorAll("[data-region]").forEach((b) => b.addEventListener("click", () => { musicFilter.region = b.dataset.region; renderMusic(); }));
-    $app.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => runMusicSolo(b.dataset.mode, musicFilter.region)));
-    $app.querySelector("[data-kill]").addEventListener("click", () => runMusicKill(musicFilter.region));
+    // 沒登入：點任何玩法都先去登入，登入後回到音樂品味
+    const needLogin = () => { location.href = loginUrl("/?view=music"); };
+    $app.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => (ME.user ? runMusicSolo(b.dataset.mode, musicFilter.region) : needLogin())));
+    $app.querySelector("[data-kill]").addEventListener("click", () => (ME.user ? runMusicKill(musicFilter.region) : needLogin()));
     document.getElementById("mb-bank").addEventListener("click", () => go("music-bank"));
     document.getElementById("mb-create").addEventListener("click", async (e) => {
-      if (!ME.user) return renderLoginNeeded(T("⚔️ 組隊對戰"), "/?view=music");
+      if (!ME.user) return needLogin();
       e.target.disabled = true;
       try {
         const { code } = await api("/api/music/rooms", {
@@ -2048,7 +2052,7 @@
   // index.html 裡標了 data-i18n 的文字，以及 ☰ 選單底部的語言切換
   function setupLanguage() {
     document.documentElement.lang = HTML_LANG[LANG] || LANG;
-    document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";  // 阿拉伯文由右到左
+    document.documentElement.dir = ["ar", "he", "fa"].includes(LANG) ? "rtl" : "ltr";  // 阿拉伯文、希伯來文、波斯文由右到左
     document.title = T("知識大挑戰");
     document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = T(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-label]").forEach((el) => el.setAttribute("aria-label", T(el.dataset.i18nLabel)));
