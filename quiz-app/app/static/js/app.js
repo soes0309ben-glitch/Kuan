@@ -8,7 +8,8 @@
   const LANGS = {
     zh: "繁體中文", "zh-hans": "简体中文", en: "English", ja: "日本語", ko: "한국어", vi: "Tiếng Việt", ms: "Bahasa Melayu", th: "ไทย",
     id: "Bahasa Indonesia", es: "Español", pt: "Português", fr: "Français", it: "Italiano", de: "Deutsch", ru: "Русский",
-    tr: "Türkçe", hi: "हिन्दी", ar: "العربية",
+    tr: "Türkçe", hi: "हिन्दी", ar: "العربية", nl: "Nederlands", sv: "Svenska", pl: "Polski", uk: "Українська",
+    tl: "Filipino", el: "Ελληνικά", he: "עברית", fa: "فارسی", bn: "বাংলা", km: "ខ្មែរ",
   };
   const HTML_LANG = { zh: "zh-Hant", "zh-hans": "zh-Hans" };  // 其他語言的 HTML lang 就是代碼本身
   const LOCALE = { zh: "zh-TW", "zh-hans": "zh-CN", en: "en-US", ja: "ja-JP", ko: "ko-KR", vi: "vi-VN", ms: "ms-MY", th: "th-TH" };
