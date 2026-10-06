@@ -63,7 +63,14 @@
     </div>
   </nav>
   <main id="app"></main>
-  <script src="/js/i18n.js"></script>
+  <script>
+    // 只載入目前選擇的介面語言翻譯檔；繁體中文是原文，不用載入
+    (function () {
+      var l = null;
+      try { l = localStorage.getItem("quiz-lang"); } catch (e) { /* 忽略 */ }
+      if (l && l !== "zh" && /^[a-z]{2}(-hans)?$/.test(l)) document.write('<script src="/js/i18n/' + l + '.js"><\/script>');
+    })();
+  </script>
   <script src="/js/app.js"></script>
 </body>
 </html>

@@ -5,9 +5,13 @@
   const $app = document.getElementById("app");
 
   /* ---------- 介面語言：以中文原文當 key 查 i18n.js 的翻譯 ---------- */
-  const LANGS = { zh: "繁體中文", en: "English", ja: "日本語", ko: "한국어", vi: "Tiếng Việt", ms: "Bahasa Melayu", th: "ไทย" };
-  const HTML_LANG = { zh: "zh-Hant", en: "en", ja: "ja", ko: "ko", vi: "vi", ms: "ms", th: "th" };
-  const LOCALE = { zh: "zh-TW", en: "en-US", ja: "ja-JP", ko: "ko-KR", vi: "vi-VN", ms: "ms-MY", th: "th-TH" };
+  const LANGS = {
+    zh: "繁體中文", "zh-hans": "简体中文", en: "English", ja: "日本語", ko: "한국어", vi: "Tiếng Việt", ms: "Bahasa Melayu", th: "ไทย",
+    id: "Bahasa Indonesia", es: "Español", pt: "Português", fr: "Français", it: "Italiano", de: "Deutsch", ru: "Русский",
+    tr: "Türkçe", hi: "हिन्दी", ar: "العربية",
+  };
+  const HTML_LANG = { zh: "zh-Hant", "zh-hans": "zh-Hans" };  // 其他語言的 HTML lang 就是代碼本身
+  const LOCALE = { zh: "zh-TW", "zh-hans": "zh-CN", en: "en-US", ja: "ja-JP", ko: "ko-KR", vi: "vi-VN", ms: "ms-MY", th: "th-TH" };
   const LANG = (() => {
     let l = null;
     try { l = localStorage.getItem("quiz-lang"); } catch { /* 忽略 */ }
@@ -1398,7 +1402,7 @@
       ${mine.results.length ? `
       <section class="panel psy-history">
         <h3>${T("📒 我的測驗紀錄")}</h3>
-        <ul>${mine.results.map((r) => `<li><a href="#" data-code="${esc(r.code)}">${esc(r.title)}：${r.type ? `${r.type.emoji || ""} ${esc(r.type.name)}` : ""}${r.index != null ? `（${r.index}%）` : ""}</a><small>${new Date(r.created_at).toLocaleDateString(LOCALE[LANG])}</small></li>`).join("")}</ul>
+        <ul>${mine.results.map((r) => `<li><a href="#" data-code="${esc(r.code)}">${esc(r.title)}：${r.type ? `${r.type.emoji || ""} ${esc(r.type.name)}` : ""}${r.index != null ? `（${r.index}%）` : ""}</a><small>${new Date(r.created_at).toLocaleDateString(LOCALE[LANG] || LANG)}</small></li>`).join("")}</ul>
       </section>` : ""}`;
     $app.querySelectorAll(".psy-card").forEach((b) => b.addEventListener("click", () => renderPsychIntro(b.dataset.slug)));
     $app.querySelectorAll(".psy-history a").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); renderPsychShared(a.dataset.code); }));
@@ -2043,7 +2047,8 @@
 
   // index.html 裡標了 data-i18n 的文字，以及 ☰ 選單底部的語言切換
   function setupLanguage() {
-    document.documentElement.lang = HTML_LANG[LANG];
+    document.documentElement.lang = HTML_LANG[LANG] || LANG;
+    document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";  // 阿拉伯文由右到左
     document.title = T("知識大挑戰");
     document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = T(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-label]").forEach((el) => el.setAttribute("aria-label", T(el.dataset.i18nLabel)));
