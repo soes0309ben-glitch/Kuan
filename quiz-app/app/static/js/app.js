@@ -238,7 +238,7 @@
            <span class="who">${esc(displayName())}</span></a>
          ${u.is_admin ? `<a href="#" data-nav="admin">${T("管理")}</a>` : ""}
          <button class="link" id="logout">${T("登出")}</button>`
-      : `<a class="btn google" href="${loginUrl()}"><span class="g">G</span> ${T("Google 登入")}</a>`;
+      : `<a class="btn primary login-btn" href="${loginUrl()}">${T("登入")}</a>`;
     document.getElementById("account").insertAdjacentHTML("afterbegin",
       `<button class="link bgm-toggle ${bgm.on ? "" : "off"}" title="${T("背景音樂")}" aria-label="${T("背景音樂")}" aria-pressed="${bgm.on}">🎶</button>` +
       `<button class="link sound-toggle" title="${T("音效開關")}">${sound.on ? "🔊" : "🔇"}</button>`);
@@ -535,7 +535,7 @@
           <span>${T("🎯 個人挑戰：每個主題的每種難度限一次")}</span>
           <a href="#" class="rule-team">${T("👥 組隊挑戰：不限次數，找朋友一起來！")}</a>
         </div>
-        ${ME.user ? "" : `<p class="login-cta"><a class="btn primary" href="${loginUrl("/")}">${T("用 Google 帳號登入開始挑戰")}</a></p>`}
+        ${ME.user ? "" : `<p class="login-cta"><a class="btn primary" href="${loginUrl("/")}">${T("登入")}</a></p>`}
       </section>
       <section class="cat-grid">${cards}</section>`;
 
@@ -864,7 +864,7 @@
         <svg class="mascot small" viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg>
         <h2>${esc(title)}</h2>
         <p>${T("每位參加的朋友都需要先用 Google 帳號登入喔！")}</p>
-        <a class="btn primary big" href="${loginUrl(next)}">${T("用 Google 帳號登入")}</a>
+        <a class="btn primary big" href="${loginUrl(next)}">${T("登入")}</a>
       </section>`;
   }
 
@@ -1033,7 +1033,7 @@
         <p>${T("猜歌手、猜年代、emoji 猜歌、動漫歌，還能紅藍兩隊組隊對戰！")}</p>
       </section>
       ${ME.user ? "" : `<div class="sub-banner music-login"><div><b>🔐 ${T("登入後才能開始遊戲")}</b><p>${T("用 Google 帳號登入，就能玩所有音樂模式和組隊對戰。")}</p></div>
-        <a class="btn primary" href="${loginUrl("/?view=music")}">${T("用 Google 帳號登入")}</a></div>`}
+        <a class="btn primary" href="${loginUrl("/?view=music")}">${T("登入")}</a></div>`}
       <div class="music-regions">${regions}</div>
       <section class="music-grid">
         ${modes}
@@ -1826,7 +1826,7 @@
         <svg class="mascot small" viewBox="0 0 140 112" aria-hidden="true"><use href="#mascot"/></svg>
         <h2>📚 ${T("題庫總覽")}</h2>
         <p>${T("登入後就能<strong>免費</strong>瀏覽全部 <strong>{0}</strong> 題、篩選與搜尋；訂閱會員可看全部答案並匯出 PDF。", CONFIG.total)}</p>
-        <a class="btn primary big" href="${loginUrl("/?view=bank")}">${T("用 Google 帳號登入")}</a>
+        <a class="btn primary big" href="${loginUrl("/?view=bank")}">${T("登入")}</a>
       </section>`;
   }
 

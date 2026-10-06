@@ -331,6 +331,7 @@ details p { margin: 4px 0; }
 .account .link, .account a { white-space: nowrap; }
 .account .avatar { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); }
 .account .who { font-size: .9rem; max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.login-btn { padding: 6px 18px; font-size: .9rem; white-space: nowrap; }
 .btn.google { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; font-size: .9rem; text-decoration: none; color: var(--text) !important; }
 .btn.google .g { font-weight: 700; color: #4285f4; }
 .login-cta { margin-top: 14px !important; }
