@@ -863,3 +863,104 @@ details p { margin: 4px 0; }
   .pq-ripple { display: none; }
 }
 @media (hover: none) { .psy-option kbd { display: inline-grid; } }  /* 手機也保留數字徽章當設計元素 */
+
+/* ======================================================================
+   音樂品味組隊對戰：和心理測驗同一套質感（紅藍雙色光、毛玻璃、漸層選項）
+   ====================================================================== */
+.music-room { --pq-a: #ff4d6d; --pq-b: #4d7cff; --pq-glow: rgba(140, 90, 255, .42); --red: #ff4d6d; --blue: #4d7cff;
+  position: relative; isolation: isolate; overflow: hidden;
+  border: 3px solid transparent;
+  background:
+    linear-gradient(color-mix(in srgb, var(--surface) 86%, transparent), color-mix(in srgb, var(--surface) 86%, transparent)) padding-box,
+    conic-gradient(from var(--pq-angle, 0deg), var(--red), #b46bff, var(--blue), color-mix(in srgb, var(--red) 15%, transparent) 60%, var(--red)) border-box;
+  backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: 0 18px 50px -18px var(--pq-glow); animation: pq-spin 8s linear infinite;
+}
+.music-room::before { content: none; }
+.music-room::after {
+  content: ""; position: absolute; z-index: -2; inset: -30%; pointer-events: none;
+  background:
+    radial-gradient(closest-side at 20% 30%, color-mix(in srgb, var(--red) 34%, transparent), transparent 70%),
+    radial-gradient(closest-side at 80% 30%, color-mix(in srgb, var(--blue) 34%, transparent), transparent 70%),
+    radial-gradient(1.5px 1.5px at 12% 20%, #fff, transparent 60%), radial-gradient(1.5px 1.5px at 82% 14%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 66% 82%, #fff, transparent 60%), radial-gradient(1.5px 1.5px at 30% 76%, #fff, transparent 60%);
+  animation: pq-aurora 14s ease-in-out infinite alternate, pq-twinkle 3.5s ease-in-out infinite;
+}
+/* 紅藍兩隊：毛玻璃卡片＋隊伍色光邊 */
+.music-room .team-col {
+  border: 2px solid transparent; border-radius: 22px; padding: 14px;
+  background:
+    linear-gradient(color-mix(in srgb, var(--surface) 80%, transparent), color-mix(in srgb, var(--surface) 80%, transparent)) padding-box,
+    linear-gradient(160deg, var(--tc), color-mix(in srgb, var(--tc) 20%, transparent)) border-box;
+  box-shadow: 0 12px 30px -16px var(--tc);
+}
+.music-room .team-col.red { --tc: var(--red); } .music-room .team-col.blue { --tc: var(--blue); }
+.music-room .team-col h3 { color: var(--tc); }
+.music-room .team-score { color: var(--tc); text-shadow: 0 0 14px color-mix(in srgb, var(--tc) 60%, transparent); font-size: 1.6rem; font-weight: 900; }
+.music-room .team-col .member { padding: 6px 8px; border-radius: 14px; transition: background .3s, box-shadow .3s; }
+.music-room .team-col .member.got { background: color-mix(in srgb, #2fbf71 18%, transparent); box-shadow: 0 0 0 2px color-mix(in srgb, #2fbf71 45%, transparent) inset; }
+.music-room .vs {
+  font-size: 1.6rem; font-weight: 900; color: transparent;
+  background: linear-gradient(135deg, var(--red), #b46bff, var(--blue)); -webkit-background-clip: text; background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(180, 107, 255, .55)); animation: mr-vs 1.8s ease-in-out infinite;
+}
+@keyframes mr-vs { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+.music-room .join-team { width: 100%; margin-top: 8px; background: linear-gradient(120deg, var(--tc), color-mix(in srgb, var(--tc) 60%, #fff)); color: #fff; border: 0;
+  box-shadow: 0 8px 18px -8px var(--tc); }
+.music-room #mb-start { background: linear-gradient(120deg, var(--red), #b46bff, var(--blue)); border: 0; color: #fff; position: relative; overflow: hidden;
+  box-shadow: 0 14px 30px -12px var(--pq-glow); }
+.music-room #mb-start::after { content: ""; position: absolute; inset: 0; left: -60%; width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .5), transparent); transform: skewX(-20deg); animation: pq-sweep 2.6s ease-in-out infinite; }
+.music-room .invite { border-radius: 18px; background: color-mix(in srgb, var(--surface) 70%, transparent); border: 1px solid color-mix(in srgb, #b46bff 30%, transparent); }
+/* 倒數 */
+.music-room .mb-countdown span {
+  font-size: 5rem; color: transparent; background: linear-gradient(135deg, var(--red), #b46bff, var(--blue));
+  -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 18px rgba(180, 107, 255, .6)); animation: mr-beat 1s ease-in-out infinite;
+}
+@keyframes mr-beat { 0% { transform: scale(1.25); opacity: .6; } 30% { transform: scale(1); opacity: 1; } 100% { transform: scale(.95); } }
+/* 作答倒數條 */
+.music-room .kill-bar { height: 10px; border-radius: 99px; overflow: visible; background: color-mix(in srgb, #b46bff 14%, var(--surface-2)); }
+.music-room .kill-bar > div { position: relative; height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--red), #b46bff, var(--blue), var(--red)); background-size: 200% 100%;
+  animation: pq-flow 2.4s linear infinite; box-shadow: 0 0 12px var(--pq-glow); }
+.music-room .kill-bar > div::after { content: ""; position: absolute; right: -4px; top: 50%; width: 14px; height: 14px; transform: translateY(-50%);
+  border-radius: 50%; background: #fff; box-shadow: 0 0 10px 3px #b46bff; }
+.music-room .mb-sec b { color: var(--red); text-shadow: 0 0 10px color-mix(in srgb, var(--red) 50%, transparent); }
+/* 題目、選項 */
+.music-room .q-text { background: linear-gradient(100deg, color-mix(in srgb, var(--text) 85%, #b46bff), #b46bff 140%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.music-room .option {
+  position: relative; overflow: hidden; display: flex; align-items: center; min-height: 56px; padding: 14px 18px; border-radius: 18px;
+  font-weight: 700; color: var(--text); border: 2px solid transparent;
+  background:
+    linear-gradient(color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface) 92%, transparent)) padding-box,
+    linear-gradient(120deg, color-mix(in srgb, var(--red) 45%, var(--line)), color-mix(in srgb, var(--blue) 45%, var(--line))) border-box;
+  box-shadow: 0 6px 18px -12px var(--pq-glow); transition: transform .18s cubic-bezier(.2, .9, .3, 1.4), box-shadow .2s;
+}
+.music-room .option::before { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 45%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent); transform: skewX(-20deg); }
+.music-room .option:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 14px 30px -12px var(--pq-glow), 0 0 0 4px rgba(180, 107, 255, .15); }
+.music-room .option:hover:not(:disabled)::before { animation: pq-sweep .8s ease; }
+.music-room .option.picked { color: #fff; animation: pq-pop .35s ease;
+  background: linear-gradient(120deg, var(--red), #b46bff, var(--blue)) padding-box, linear-gradient(120deg, var(--red), var(--blue)) border-box;
+  box-shadow: 0 0 0 4px rgba(180, 107, 255, .25), 0 16px 34px -10px var(--pq-glow); }
+.music-room .option.correct { color: #fff; animation: pq-pop .35s ease;
+  background: linear-gradient(120deg, #2fbf71, #4fd1a5) padding-box, linear-gradient(120deg, #2fbf71, #4fd1a5) border-box;
+  box-shadow: 0 0 0 4px rgba(47, 191, 113, .25), 0 0 26px rgba(47, 191, 113, .55); }
+.music-room .option.correct::after { content: " ✓"; color: #fff; margin-left: auto; font-weight: 900; }
+.music-room .option.wrong { color: #fff;
+  background: linear-gradient(120deg, #ff5a6e, #ff8a5c) padding-box, linear-gradient(120deg, #ff5a6e, #ff8a5c) border-box; }
+.music-room .option:disabled:not(.correct):not(.picked):not(.wrong) { opacity: .65; }
+.music-room .feedback { border-radius: 18px; backdrop-filter: blur(8px); }
+/* 勝負揭曉 */
+.music-room .mb-winner { position: relative; overflow: hidden; border-radius: 22px; color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+  background: linear-gradient(120deg, var(--red), #b46bff, var(--blue)); box-shadow: 0 16px 40px -14px var(--pq-glow); }
+.music-room .mb-winner.red { background: linear-gradient(120deg, #ff4d6d, #ff9a8b); }
+.music-room .mb-winner.blue { background: linear-gradient(120deg, #4d7cff, #8fb5ff); }
+.music-room .mb-winner::after { content: ""; position: absolute; inset: 0; left: -60%; width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent); transform: skewX(-20deg); animation: pq-sweep 2.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .music-room, .music-room::after, .music-room .vs, .music-room .mb-countdown span, .music-room .kill-bar > div,
+  .music-room #mb-start::after, .music-room .mb-winner::after, .music-room .option.picked, .music-room .option.correct { animation: none; }
+  .music-room .option:hover::before { animation: none; }
+}
