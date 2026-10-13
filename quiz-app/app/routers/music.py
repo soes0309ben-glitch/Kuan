@@ -12,7 +12,7 @@ import urllib.parse
 from functools import lru_cache
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.billing import music_subscribed
+from app.content_i18n import translate
 from app.dependencies import require_json, require_user
 from app.models import MusicAnswer, MusicPlayer, MusicRoom, Profile, User
 from app.routers.profile import profile_dict
@@ -63,6 +64,11 @@ def _reveal(q: dict) -> dict:
             "search": "https://www.youtube.com/results?search_query=" + urllib.parse.quote(query) if query else None}
 
 
+def _is_answer(q: dict, given: str, request: Request) -> bool:
+    """選項可能已依介面語言翻譯過，所以也和翻譯後的答案比對。"""
+    return given in (q["answer"], translate(q["answer"], request.headers.get("x-lang")))
+
+
 # ------------------------------------------------------------------ 單人練習
 @router.get("/meta")
 def meta():
@@ -87,11 +93,11 @@ class CheckBody(BaseModel):
 
 
 @router.post("/check", dependencies=[Depends(require_json)])
-def check(body: CheckBody, user: User = Depends(require_user)):
+def check(body: CheckBody, request: Request, user: User = Depends(require_user)):
     q = bank().get(body.id)
     if not q:
         raise HTTPException(404, "找不到這一題")
-    return {"correct": body.given == q["answer"], **_reveal(q)}
+    return {"correct": _is_answer(q, body.given, request), **_reveal(q)}
 
 
 # ------------------------------------------------------------------ 音樂題庫（月訂閱）
@@ -259,7 +265,7 @@ class AnswerBody(BaseModel):
 
 
 @router.post("/rooms/{code}/answer", dependencies=[Depends(require_json)])
-def answer_room(code: str, body: AnswerBody, user: User = Depends(require_user), db: Session = Depends(get_db)):
+def answer_room(code: str, body: AnswerBody, request: Request, user: User = Depends(require_user), db: Session = Depends(get_db)):
     room = _room(db, code)
     if not any(p.user_id == user.id for p in room.players):
         raise HTTPException(403, "你不是這場對戰的玩家")
@@ -267,7 +273,7 @@ def answer_room(code: str, body: AnswerBody, user: User = Depends(require_user),
     if clock["status"] != "playing" or clock["index"] != body.index or clock["phase"] != "answer":
         raise HTTPException(409, "這一題的作答時間已經結束")
     q = bank()[room.question_ids[body.index]]
-    correct = body.given == q["answer"]
+    correct = _is_answer(q, body.given, request)
     # 答對 100 分，再依剩餘時間加最多 100 分的速度獎勵
     points = 100 + round(100 * clock["remaining"] / ANSWER_SECONDS) if correct else 0
     db.add(MusicAnswer(room_id=room.id, user_id=user.id, q_index=body.index, correct=correct, points=points))

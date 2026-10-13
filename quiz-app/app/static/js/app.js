@@ -54,7 +54,8 @@
   const catName = (c) => (c === "all" ? T("綜合挑戰") : T(CONFIG.categories[c]));
 
   async function api(path, body) {
-    const opts = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
+    const headers = { "X-Lang": LANG };  // 伺服器依介面語言翻譯心理測驗與音樂題目
+    const opts = body === undefined ? { headers } : { method: "POST", headers: { ...headers, "Content-Type": "application/json" }, body: JSON.stringify(body) };
     const res = await fetch(path, opts);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
