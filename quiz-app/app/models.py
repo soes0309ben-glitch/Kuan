@@ -34,6 +34,11 @@ class User(Base):
 
     @property
     def is_subscribed(self) -> bool:
+        if self.subscription_status == "paypal":  # PayPal 單次付款：管理員開通，到期日前有效
+            end = self.subscription_period_end
+            if end and end.tzinfo is None:
+                end = end.replace(tzinfo=timezone.utc)
+            return bool(end and end > utcnow())
         return self.subscription_status in ACTIVE_SUBSCRIPTION_STATUSES
 
 

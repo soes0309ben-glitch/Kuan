@@ -964,3 +964,9 @@ details p { margin: 4px 0; }
   .music-room #mb-start::after, .music-room .mb-winner::after, .music-room .option.picked, .music-room .option.correct { animation: none; }
   .music-room .option:hover::before { animation: none; }
 }
+
+/* PayPal 付款區塊 */
+.paypal-box { margin: 10px 0 4px; padding: 14px 16px; border-radius: 16px; border: 1.5px dashed var(--line, #f3c6d8); }
+.paypal-box b { display: block; margin-bottom: 10px; }
+.paypal-box [id^="paypal-container"] { max-width: 360px; min-height: 48px; }
+.paypal-box .hint { margin: 8px 0 0; font-size: .85em; }

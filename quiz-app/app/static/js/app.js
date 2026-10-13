@@ -1853,10 +1853,33 @@
           <p>${T("每月 NT${0}，隨時可以取消。訂閱後可看全部答案，並匯出含答案與解說的 PDF 題本。", CONFIG.price_twd)}</p>
         </div>
         <button class="btn primary" id="subscribe">${T("訂閱 NT${0} / 月", CONFIG.price_twd)}</button>
+      </div>
+      <div class="paypal-box">
+        <b>${T("或用 PayPal 付款（單次付款，開通 30 天）")}</b>
+        <div id="paypal-container-${PAYPAL.button}"></div>
+        <p class="hint">${T("PayPal 付款後，我們會用付款 Email 比對帳號，1 天內幫你開通 30 天。如果付款 Email 和登入 Email（{0}）不同，請來信告知。", esc(ME.user?.email || ""))}</p>
       </div>`;
   }
 
+  // PayPal 託管按鈕（NT$399 單次付款）；SDK 只在需要時載入一次
+  const PAYPAL = { client: "BAAoq-ITV1uU1oamzedzAPGRsE1i0TF6XJ41BY4v_uMVXGroMqOEsE1pkbdYqN0h0iPRWj582dVHufOc-I", button: "XFQVCMCQZPCR4" };
+  let paypalSdk;
+  function renderPaypal() {
+    const box = document.getElementById(`paypal-container-${PAYPAL.button}`);
+    if (!box) return;
+    paypalSdk ||= new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL.client}&components=hosted-buttons&disable-funding=venmo&currency=TWD`;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    paypalSdk.then(() => window.paypal.HostedButtons({ hostedButtonId: PAYPAL.button }).render(`#paypal-container-${PAYPAL.button}`))
+      .catch(() => { box.textContent = T("PayPal 暫時無法載入，請稍後再試"); });
+  }
+
   function bindSubscribe() {
+    renderPaypal();
     document.getElementById("subscribe")?.addEventListener("click", async (e) => {
       e.target.disabled = true;
       try {
@@ -1876,10 +1899,10 @@
       <section class="panel bank">
         <div class="bank-head">
           <h2>📚 ${T("題庫總覽")}</h2>
-          ${subscribed ? `<button class="link" id="portal">${T("管理訂閱")}</button>` : ""}
+          ${subscribed && ME.user.subscription_status !== "paypal" ? `<button class="link" id="portal">${T("管理訂閱")}</button>` : ""}
         </div>
         ${subscribed
-          ? `<p class="hint">${T("💖 你是訂閱會員，可以看到全部答案與解說。")}</p>`
+          ? `<p class="hint">${T("💖 你是訂閱會員，可以看到全部答案與解說。")}${ME.user.subscription_status === "paypal" && ME.user.period_end ? " " + T("（PayPal 開通至 {0}）", new Date(ME.user.period_end).toLocaleDateString(LOCALE[LANG] || LANG)) : ""}</p>`
           : subscribeBanner() + `<p class="hint">${T("免費瀏覽所有題目；你已挑戰完成的「主題 × 難度」也會顯示答案。")}</p>`}
         <div class="filters">
           <select id="f-cat"><option value="">${T("全部主題")}</option>${opt(CONFIG.categories, bankFilters.cat, (k, v) => `${CAT_ICON[k]} ${T(v)}`)}</select>
@@ -1995,6 +2018,13 @@
           <select name="difficulty">${Object.entries(DIFF).map(([k, v]) => `<option value="${k}">${v.name}</option>`).join("")}</select>
           <button class="btn" type="submit">重設</button>
         </form>
+        <h3>PayPal 付款開通</h3>
+        <p class="hint">在 PayPal 確認收到 NT$399 後，輸入對方登入用的 Email 開通題庫總覽；已開通的會從原本到期日往後延。</p>
+        <form id="paypal-form" class="filters">
+          <input class="text-input" name="email" placeholder="使用者 Email" required>
+          <input class="text-input" name="days" type="number" min="1" max="400" value="30" style="width:6em">
+          <button class="btn" type="submit">開通</button>
+        </form>
       </section>`;
     const drawIllusts = async () => {
       const { tests } = await api("/api/psych");
@@ -2049,6 +2079,17 @@
       try {
         await api("/api/admin/reset-attempt", { email: f.email.value, category: f.category.value, difficulty: f.difficulty.value });
         toast("已重設，對方可以重新挑戰");
+      } catch (err) {
+        toast(err.message);
+      }
+    });
+    document.getElementById("paypal-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      try {
+        const r = await api("/api/admin/paypal-grant", { email: f.email.value, days: Number(f.days.value) });
+        toast(`已開通到 ${new Date(r.until).toLocaleDateString("zh-TW")}`);
+        f.reset();
       } catch (err) {
         toast(err.message);
       }

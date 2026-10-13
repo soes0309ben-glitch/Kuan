@@ -565,3 +565,26 @@ def test_webhook_music_plan_is_separate(make_client, db):
     assert client.post("/stripe/webhook", content=body, headers={"stripe-signature": sig}).status_code == 200
     db.expire_all()
     assert db.get(MusicSubscription, uid).active and not db.get(User, uid).is_subscribed
+
+
+def test_paypal_grant_unlocks_bank_for_30_days(make_client):
+    client, _ = make_client("payer@example.com")
+    assert client.get("/api/me").json()["user"]["subscribed"] is False
+    admin, _ = make_client("admin@example.com")
+    assert admin.post("/api/admin/paypal-grant", json={"email": "nobody@example.com"}).status_code == 404
+    r = admin.post("/api/admin/paypal-grant", json={"email": "PAYER@example.com", "days": 30})
+    assert r.status_code == 200
+    me = client.get("/api/me").json()["user"]
+    assert me["subscribed"] is True and me["subscription_status"] == "paypal"
+    first = r.json()["until"]
+    assert admin.post("/api/admin/paypal-grant", json={"email": "payer@example.com", "days": 30}).json()["until"] > first
+
+
+def test_psych_content_follows_interface_language(make_client):
+    client, _ = make_client()
+    en = client.get("/api/psych", headers={"X-Lang": "en"}).json()
+    assert en["mix"]["title"] == "Comprehensive Personality Quiz"
+    zh = client.get("/api/psych").json()
+    assert zh["mix"]["title"] == "綜合心理測驗"
+    hans = client.get("/api/psych", headers={"X-Lang": "zh-hans"}).json()
+    assert hans["mix"]["title"] == "综合心理测验"

@@ -1,6 +1,7 @@
 """管理者：匯入題庫、查看統計、重設某人的挑戰。權限由 ADMIN_EMAILS 控制。"""
 
 import secrets
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException
 from pydantic import BaseModel
@@ -79,6 +80,29 @@ def reset_attempt(body: ResetBody, db: Session = Depends(get_db)):
     db.delete(attempt)
     db.commit()
     return {"ok": True}
+
+
+class PaypalGrantBody(BaseModel):
+    email: str
+    days: int = 30
+
+
+@router.post("/paypal-grant", dependencies=[Depends(require_json)])
+def paypal_grant(body: PaypalGrantBody, db: Session = Depends(get_db)):
+    """PayPal 付款確認後，替該帳號開通（或延長）題庫總覽。"""
+    if not 1 <= body.days <= 400:
+        raise HTTPException(400, "天數需在 1～400 之間")
+    user = db.scalar(select(User).where(func.lower(User.email) == body.email.strip().lower()))
+    if not user:
+        raise HTTPException(404, "找不到這個 Email 的帳號（對方需要先登入過一次）")
+    now = datetime.now(timezone.utc)
+    end = user.subscription_period_end if user.subscription_status == "paypal" else None
+    if end and end.tzinfo is None:
+        end = end.replace(tzinfo=timezone.utc)
+    user.subscription_status = "paypal"
+    user.subscription_period_end = max(end or now, now) + timedelta(days=body.days)
+    db.commit()
+    return {"ok": True, "until": user.subscription_period_end.isoformat()}
 
 
 # shigureni free illust 商用免費上限：同一個作品最多 5 張，第 6 張起需購買授權
