@@ -1485,7 +1485,18 @@
         <div class="psy-options">${q.options.map((o, i) => `<button class="psy-option" data-i="${i}"><kbd>${i + 1}</kbd>${esc(o)}</button>`).join("")}</div>
         ${state.idx ? `<button class="link psy-back">${T("← 上一題")}</button>` : ""}`;
       stage.querySelector(".psy-back")?.addEventListener("click", back);
-      stage.querySelectorAll(".psy-option").forEach((b) => b.addEventListener("click", () => pick(Number(b.dataset.i))));
+      stage.querySelectorAll(".psy-option").forEach((b) => {
+        b.addEventListener("click", () => pick(Number(b.dataset.i)));
+        // 點擊處冒出一圈光的漣漪
+        b.addEventListener("pointerdown", (e) => {
+          const r = b.getBoundingClientRect();
+          const dot = Object.assign(document.createElement("span"), { className: "pq-ripple" });
+          dot.style.left = `${e.clientX - r.left}px`;
+          dot.style.top = `${e.clientY - r.top}px`;
+          b.append(dot);
+          setTimeout(() => dot.remove(), 650);
+        });
+      });
     };
     const back = () => {
       if (locked || !state.idx) return;

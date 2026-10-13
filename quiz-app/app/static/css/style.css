@@ -729,3 +729,137 @@ details p { margin: 4px 0; }
   .mascot { width: 120px; }
   .hero .sparkle { display: none; }
 }
+
+/* ======================================================================
+   心理測驗質感升級：每個測驗兩種主色、極光燈光背景、毛玻璃面板、
+   漸層邊框選項、掃光／漣漪特效、閃爍進度條。主色由 .theme-* 決定。
+   ====================================================================== */
+.psy-q, .psy-intro, .psy-result { --pq-a: #ff6fa3; --pq-b: #ffb36b; --pq-glow: rgba(255, 111, 163, .45); }
+.psy-q.theme-nature, .psy-intro.theme-nature, .psy-result.theme-nature { --pq-a: #22b88f; --pq-b: #9bd94f; --pq-glow: rgba(34, 184, 143, .42); }
+.psy-q.theme-cool, .psy-intro.theme-cool, .psy-result.theme-cool { --pq-a: #4f7ff0; --pq-b: #9b7bff; --pq-glow: rgba(79, 127, 240, .42); }
+.psy-q.theme-sunny, .psy-intro.theme-sunny, .psy-result.theme-sunny { --pq-a: #ff9f1c; --pq-b: #ff6b6b; --pq-glow: rgba(255, 159, 28, .42); }
+.psy-q.theme-dreamy, .psy-intro.theme-dreamy, .psy-result.theme-dreamy { --pq-a: #9b6bf2; --pq-b: #ff8fd1; --pq-glow: rgba(155, 107, 242, .45); }
+.psy-q.theme-dark, .psy-intro.theme-dark, .psy-result.theme-dark { --pq-a: #ff3d7f; --pq-b: #8a4dff; --pq-glow: rgba(255, 61, 127, .5); }
+
+/* 面板：毛玻璃＋流動的漸層光邊 */
+.psy-q, .psy-intro, .psy-result {
+  position: relative; isolation: isolate; overflow: hidden;
+  /* 毛玻璃底（padding-box）＋旋轉的漸層光邊（border-box） */
+  border: 3px solid transparent;
+  background:
+    linear-gradient(color-mix(in srgb, var(--surface) 86%, transparent), color-mix(in srgb, var(--surface) 86%, transparent)) padding-box,
+    conic-gradient(from var(--pq-angle, 0deg), var(--pq-a), var(--pq-b), color-mix(in srgb, var(--pq-a) 15%, transparent) 45%, var(--pq-a)) border-box;
+  backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: 0 18px 50px -18px var(--pq-glow);
+  animation: pq-spin 8s linear infinite;
+}
+.psy-q::before, .psy-intro::before, .psy-result::before { content: none; }  /* 這幾頁不放原本的蝴蝶結 */
+/* 背後兩團慢慢飄的光（極光） */
+.psy-q::after, .psy-intro::after, .psy-result::after {
+  content: ""; position: absolute; z-index: -2; inset: -30%;
+  background:
+    radial-gradient(closest-side at 25% 30%, color-mix(in srgb, var(--pq-a) 42%, transparent), transparent 70%),
+    radial-gradient(closest-side at 75% 70%, color-mix(in srgb, var(--pq-b) 40%, transparent), transparent 70%),
+    radial-gradient(1.5px 1.5px at 12% 20%, #fff, transparent 60%), radial-gradient(1.5px 1.5px at 82% 14%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 66% 82%, #fff, transparent 60%), radial-gradient(1.5px 1.5px at 30% 76%, #fff, transparent 60%);
+  animation: pq-aurora 14s ease-in-out infinite alternate, pq-twinkle 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@property --pq-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes pq-spin { to { --pq-angle: 360deg; } }
+@keyframes pq-aurora { 0% { transform: translate(-4%, -3%) rotate(0deg); } 100% { transform: translate(4%, 3%) rotate(8deg); } }
+@keyframes pq-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .75; } }
+
+/* 題目文字：漸層字 */
+.psy-q .q-text {
+  background: linear-gradient(100deg, color-mix(in srgb, var(--text) 85%, var(--pq-a)), var(--pq-a) 140%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1.45;
+}
+.psy-from { background: linear-gradient(90deg, color-mix(in srgb, var(--pq-a) 18%, transparent), color-mix(in srgb, var(--pq-b) 18%, transparent));
+  color: var(--pq-a); box-shadow: 0 0 0 1px color-mix(in srgb, var(--pq-a) 30%, transparent) inset, 0 4px 14px -6px var(--pq-glow); }
+
+/* 進度條：漸層＋流光＋發光尖端 */
+.psy-progress { height: 10px; background: color-mix(in srgb, var(--pq-a) 12%, var(--surface-2)); border-radius: 99px; overflow: visible; }
+.psy-progress > div {
+  position: relative; height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--pq-a), var(--pq-b), var(--pq-a)); background-size: 200% 100%;
+  animation: pq-flow 2.4s linear infinite; box-shadow: 0 0 12px var(--pq-glow);
+}
+.psy-progress > div::after { content: ""; position: absolute; right: -4px; top: 50%; width: 14px; height: 14px; transform: translateY(-50%);
+  border-radius: 50%; background: #fff; box-shadow: 0 0 10px 3px var(--pq-a); }
+@keyframes pq-flow { to { background-position: -200% 0; } }
+
+/* 選項：質感卡片 */
+.psy-options { gap: 12px; }
+.psy-option {
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; text-align: left;
+  padding: 15px 18px; border-radius: 18px; font: inherit; font-weight: 700; font-size: 1rem; color: var(--text); cursor: pointer;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface) 92%, transparent)) padding-box,
+    linear-gradient(120deg, color-mix(in srgb, var(--pq-a) 45%, var(--line)), color-mix(in srgb, var(--pq-b) 45%, var(--line))) border-box;
+  box-shadow: 0 6px 18px -12px var(--pq-glow), 0 1px 0 rgba(255, 255, 255, .6) inset;
+  transition: transform .18s cubic-bezier(.2, .9, .3, 1.4), box-shadow .2s, background .2s;
+}
+.psy-option kbd {
+  flex: none; position: relative; display: inline-grid; place-items: center; width: 30px; height: 30px; margin: 0; border-radius: 50%;
+  background: linear-gradient(135deg, var(--pq-a), var(--pq-b)); color: #fff; font-weight: 900; font-size: .85rem;
+  box-shadow: 0 4px 10px -4px var(--pq-glow);
+}
+/* 掃光 */
+.psy-option::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 45%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent); transform: skewX(-20deg);
+}
+.psy-option:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 14px 30px -12px var(--pq-glow), 0 0 0 4px color-mix(in srgb, var(--pq-a) 14%, transparent); }
+.psy-option:hover::after { animation: pq-sweep .8s ease; }
+.psy-option:active { transform: scale(.98); }
+.psy-option.picked {
+  color: #fff;
+  background: linear-gradient(120deg, var(--pq-a), var(--pq-b)) padding-box, linear-gradient(120deg, var(--pq-a), var(--pq-b)) border-box;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--pq-a) 25%, transparent), 0 16px 34px -10px var(--pq-glow);
+  animation: pq-pop .35s ease;
+}
+.psy-option.picked kbd { background: #fff; color: transparent; }
+.psy-option.picked kbd::before { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--pq-a); font-size: 1rem; font-weight: 900; }
+@keyframes pq-sweep { to { left: 120%; } }
+@keyframes pq-pop { 0% { transform: scale(.97); } 60% { transform: scale(1.03); } 100% { transform: scale(1); } }
+/* 點擊漣漪（由 JS 加入 .pq-ripple） */
+.pq-ripple { position: absolute; border-radius: 50%; pointer-events: none; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  background: radial-gradient(circle, rgba(255, 255, 255, .9), color-mix(in srgb, var(--pq-a) 40%, transparent) 60%, transparent 70%);
+  animation: pq-ripple .6s ease-out forwards; }
+@keyframes pq-ripple { to { transform: scale(40); opacity: 0; } }
+
+/* 開始測驗按鈕、結果頁卡片也帶主色光 */
+.psy-intro #psy-start, .psy-result .actions .btn.primary {
+  background: linear-gradient(120deg, var(--pq-a), var(--pq-b)); border: 0; color: #fff;
+  box-shadow: 0 12px 28px -10px var(--pq-glow); position: relative; overflow: hidden;
+}
+.psy-intro #psy-start::after, .psy-result .actions .btn.primary::after {
+  content: ""; position: absolute; inset: 0; left: -60%; width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .5), transparent); transform: skewX(-20deg);
+  animation: pq-sweep 2.8s ease-in-out infinite;
+}
+.psy-result .psy-typebox { position: relative; overflow: hidden; box-shadow: 0 12px 30px -16px var(--pq-glow);
+  border: 2px solid color-mix(in srgb, var(--pq-a) 30%, transparent); }
+.psy-result .psy-index .big { background: linear-gradient(135deg, var(--pq-a), var(--pq-b)); -webkit-background-clip: text; background-clip: text;
+  color: transparent; filter: drop-shadow(0 6px 16px var(--pq-glow)); }
+.psy-result .psy-bar i, .psy-result .dim-bar div { background: linear-gradient(90deg, var(--pq-a), var(--pq-b)); }
+
+/* 心理變態（暗色主題）：深色玻璃 */
+.psy-q.theme-dark, .psy-intro.theme-dark { color: #ffe1ee;
+  background: linear-gradient(rgba(42, 21, 48, .9), rgba(42, 21, 48, .9)) padding-box,
+    conic-gradient(from var(--pq-angle, 0deg), var(--pq-a), var(--pq-b), rgba(255, 61, 127, .15) 45%, var(--pq-a)) border-box; }
+.psy-q.theme-dark .psy-option { color: #ffe1ee;
+  background: linear-gradient(rgba(58, 28, 64, .92), rgba(58, 28, 64, .92)) padding-box, linear-gradient(120deg, var(--pq-a), var(--pq-b)) border-box; }
+.psy-q.theme-dark .psy-option.picked { color: #fff;
+  background: linear-gradient(120deg, var(--pq-a), var(--pq-b)) padding-box, linear-gradient(120deg, var(--pq-a), var(--pq-b)) border-box; }
+.psy-q.theme-dark .q-text { background: linear-gradient(100deg, #ffe1ee, var(--pq-a) 140%); -webkit-background-clip: text; background-clip: text; }
+
+@media (prefers-reduced-motion: reduce) {
+  .psy-q, .psy-intro, .psy-result, .psy-q::after, .psy-intro::after, .psy-result::after,
+  .psy-progress > div, .psy-option.picked, .psy-intro #psy-start::after, .psy-result .actions .btn.primary::after { animation: none; }
+  .psy-option:hover::after { animation: none; }
+  .pq-ripple { display: none; }
+}
+@media (hover: none) { .psy-option kbd { display: inline-grid; } }  /* 手機也保留數字徽章當設計元素 */
