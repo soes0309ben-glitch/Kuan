@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Fredoka:wght@500;600;700&display=swap">
 <style>
-/* 版面：頂部是招財貓「財財」和牠的對話泡泡（心情跟著預算變），下面是一句話記帳列，再下面是分頁內容；手機底部有分頁列 */
+/* 版面：頂部是虎斑貓「財財」和牠的對話泡泡（心情跟著預算變），下面是一句話記帳列，再下面是分頁內容；手機底部有分頁列 */
 :root {
   --bg: #fff3ee;
   --paws: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='%23ffe1d6'%3E%3Cellipse cx='16' cy='20' rx='5' ry='4.2'/%3E%3Ccircle cx='9.5' cy='13.5' r='2.3'/%3E%3Ccircle cx='14' cy='10.5' r='2.3'/%3E%3Ccircle cx='19' cy='10.8' r='2.3'/%3E%3Ccircle cx='23' cy='14' r='2.3'/%3E%3Cg transform='translate(32 32) rotate(-20)'%3E%3Cellipse cx='16' cy='20' rx='5' ry='4.2'/%3E%3Ccircle cx='9.5' cy='13.5' r='2.3'/%3E%3Ccircle cx='14' cy='10.5' r='2.3'/%3E%3Ccircle cx='19' cy='10.8' r='2.3'/%3E%3Ccircle cx='23' cy='14' r='2.3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
@@ -208,6 +208,16 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
 .chips button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
 .confirm-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 14px; }
 
+.help-row { display: grid; gap: 4px; padding: 10px 0; border-bottom: 2px dotted var(--line); }
+.help-row:last-child { border-bottom: 0; }
+.help-row code { font-family: var(--font-num); font-size: 17px; background: var(--accent-soft); border-radius: 10px; padding: 2px 12px; width: fit-content; }
+.help-row .help-res { display: flex; flex-wrap: wrap; gap: 6px; }
+.help-row p { margin: 0; color: var(--ink-2); font-size: 14px; }
+.moods { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.moods div { display: grid; justify-items: center; gap: 4px; text-align: center; font-size: 13px; color: var(--ink-2); background: var(--panel-2); border-radius: 18px; padding: 10px; }
+.moods svg { width: 90px; height: 78px; overflow: visible; }
+.demo-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; background: var(--butter); border: 2px dashed var(--accent); border-radius: 18px; padding: 10px 14px; font-size: 14px; }
+.demo-banner span { flex: 1 1 220px; }
 #toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(12px); background: var(--ink); color: var(--panel); padding: 10px 18px; border-radius: 999px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 50; max-width: calc(100vw - 32px); text-align: center; }
 #toast.show { opacity: 1; transform: translateX(-50%); }
 @media (prefers-reduced-motion: reduce) { #toast { transition: none; } .cat.wiggle svg { animation: none; } }
@@ -215,26 +225,31 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <g id="cat-body">
-      <path d="M100 74 q16 -2 12 -18 q-3 -9 -9 -6" fill="none" stroke="#e0913f" stroke-width="7" stroke-linecap="round"/>
-      <path d="M100 74 q16 -2 12 -18 q-3 -9 -9 -6" fill="none" stroke="#f6b26b" stroke-width="4" stroke-linecap="round"/>
-      <path d="M22 40 L24 6 L50 24 Z" fill="#f6b26b" stroke="#c97f45" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M98 40 L96 6 L70 24 Z" fill="#fff8f0" stroke="#c97f45" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M100 76 q17 -2 13 -19 q-3 -10 -10 -6" fill="none" stroke="#a85a22" stroke-width="9" stroke-linecap="round"/>
+      <path d="M100 76 q17 -2 13 -19 q-3 -10 -10 -6" fill="none" stroke="#f4a259" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M100 76 q17 -2 13 -19 q-3 -10 -10 -6" fill="none" stroke="#b9652a" stroke-width="5.5" stroke-dasharray="3 5" stroke-linecap="butt"/>
+      <path d="M22 40 L24 6 L50 24 Z" fill="#f4a259" stroke="#a85a22" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M98 40 L96 6 L70 24 Z" fill="#f4a259" stroke="#a85a22" stroke-width="2.5" stroke-linejoin="round"/>
       <path d="M28 32 L29 15 L42 25 Z" fill="#ffb3c6"/>
       <path d="M92 32 L91 15 L78 25 Z" fill="#ffb3c6"/>
-      <ellipse cx="60" cy="54" rx="44" ry="34" fill="#fff8f0" stroke="#c97f45" stroke-width="2.5"/>
-      <path d="M18 48 Q22 22 50 21 Q44 34 46 50 Q30 58 18 48 Z" fill="#f6b26b"/>
-      <path d="M84 24 q8 2 12 8 q-6 6 -14 2 z" fill="#5b4a48"/>
-      <path d="M55 22 l1 8 M60 21 v9 M65 22 l-1 8" stroke="#c97f45" stroke-width="2" stroke-linecap="round"/>
-      <ellipse cx="60" cy="54" rx="44" ry="34" fill="none" stroke="#c97f45" stroke-width="2.5"/>
-      <ellipse cx="33" cy="64" rx="7" ry="4.5" fill="#ffa3bd" opacity=".75"/>
-      <ellipse cx="87" cy="64" rx="7" ry="4.5" fill="#ffa3bd" opacity=".75"/>
+      <ellipse cx="60" cy="54" rx="44" ry="34" fill="#f4a259"/>
+      <path d="M46 26 l5 10 l9 -7 l9 7 l5 -10" fill="none" stroke="#b9652a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M60 22 v6" stroke="#b9652a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M17 48 q8 1 13 4 M16 57 q8 0 13 2" fill="none" stroke="#b9652a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M103 48 q-8 1 -13 4 M104 57 q-8 0 -13 2" fill="none" stroke="#b9652a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M36 74 q24 22 48 0 q-6 -18 -24 -18 q-18 0 -24 18 z" fill="#fff6ea"/>
+      <ellipse cx="60" cy="54" rx="44" ry="34" fill="none" stroke="#a85a22" stroke-width="2.5"/>
+      <ellipse cx="31" cy="64" rx="6.5" ry="4.2" fill="#ff9fb8" opacity=".8"/>
+      <ellipse cx="89" cy="64" rx="6.5" ry="4.2" fill="#ff9fb8" opacity=".8"/>
       <path d="M56 58 h8 l-4 4 z" fill="#ff7fa2" stroke="#e06a8e" stroke-width="1" stroke-linejoin="round"/>
-      <path d="M20 58 l-14 -3 M20 63 l-14 2 M100 58 l14 -3 M100 63 l14 2" stroke="#c9a48a" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M30 84 q30 10 60 0" fill="none" stroke="#e84a5f" stroke-width="6" stroke-linecap="round"/>
+      <path d="M20 61 l-14 -3 M20 66 l-14 2 M100 61 l14 -3 M100 66 l14 2" stroke="#d9b89a" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M30 84 q30 10 60 0" fill="none" stroke="#2f8fd8" stroke-width="6" stroke-linecap="round"/>
       <circle cx="60" cy="92" r="6" fill="#ffcf3f" stroke="#d99a12" stroke-width="1.6"/>
       <path d="M56 92 h8" stroke="#d99a12" stroke-width="1.4"/>
-      <ellipse cx="38" cy="96" rx="10" ry="6" fill="#fff8f0" stroke="#c97f45" stroke-width="2"/>
-      <ellipse cx="82" cy="96" rx="10" ry="6" fill="#fff8f0" stroke="#c97f45" stroke-width="2"/>
+      <ellipse cx="38" cy="96" rx="10" ry="6" fill="#f4a259" stroke="#a85a22" stroke-width="2"/>
+      <path d="M34 94 v4 M38 93 v5 M42 94 v4" stroke="#b9652a" stroke-width="1.6" stroke-linecap="round"/>
+      <ellipse cx="82" cy="96" rx="10" ry="6" fill="#f4a259" stroke="#a85a22" stroke-width="2"/>
+      <path d="M78 94 v4 M82 93 v5 M86 94 v4" stroke="#b9652a" stroke-width="1.6" stroke-linecap="round"/>
     </g>
     <symbol id="cat-happy" viewBox="0 0 120 104"><use href="#cat-body"/>
       <path d="M36 50 q6 -7 12 0" fill="none" stroke="#3b2a2f" stroke-width="3.2" stroke-linecap="round"/>
@@ -290,6 +305,7 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
     <button type="button" data-view="list"><span class="ti" aria-hidden="true">🐾</span>明細</button>
     <button type="button" data-view="budgets"><span class="ti" aria-hidden="true">🐟</span>預算</button>
     <button type="button" data-view="cats"><span class="ti" aria-hidden="true">🧶</span>分類</button>
+    <button type="button" data-view="help"><span class="ti" aria-hidden="true">📖</span>說明</button>
   </nav>
 
   <main id="main" class="view"></main>
@@ -326,7 +342,7 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
   const defaultSettings = () => ({ monthStart: 1, budgets: { total: 0, byCat: {} }, cats: DEFAULT_CATS.map((c) => ({ ...c, kw: [...c.kw] })) });
 
   /* ================= 狀態 ================= */
-  const S = { txns: [], settings: defaultSettings(), month: null, view: "overview", filters: { kind: "", cat: "", q: "" }, store: null, readOnly: false };
+  const S = { demo: false, real: { txns: [], settings: null }, txns: [], settings: defaultSettings(), month: null, view: "overview", filters: { kind: "", cat: "", q: "" }, store: null, readOnly: false };
   const cats = (kind) => S.settings.cats.filter((c) => !c.archived && (!kind || c.kind === kind));
   const catById = (id) => S.settings.cats.find((c) => c.id === id) || S.settings.cats.find((c) => c.id === FALLBACK.expense) || DEFAULT_CATS[11];
 
@@ -441,6 +457,7 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
     render();
   }
   async function write(fn, okMsg) {
+    if (S.demo) { toast("現在是範例模式，不會存進你的帳本喔。按上方「離開範例」回到你的帳本"); return false; }
     if (S.readOnly) { toast("你在這個頁面只有檢視權限，無法儲存紀錄"); return false; }
     try { await fn(); if (okMsg) toast(okMsg); return true; } catch (e) { failed(e); return false; }
   }
@@ -572,8 +589,9 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
   });
   document.getElementById("open-form").addEventListener("click", () => openTxnDialog());
   const EX = ["午餐 120", "昨天 計程車250", "+3000 獎金", "蝦皮 耳機 1.2k", "咖啡 65 #餐飲"];
-  document.getElementById("examples").innerHTML = EX.map((x) => `<button type="button">${esc(x)}</button>`).join("");
-  document.querySelectorAll("#examples button").forEach((b) => b.addEventListener("click", () => { $qi.value = b.textContent; updatePreview(); $qi.focus(); }));
+  document.getElementById("examples").innerHTML = EX.map((x) => `<button type="button">${esc(x)}</button>`).join("") + `<button type="button" id="ex-help">📖 所有寫法</button>`;
+  document.querySelectorAll("#examples button:not(#ex-help)").forEach((b) => b.addEventListener("click", () => { $qi.value = b.textContent; updatePreview(); $qi.focus(); }));
+  document.getElementById("ex-help").addEventListener("click", () => go("help"));
 
   /* ================= 新增／編輯對話框 ================= */
   function openTxnDialog(txn = null) {
@@ -632,8 +650,8 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
       <span class="cat"><svg viewBox="0 0 120 104" aria-hidden="true"><use href="#cat-sleep"></use></svg></span>
       <p style="font-size:18px;margin:0"><b>財財在睡覺，碗裡空空的…</b></p>
       <p style="margin:0 0 6px">在上面輸入「午餐 120」按 Enter，就記好第一筆了。</p>
-      <button type="button" class="btn" id="load-sample">先載入範例資料看看</button>
-      <p style="font-size:12px;margin:8px 0 0">範例資料會標上「範例」，之後可以在「分類與匯出」一鍵清除。</p>
+      <button type="button" class="btn" id="load-sample">看看範例帳本</button>
+      <p style="font-size:12px;margin:8px 0 0">範例是另外一本示範用的帳本，不會存進你的紀錄，隨時可以離開。</p>
     </div></section>`;
   }
 
@@ -825,27 +843,43 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
     catch (e) { if (e?.code !== "declined") toast(e?.code === "rate_limited" ? "請稍候再試一次" : "無法下載檔案"); }
   }
 
+  /* 範例模式：另外產生一本示範帳本放在記憶體裡，不寫進儲存空間，離開後就回到自己的帳本 */
+  function sampleLedger() {
+    const t = todayDate(), items = ["早餐 65", "午餐 120", "晚餐 180", "咖啡 60", "捷運 30", "計程車 250", "全聯 680", "電影 350", "手機費 599", "聚餐 800", "飲料 55", "蝦皮 耳機 1290"], out = [];
+    let r = 11, k = 0; const rnd = () => (r = (r * 16807) % 2147483647) / 2147483647;
+    const add = (line, day) => { const x = parseLine(line, day); if (x && !x.error) out.push({ id: "demo" + (k++), ...x, created: k }); };
+    for (let d = 45; d >= 0; d--) {
+      const day = addDays(t, -d), n = d === 0 ? 1 : 1 + Math.floor(rnd() * 2);
+      for (let i = 0; i < n; i++) add(items[Math.floor(rnd() * items.length)], day);
+      if (day.getDate() === 1) add("房租 15000", day);
+      if (day.getDate() === 5) add("薪水 48000", day);
+    }
+    return out;
+  }
+  function enterDemo() {
+    S.demo = true;
+    S.txns = sampleLedger();
+    S.settings = { ...defaultSettings(), budgets: { total: 50000, byCat: { food: 6000, shopping: 20000 } } };
+    S.month = periodKey(todayDate());
+    go("overview");
+  }
+  function exitDemo() {
+    S.demo = false;
+    S.txns = S.real.txns;
+    S.settings = S.real.settings || defaultSettings();
+    S.month = periodKey(todayDate());
+    render();
+    toast("回到你的帳本了");
+  }
   function bindSample() {
-    document.getElementById("load-sample")?.addEventListener("click", async () => {
-      const t = todayDate(), items = ["早餐 65", "午餐 120", "晚餐 180", "咖啡 60", "捷運 30", "計程車 250", "全聯 680", "電影 350", "手機費 599", "聚餐 800", "飲料 55", "蝦皮 耳機 1290"], out = [];
-      let r = 11; const rnd = () => (r = (r * 16807) % 2147483647) / 2147483647;
-      for (let d = 45; d >= 0; d--) {
-        const day = addDays(t, -d), n = d === 0 ? 1 : 1 + Math.floor(rnd() * 2);
-        for (let i = 0; i < n; i++) out.push(parseLine(items[Math.floor(rnd() * items.length)], day));
-        if (day.getDate() === 1) out.push(parseLine("房租 15000", day));
-        if (day.getDate() === 5) out.push(parseLine("薪水 48000", day));
-      }
-      const btn = document.getElementById("load-sample"); btn.disabled = true; btn.textContent = "載入中…";
-      const ok = await write(async () => { let k = 0; for (const x of out) await S.store.putTxn(newId() + (k++), { ...x, created: Date.now() + k, sample: true }); }, `已載入 ${out.length} 筆範例資料`);
-      if (ok && !(S.settings.budgets?.total > 0)) { S.settings.budgets = { total: 40000, byCat: { food: 6000, shopping: 3000 } }; await saveSettings(); }
-      render();
-    });
+    document.getElementById("load-sample")?.addEventListener("click", enterDemo);
   }
 
   /* ================= 財財（心情跟著預算與紀錄變） ================= */
   const $cat = document.getElementById("cat"), $bubble = document.getElementById("bubble");
   function catState() {
     const key = periodKey(todayDate()), list = inPeriod(key), today = iso(todayDate());
+    if (S.demo) return ["happy", "這是範例帳本喵～逛完記得回到你自己的帳本！"];
     if (!S.txns.length) return ["sleep", "喵…肚子好餓，記第一筆餵我吧！"];
     const rows = budgetRows(key), over = rows.find((r) => r.ratio >= 1), near = rows.find((r) => r.ratio >= .8);
     if (over) return ["cry", `喵嗚嗚，${over.name}超支 ${money(over.spent - over.budget)} 了…`];
@@ -860,7 +894,7 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
     $cat.querySelector("use").setAttribute("href", `#cat-${mood}`);
     $bubble.textContent = line;
   }
-  const TIPS = ["喵～記帳不用完美，記得就很棒了！", "試試看「昨天 晚餐 300」，日期我會自動算好", "前面加 + 就是收入喔，例如「+3000 獎金」", "最後加「#分類」可以指定分類喵", "一次記好幾筆，用「；」隔開就好", "到「預算」設定目標，快超過時我會提醒你", "呼嚕呼嚕…被摸頭好舒服 😽"];
+  const TIPS = ["喵～記帳不用完美，記得就很棒了！", "試試看「昨天 晚餐 300」，日期我會自動算好", "前面加 + 就是收入喔，例如「+3000 獎金」", "最後加「#分類」可以指定分類喵", "一次記好幾筆，用「；」隔開就好", "到「預算」設定目標，快超過時我會提醒你", "呼嚕呼嚕…被摸頭好舒服 😽", "不知道怎麼寫？到「說明」看所有寫法喵"];
   let tipIdx = 0;
   $cat.addEventListener("click", () => { $bubble.textContent = TIPS[tipIdx++ % TIPS.length]; wiggle(); });
   function wiggle() { $cat.classList.remove("wiggle"); void $cat.offsetWidth; $cat.classList.add("wiggle"); }
@@ -879,7 +913,51 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
   }
 
   /* ================= 路由與啟動 ================= */
-  const VIEWS = { overview: viewOverview, list: viewList, budgets: viewBudgets, cats: viewCats };
+  const HELP_ROWS = [
+    ["午餐 120", "最基本的寫法：內容＋金額，分類會自動判斷（午餐 → 餐飲）。"],
+    ["120 午餐", "金額放前面也可以。"],
+    ["計程車250", "中間不用空格。"],
+    ["昨天 晚餐 300", "寫「今天、昨天、前天」會自動算日期。"],
+    ["10/3 電影 350", "寫月/日就記在那天；比今天晚的日期會當成去年。"],
+    ["+3000 獎金", "前面加 + 就是收入。"],
+    ["薪水 50000", "內容是薪水、獎金、退款這類字，也會自動當成收入。"],
+    ["耳機 1.2k", "看得懂 k（千）和 萬，例如「機票 1.5萬」。"],
+    ["咖啡 65 #購物", "最後加「#分類名稱」可以指定分類，不用自動判斷。"],
+    ["早餐 65；捷運 30", "用「；」隔開，一次記好幾筆。"],
+  ];
+  function viewHelp() {
+    const t = todayDate();
+    const rows = HELP_ROWS.map(([ex, why]) => {
+      const res = ex.split(/；|;/).map((l) => parseLine(l, t)).filter(Boolean).map((e) => {
+        if (e.error) return `<span class="chip warn">${esc(e.error)}</span>`;
+        const c = catById(e.cat);
+        return `<span class="chip">${esc(c.icon)} ${esc(c.name)} · <b class="num ${e.kind}">${e.kind === "expense" ? "-" : "+"}${money(e.amount)}</b>${e.note ? ` · ${esc(e.note)}` : ""} · ${md(e.date)}</span>`;
+      }).join(" ");
+      return `<div class="help-row"><code>${esc(ex)}</code><div class="help-res">${res}</div><p>${esc(why)}</p></div>`;
+    }).join("");
+    $main.innerHTML = `
+      <section class="panel"><h2>怎麼跟財財說<small>下面每一行都是示範，只顯示會記成什麼，不會存進你的帳本</small></h2>${rows}</section>
+      <section class="panel"><h2>試試看<small>打一句話，看看財財會怎麼理解（不會記帳）</small></h2>
+        <input type="text" id="help-try" placeholder="例如：前天 全聯 680" aria-label="試試看">
+        <div class="preview" id="help-out"><span class="muted">打字後這裡會顯示結果</span></div></section>
+      <section class="panel"><h2>財財的表情<small>跟著這個月的預算變化</small></h2>
+        <div class="moods">
+          ${[["sleep", "還沒有任何紀錄，在睡覺等你"], ["happy", "一切正常，開心地誇你"], ["worry", "某個預算用到 80%，冒汗提醒你"], ["cry", "超過預算了，哭哭"]].map(([m, d]) => `<div><svg viewBox="0 0 120 104" aria-hidden="true"><use href="#cat-${m}"></use></svg><span>${d}</span></div>`).join("")}
+        </div></section>
+      <section class="panel"><h2>想看看用起來的樣子？</h2>
+        <p style="margin:0" class="muted">「範例帳本」是另外一本示範用的帳本，有一個多月的假資料可以逛。你自己的紀錄不會被改動，按「離開範例」就回來。</p>
+        <div class="row-end" style="justify-content:flex-start">${S.demo ? "" : `<button type="button" class="btn" id="help-demo">打開範例帳本</button>`}</div></section>`;
+    $main.querySelector("#help-demo")?.addEventListener("click", enterDemo);
+    const $o = $main.querySelector("#help-out");
+    $main.querySelector("#help-try").addEventListener("input", (e) => {
+      const v = e.target.value.trim();
+      if (!v) { $o.innerHTML = `<span class="muted">打字後這裡會顯示結果</span>`; return; }
+      const { ok, errs } = parseText(v);
+      $o.innerHTML = ok.map((x) => { const c = catById(x.cat); return `<span class="chip">${esc(c.icon)} ${esc(c.name)} · <b class="num ${x.kind}">${x.kind === "expense" ? "-" : "+"}${money(x.amount)}</b>${x.note ? ` · ${esc(x.note)}` : ""} · ${md(x.date)}</span>`; }).join("") + errs.map((x) => `<span class="chip warn">${esc(x)}</span>`).join("");
+    });
+  }
+
+  const VIEWS = { overview: viewOverview, list: viewList, budgets: viewBudgets, cats: viewCats, help: viewHelp };
   function go(v) { S.view = VIEWS[v] ? v : "overview"; if (location.hash.slice(1) !== S.view) location.hash = S.view; else render(); window.scrollTo({ top: 0 }); }
   addEventListener("hashchange", () => { const v = location.hash.slice(1); S.view = VIEWS[v] ? v : "overview"; render(); });
   document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("click", () => go(b.dataset.view)));
@@ -894,6 +972,13 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
     badge.textContent = !S.store ? "連線中…" : S.readOnly ? "🔒 僅能檢視" : S.store.kind === "cloud" ? "☁️ 已同步・只有你看得到" : "📱 只存在這台裝置";
     updateCat();
     VIEWS[S.view]();
+    if (S.demo) {
+      const bar = document.createElement("section");
+      bar.className = "demo-banner";
+      bar.innerHTML = `<span>🐾 <b>範例模式</b>：這是一本示範用的帳本，你在這裡做的任何事都不會存進你的紀錄。</span><button type="button" class="btn small primary">離開範例</button>`;
+      bar.querySelector("button").addEventListener("click", exitDemo);
+      $main.prepend(bar);
+    }
   }
 
   function attach(store) {
@@ -901,12 +986,13 @@ dialog .amt { font-family: var(--font-num); font-size: 28px; font-weight: 600; p
     let rendered = false, timer;
     const later = () => { clearTimeout(timer); timer = setTimeout(render, 30); };
     store.subscribe(
-      (txns) => { S.txns = txns.filter((t) => t && t.date && t.amount > 0); later(); },
+      (txns) => { S.real.txns = txns.filter((t) => t && t.date && t.amount > 0); if (!S.demo) S.txns = S.real.txns; later(); },
       (settings) => {
         if (settings && Array.isArray(settings.cats)) {
           // 新版若多了預設分類，補進使用者的設定裡
           const have = new Set(settings.cats.map((c) => c.id));
-          S.settings = { ...defaultSettings(), ...settings, cats: [...settings.cats, ...DEFAULT_CATS.filter((c) => !have.has(c.id)).map((c) => ({ ...c, kw: [...c.kw] }))] };
+          S.real.settings = { ...defaultSettings(), ...settings, cats: [...settings.cats, ...DEFAULT_CATS.filter((c) => !have.has(c.id)).map((c) => ({ ...c, kw: [...c.kw] }))] };
+          if (!S.demo) S.settings = S.real.settings;
           S.month = rendered ? S.month : periodKey(todayDate());
         }
         rendered = true; later();

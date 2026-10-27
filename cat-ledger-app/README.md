@@ -1,6 +1,6 @@
 # 🐱 隨手記帳本（手機 App 版）
 
-招財貓「財財」陪你記帳。用 [Capacitor](https://capacitorjs.com/) 把網頁版包成 iOS 與 Android 原生 App：
+虎斑貓「財財」陪你記帳。用 [Capacitor](https://capacitorjs.com/) 把網頁版包成 iOS 與 Android 原生 App：
 
 - 資料存在手機裡（Capacitor Preferences），不用登入、不上網也能用
 - 字型已內建（`www/fonts/`），離線也是可愛的圓體字
@@ -83,7 +83,7 @@ keytool -genkeypair -v -keystore upload.jks -alias upload \
 
 ### 2-3 在 Play Console 建立應用程式
 
-1. **建立應用程式**：名稱「隨手記帳本－招財貓陪你記帳」、預設語言「中文（台灣）」、應用程式、免費。
+1. **建立應用程式**：名稱「隨手記帳本－虎斑貓陪你記帳」、預設語言「中文（台灣）」、應用程式、免費。
 2. **設定應用程式**（資訊主頁上的待辦清單）：
    - 隱私權政策：填第 3 步的網址
    - 應用程式存取權：所有功能都不需要特殊存取權
@@ -112,7 +112,7 @@ keytool -genkeypair -v -keystore upload.jks -alias upload \
 ## 4. App Store 上架（需要 Mac）
 
 1. **加入 Apple Developer Program** 後，到 [App Store Connect](https://appstoreconnect.apple.com/) → 我的 App → ＋ 新增 App：
-   - 平台 iOS、名稱「隨手記帳本－招財貓陪你記帳」、主要語言「繁體中文」
+   - 平台 iOS、名稱「隨手記帳本－虎斑貓陪你記帳」、主要語言「繁體中文」
    - 套裝識別碼：選 `com.kuan.catledger`（沒有的話先到 developer.apple.com → Identifiers 建立）
    - SKU：任意，例如 `catledger001`
 2. **在 Mac 上打包**：
@@ -132,7 +132,7 @@ keytool -genkeypair -v -keystore upload.jks -alias upload \
    - 加密：已在 `Info.plist` 設定不使用非豁免加密，不用另外回答
    - 選剛剛上傳的建置版本 → **提交審查**（通常 1～3 天）
 
-> 💡 審查備註可以寫：「這是一個單機記帳 App，所有資料只存在裝置上，不需要帳號或網路。在輸入框輸入『午餐 120』後按 Enter 即可新增一筆紀錄；也可以在空白時按『先載入範例資料看看』體驗所有功能。」
+> 💡 審查備註可以寫：「這是一個單機記帳 App，所有資料只存在裝置上，不需要帳號或網路。在輸入框輸入『午餐 120』後按 Enter 即可新增一筆紀錄；也可以按『看看範例帳本』（另一本示範用的帳本，不會寫入使用者資料）體驗所有功能，或到『說明』分頁看所有輸入寫法。」
 
 ---
 

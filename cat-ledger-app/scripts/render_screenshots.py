@@ -38,16 +38,14 @@ with sync_playwright() as p:
         ctx.add_init_script(MOCK)
         pg = ctx.new_page()
         pg.goto(APP); pg.wait_for_timeout(1500)
-        pg.add_style_tag(content=".tag{display:none!important}")
-        if pg.query_selector("#load-sample"):
-            pg.click("#load-sample"); pg.wait_for_timeout(1500)
-        # 截圖用的預算設得寬鬆一點，讓財財開開心心
-        pg.click("#tabs button[data-view=budgets]"); pg.wait_for_timeout(400)
-        pg.fill("#b-total", "50000"); pg.fill("#b-shopping", "20000"); pg.fill("#b-food", "6000")
-        pg.click("#bf button[type=submit]"); pg.wait_for_timeout(3200)
+        # 用「範例帳本」截圖（不寫進儲存空間），並把範例模式的提示橫幅藏起來
+        pg.add_style_tag(content=".tag,.demo-banner{display:none!important}")
+        pg.click("#load-sample"); pg.wait_for_timeout(800)
         for i, (view, title, typed) in enumerate(SHOTS, 1):
             pg.click(f"#tabs button[data-view={'overview' if view == 'quick' else view}]"); pg.wait_for_timeout(500)
-            pg.fill("#quick-input", typed or ""); pg.dispatch_event("#quick-input", "input"); pg.wait_for_timeout(300)
+            pg.fill("#quick-input", typed or ""); pg.dispatch_event("#quick-input", "input")
+            pg.evaluate("document.getElementById('bubble').textContent = '今天也一起記帳吧喵～'")
+            pg.wait_for_timeout(300)
             shot = pg.screenshot()
             frame = ctx.new_page()
             frame.set_viewport_size({"width": w, "height": h})
@@ -69,7 +67,7 @@ with sync_playwright() as p:
     pg.set_content(f"""<html><head><link rel="stylesheet" href="{(ROOT / 'www' / 'fonts' / 'fonts.css').as_uri()}"></head>
       <body style="margin:0;width:1024px;height:500px;background:#fff3ee;font-family:Huninn,sans-serif;display:flex;align-items:center;gap:40px;padding:0 70px;box-sizing:border-box">{defs}
       <svg viewBox="0 0 120 104" width="380" height="330"><use href="#cat-happy"/></svg>
-      <div><div style="font-size:72px;color:#c9406c">隨手記帳本</div><div style="font-size:34px;color:#6e5a64;margin-top:12px">招財貓財財陪你記帳<br>說一句話就記好 🐟</div></div></body></html>""")
+      <div><div style="font-size:72px;color:#c9406c">隨手記帳本</div><div style="font-size:34px;color:#6e5a64;margin-top:12px">虎斑貓財財陪你記帳<br>說一句話就記好 🐟</div></div></body></html>""")
     pg.wait_for_timeout(500)
     pg.screenshot(path=str(OUT / "googleplay-feature-graphic.png"))
     b.close()
