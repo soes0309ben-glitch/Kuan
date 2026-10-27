@@ -1,0 +1,498 @@
+<title>LINE 記帳本示範</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* 版面：左邊是聊天模擬（記帳入口），右邊是即時更新的報表；窄螢幕上下排 */
+:root {
+  --bg: #f4f6f3;
+  --panel: #fcfdfb;
+  --panel-2: #eaeee8;
+  --ink: #141a16;
+  --ink-2: #4a5550;
+  --muted: #7c8781;
+  --line: #dde3dc;
+  --accent: #157a55;
+  --accent-ink: #ffffff;
+  --me: #d9efe3;
+  --series: #2a78d6;
+  --expense: #b93030;
+  --income: #13732f;
+  --good: #0ca30c; --warning: #fab219; --critical: #d03b3b;
+  --font-display: "LXGW WenKai TC", "Noto Sans TC", "PingFang TC", serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1311; --panel: #181d1a; --panel-2: #222924; --ink: #eef2ee; --ink-2: #bcc6bf; --muted: #84908a;
+    --line: #2c342f; --accent: #3fbf8a; --accent-ink: #08140e; --me: #1f3a2d; --series: #3987e5;
+    --expense: #ff8a8a; --income: #4fd07a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1311; --panel: #181d1a; --panel-2: #222924; --ink: #eef2ee; --ink-2: #bcc6bf; --muted: #84908a;
+  --line: #2c342f; --accent: #3fbf8a; --accent-ink: #08140e; --me: #1f3a2d; --series: #3987e5;
+  --expense: #ff8a8a; --income: #4fd07a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+}
+button, input { font: inherit; color: inherit; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 18px; }
+header.top { display: flex; flex-wrap: wrap; align-items: end; gap: 8px 16px; }
+header.top h1 { font-family: var(--font-display); font-size: clamp(26px, 5vw, 36px); margin: 0; line-height: 1.1; text-wrap: balance; }
+header.top p { margin: 0; color: var(--ink-2); flex: 1 1 320px; }
+.badge { font-size: 12px; letter-spacing: .04em; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; color: var(--ink-2); background: var(--panel); white-space: nowrap; }
+.layout { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .layout { grid-template-columns: 380px minmax(0, 1fr); align-items: start; } .chat { position: sticky; top: max(12px, env(safe-area-inset-top, 0px)); } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; min-width: 0; }
+
+/* 聊天 */
+.chat { display: grid; grid-template-rows: auto 1fr auto auto; height: min(640px, 80vh); min-height: 460px; overflow: hidden; }
+.chat-head { padding: 12px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.chat-head .av { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; }
+.chat-head b { display: block; line-height: 1.2; }
+.chat-head small { color: var(--muted); }
+.msgs { overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+.msg { max-width: 86%; padding: 8px 12px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.me { align-self: flex-end; background: var(--me); border-bottom-right-radius: 4px; }
+.msg.bot { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.card { align-self: flex-start; width: min(290px, 92%); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; }
+.card .t { font-weight: 700; }
+.card .big { font-family: var(--font-num); font-size: 26px; font-weight: 600; }
+.card .row { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.card .row span:first-child { color: var(--ink-2); }
+.card hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; width: 100%; }
+.card .alert { font-size: 13px; }
+.card .err { font-size: 12px; color: var(--muted); }
+.quick { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; border-top: 1px solid var(--line); scrollbar-width: none; }
+.quick button { flex: none; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer; }
+.quick button:hover { background: var(--panel-2); }
+form.send { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); }
+form.send textarea { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--bg); border-radius: 18px; padding: 8px 14px; resize: none; max-height: 96px; field-sizing: content; }
+form.send button { border: 0; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 8px 16px; font-weight: 700; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--series); outline-offset: 2px; }
+
+/* 報表 */
+.report { display: grid; gap: 14px; }
+.section { padding: 16px; display: grid; gap: 12px; }
+.section h2 { font-family: var(--font-display); font-size: 19px; margin: 0; display: flex; align-items: baseline; gap: 10px; }
+.section h2 small { font-family: var(--font-body); font-size: 13px; color: var(--muted); font-weight: 400; }
+.section h2 .sp { flex: 1; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.stat .l { font-size: 13px; color: var(--ink-2); }
+.stat .v { font-family: var(--font-num); font-size: clamp(18px, 4.4vw, 28px); font-weight: 600; overflow-wrap: anywhere; }
+.stat .d { font-size: 12px; color: var(--muted); }
+.expense { color: var(--expense); } .income { color: var(--income); }
+.two { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.rank { display: grid; gap: 10px; }
+.rank-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 10px; align-items: baseline; }
+.rank-row .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-row .a small { color: var(--muted); margin-left: 6px; }
+.track { grid-column: 1 / -1; height: 8px; background: var(--panel-2); border-radius: 4px; overflow: hidden; }
+.track span { display: block; height: 100%; border-radius: 4px; background: var(--series); min-width: 2px; }
+.budget { display: grid; gap: 4px; }
+.budget .top { display: flex; gap: 8px; align-items: baseline; }
+.budget .top b { flex: 1; }
+.pill { font-size: 12px; border-radius: 999px; padding: 1px 8px; background: var(--panel-2); white-space: nowrap; }
+.meter { height: 10px; background: var(--panel-2); border-radius: 5px; overflow: hidden; }
+.meter span { display: block; height: 100%; border-radius: 5px; }
+.budget .sub { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--ink-2); }
+.chart { position: relative; }
+.chart svg { display: block; overflow: visible; }
+.chart text { fill: var(--muted); font-size: 11px; font-family: var(--font-num); }
+.chart .g { stroke: var(--line); }
+.chart .hit { fill: transparent; cursor: pointer; }
+.chart .band { fill: var(--panel-2); }
+#tip { position: fixed; z-index: 30; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; font-size: 13px; box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+.list { display: grid; }
+.txn { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.txn:last-child { border-bottom: 0; }
+.txn .e { width: 34px; height: 34px; border-radius: 10px; background: var(--panel-2); display: grid; place-items: center; }
+.txn .m { min-width: 0; }
+.txn .m div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.txn .m small { color: var(--muted); }
+.txn .del { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+.txn .del:hover { color: var(--critical); background: var(--panel-2); }
+.empty { color: var(--muted); padding: 12px 0; }
+.foot { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; color: var(--muted); font-size: 13px; }
+.foot button { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 6px 12px; cursor: pointer; }
+.foot a { color: var(--accent); }
+.confirm { display: inline-flex; gap: 8px; align-items: center; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>LINE 記帳本示範</h1>
+    <p>左邊模擬在 LINE 跟記帳機器人聊天，右邊是網頁版報表。試著傳「午餐 120」「昨天 計程車250」「+3000 獎金」或「本月」。</p>
+    <span class="badge">示範資料・只存在你的瀏覽器</span>
+  </header>
+
+  <div class="layout">
+    <section class="panel chat" aria-label="聊天模擬">
+      <div class="chat-head"><span class="av" aria-hidden="true">記</span><span><b>記帳本機器人</b><small>模擬 LINE 官方帳號的回覆</small></span></div>
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+      <div class="quick" id="quick"></div>
+      <form class="send" id="send">
+        <textarea id="text" aria-label="訊息" rows="1" autocomplete="off" placeholder="例如：午餐 120（Shift+Enter 換行）" enterkeyhint="send"></textarea>
+        <button type="submit">傳送</button>
+      </form>
+    </section>
+
+    <main class="report" id="report"></main>
+  </div>
+
+  <div class="foot">
+    <span>完整程式在 GitHub：<a href="https://github.com/soes0309ben-glitch/Kuan/tree/main/expense-app" target="_blank" rel="noopener">soes0309ben-glitch/Kuan · expense-app</a></span>
+    <span id="reset-box"><button type="button" id="reset">重設示範資料</button></span>
+  </div>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+(() => {
+  "use strict";
+  /* ---------- 分類（與 app/categories.py 相同的預設） ---------- */
+  const CATS = [
+    ["expense", "餐飲", "🍱", "早餐,午餐,晚餐,宵夜,早午餐,便當,飯,麵,餐,吃,火鍋,燒肉,拉麵,壽司,咖啡,飲料,奶茶,手搖,星巴克,麥當勞,肯德基,摩斯,點心,甜點,蛋糕,零食,水果,外送,ubereats,foodpanda,聚餐"],
+    ["expense", "交通", "🚌", "捷運,公車,計程車,uber,高鐵,台鐵,火車,客運,加油,油錢,停車,悠遊卡,一卡通,etag,過路費,機票,腳踏車,youbike,機車,保養,洗車"],
+    ["expense", "購物", "🛍️", "衣服,褲子,鞋,包包,網購,蝦皮,momo,pchome,淘寶,amazon,3c,手機,電腦,耳機,家電,化妝品,保養品,日用品,衛生紙,洗髮精,全聯,家樂福,好市多,costco,大創,無印"],
+    ["expense", "居家", "🏠", "房租,租金,水費,電費,瓦斯,網路費,管理費,第四台,家具,ikea,修繕,清潔"],
+    ["expense", "娛樂", "🎮", "電影,唱歌,ktv,遊戲,steam,switch,netflix,spotify,youtube,disney,訂閱,演唱會,展覽,門票,旅遊,住宿,飯店,民宿,書,漫畫"],
+    ["expense", "醫療", "💊", "看醫生,掛號,診所,醫院,藥,牙醫,健檢,眼鏡,保健"],
+    ["expense", "通訊", "📱", "電話費,手機費,月租費,中華電信,台灣大哥大,遠傳,儲值"],
+    ["expense", "教育", "📚", "學費,補習,課程,上課,教材,考試,報名費,文具"],
+    ["expense", "人情", "🎁", "紅包,禮物,禮金,喜帖,奠儀,請客,送禮,捐款"],
+    ["expense", "其他", "📦", ""],
+    ["income", "薪水", "💼", "薪水,薪資,月薪,工資,加班費"],
+    ["income", "獎金", "🏆", "獎金,年終,分紅,三節"],
+    ["income", "投資", "📈", "股息,股利,利息,配息,投資,賣股,基金,租金收入"],
+    ["income", "兼職", "🧑‍💻", "兼職,打工,接案,稿費,外快"],
+    ["income", "退款", "↩️", "退款,退費,退稅,回饋,現金回饋"],
+    ["income", "其他收入", "💰", ""],
+  ].map(([kind, name, icon, kw]) => ({ kind, name, icon, kw: kw ? kw.split(",") : [] }));
+  const catOf = (name) => CATS.find((c) => c.name === name);
+
+  function bestMatch(kind, text) {
+    const t = text.toLowerCase();
+    let best = null, len = 0;
+    for (const c of CATS.filter((c) => c.kind === kind)) for (const k of [c.name, ...c.kw]) {
+      const kk = k.toLowerCase();
+      if (kk && t.includes(kk) && kk.length > len) { best = c; len = kk.length; }
+    }
+    return [best, len];
+  }
+
+  /* ---------- 日期工具（用台北時間的「今天」） ---------- */
+  const pad = (n) => String(n).padStart(2, "0");
+  const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const todayDate = () => { const p = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Taipei" }).format(new Date()).split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); };
+  const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const md = (s) => `${Number(s.slice(5, 7))}/${Number(s.slice(8))}`;
+  const money = (n) => "$" + Math.round(n).toLocaleString("zh-TW");
+
+  /* ---------- 解析（與 app/parser.py 相同規則） ---------- */
+  const AMOUNT = /(?<![A-Za-z0-9.])(?:nt\$|\$)?(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?\s*(k|千|萬|w)?(?:元|塊錢|塊)?(?![A-Za-z0-9.])/gi;
+  const REL = [["大前天", 3], ["前天", 2], ["昨天", 1], ["昨日", 1], ["今天", 0], ["今日", 0]];
+  const COMMANDS = { help: ["說明", "幫助", "help", "?", "使用說明", "指令"], today: ["今天", "今日"], week: ["本週", "這週", "本周"], month: ["本月", "這個月", "月報", "統計"], recent: ["明細", "最近", "紀錄"], budget: ["預算"], undo: ["復原", "取消", "刪除"], categories: ["分類", "類別"], web: ["網頁", "報表"] };
+  const CMD = {}; for (const [k, v] of Object.entries(COMMANDS)) for (const a of v) CMD[a.toLowerCase()] = k;
+
+  function parseEntry(line, today) {
+    let text = line.normalize("NFKC").trim();
+    if (!text) return "內容是空的";
+    let kind = null, hint = null, date = today;
+    if (text[0] === "+" || text[0] === "-") { kind = text[0] === "+" ? "income" : "expense"; text = text.slice(1).trim(); }
+    for (const [p, k] of [["收入", "income"], ["支出", "expense"], ["花費", "expense"]]) if (text.startsWith(p)) { kind = k; text = text.slice(p.length).trim(); break; }
+    const tag = text.match(/#\s*(\S+)/);
+    if (tag) { hint = tag[1]; text = text.replace(tag[0], " ").trim(); }
+    const rel = REL.find(([w]) => text.includes(w));
+    if (rel) { date = addDays(today, -rel[1]); text = text.replace(rel[0], " "); }
+    else {
+      const m = text.match(/(?<![\d.])(?:(\d{4})[/-])?(\d{1,2})\/(\d{1,2})(?![\d/])/) || text.match(/(?:(\d{4})年)?(\d{1,2})月(\d{1,2})[日號号]?/);
+      if (m) {
+        let d = new Date(m[1] ? +m[1] : today.getFullYear(), +m[2] - 1, +m[3]);
+        if (d.getMonth() !== +m[2] - 1) return `日期「${m[0]}」不存在`;
+        if (!m[1] && d > today) d = new Date(d.getFullYear() - 1, d.getMonth(), d.getDate());
+        date = d; text = text.replace(m[0], " ").trim();
+      }
+    }
+    const ms = [...text.matchAll(AMOUNT)];
+    if (!ms.length) return "找不到金額";
+    const m = ms[ms.length - 1];
+    let v = parseFloat(m[1].replace(/,/g, "") + (m[2] ? "." + m[2] : ""));
+    v *= { k: 1000, "千": 1000, "萬": 10000, w: 10000 }[(m[3] || "").toLowerCase()] || 1;
+    const amount = Math.round(v);
+    if (!(amount > 0 && amount <= 1e8)) return "金額需介於 1 到 100,000,000 元";
+    const note = (text.slice(0, m.index) + " " + text.slice(m.index + m[0].length)).replace(/\s+/g, " ").trim().replace(/^[ ,，、:：]+|[ ,，、:：]+$/g, "");
+    return { amount, note: note.slice(0, 200), date: iso(date), kind, hint };
+  }
+
+  function resolve(e) {
+    let kind = e.kind;
+    if (!kind) {
+      const hinted = e.hint && catOf(e.hint);
+      if (hinted) kind = hinted.kind;
+      else kind = bestMatch("income", e.note)[1] > bestMatch("expense", e.note)[1] ? "income" : "expense";
+    }
+    let cat = e.hint && CATS.find((c) => c.kind === kind && (c.name === e.hint || c.name.includes(e.hint) || e.hint.includes(c.name)));
+    cat = cat || bestMatch(kind, e.note)[0] || CATS.find((c) => c.kind === kind && c.name.startsWith("其他"));
+    return { id: ++state.seq, kind, amount: e.amount, cat: cat.name, note: e.note, date: e.date };
+  }
+
+  /* ---------- 狀態（只存在這個瀏覽器） ---------- */
+  const KEY = "expense-demo-v2";
+  let state;
+  function sample() {
+    const t = todayDate(), s = { seq: 0, txns: [], budgets: { total: 40000, "餐飲": 6000, "購物": 3000 }, chat: [] };
+    state = s;
+    const items = ["早餐 65", "午餐 120", "晚餐 180", "咖啡 60", "捷運 30", "計程車 250", "全聯 680", "電影 350", "手機費 599", "聚餐 800", "飲料 55", "蝦皮 耳機 1290"];
+    let r = 7; const rnd = () => (r = (r * 16807) % 2147483647) / 2147483647;
+    for (let d = 75; d >= 1; d--) {
+      const day = addDays(t, -d);
+      const n = 1 + Math.floor(rnd() * 3);
+      for (let i = 0; i < n; i++) { const e = parseEntry(items[Math.floor(rnd() * items.length)], day); s.txns.push(resolve(e)); }
+      if (day.getDate() === 1) s.txns.push(resolve(parseEntry("房租 15000", day)));
+      if (day.getDate() === 5) s.txns.push(resolve(parseEntry("薪水 48000", day)));
+    }
+    return s;
+  }
+  function load() {
+    try { const raw = localStorage.getItem(KEY); if (raw) { state = JSON.parse(raw); return; } } catch (_) { /* 無法讀取就用示範資料 */ }
+    state = sample();
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (_) { /* 無法儲存也不影響示範 */ } }
+
+  /* ---------- 統計 ---------- */
+  const monthBounds = (d) => [new Date(d.getFullYear(), d.getMonth(), 1), new Date(d.getFullYear(), d.getMonth() + 1, 1)];
+  function inRange(a, b) { const A = iso(a), B = iso(b); return state.txns.filter((t) => t.date >= A && t.date < B); }
+  function sum(list, kind) { return list.filter((t) => t.kind === kind).reduce((a, t) => a + t.amount, 0); }
+  function spent(a, b, cat) { return inRange(a, b).filter((t) => t.kind === "expense" && (!cat || t.cat === cat)).reduce((x, t) => x + t.amount, 0); }
+  function budgetRows(a, b) {
+    return Object.entries(state.budgets).map(([k, amt]) => {
+      const c = k === "total" ? null : catOf(k);
+      const used = spent(a, b, c ? c.name : null);
+      return { name: c ? c.name : "總預算", icon: c ? c.icon : "💰", budget: amt, spent: used, ratio: used / amt };
+    }).sort((x, y) => (x.name === "總預算" ? -1 : y.name === "總預算" ? 1 : y.ratio - x.ratio));
+  }
+  const status = (r) => r >= 1 ? ["var(--critical)", "🔴 超支"] : r >= .8 ? ["var(--warning)", "🟡 注意"] : ["var(--good)", "🟢 正常"];
+
+  /* ---------- 聊天 ---------- */
+  const $msgs = document.getElementById("msgs"), $quick = document.getElementById("quick");
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  function push(item) { state.chat.push(item); if (state.chat.length > 60) state.chat.splice(0, state.chat.length - 60); }
+  function renderChat() {
+    $msgs.innerHTML = state.chat.map((m) => m.type === "me" ? `<div class="msg me">${esc(m.text)}</div>` : m.type === "card" ? `<div class="card">${m.html}</div>` : `<div class="msg bot">${esc(m.text)}</div>`).join("");
+    $msgs.scrollTop = $msgs.scrollHeight;
+  }
+  const MAIN_QUICK = ["本月", "今天", "明細", "預算", "說明"];
+  function setQuick(items) {
+    $quick.innerHTML = items.map((q, i) => `<button type="button" data-i="${i}">${esc(q.label || q)}</button>`).join("");
+    $quick.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { const q = items[+b.dataset.i]; if (typeof q === "string") send(q); else q.run(); }));
+  }
+
+  function recordedCard(txns, errors) {
+    const t = todayDate(), [a, b] = monthBounds(t);
+    let h = `<div class="t">✅ 已記錄${txns.length > 1 ? ` ${txns.length} 筆` : ""}</div>`;
+    if (txns.length === 1) {
+      const x = txns[0], c = catOf(x.cat);
+      h += `<div class="big ${x.kind}">${x.kind === "expense" ? "-" : "+"}${money(x.amount)}</div>
+        <div class="row"><span>分類</span><span>${c.icon} ${esc(c.name)}</span></div>
+        <div class="row"><span>內容</span><span>${esc(x.note || "（無）")}</span></div>
+        <div class="row"><span>日期</span><span class="num">${x.date.replaceAll("-", "/")}</span></div>`;
+    } else for (const x of txns) h += `<div class="row"><span>${catOf(x.cat).icon} ${esc(x.note || x.cat)}</span><span class="num ${x.kind}">${x.kind === "expense" ? "-" : "+"}${money(x.amount)}</span></div>`;
+    h += `<hr><div class="row"><span>今日支出</span><span class="num">${money(spent(t, addDays(t, 1)))}</span></div><div class="row"><span>本月支出</span><b class="num">${money(spent(a, b))}</b></div>`;
+    for (const al of alerts(txns)) h += `<div class="alert">${esc(al)}</div>`;
+    for (const e of errors) h += `<div class="err">⚠️ 沒記到 ${esc(e)}</div>`;
+    return h;
+  }
+  function alerts(txns) {
+    const out = [], [a, b] = monthBounds(todayDate()), A = iso(a), B = iso(b);
+    const exp = txns.filter((t) => t.kind === "expense" && t.date >= A && t.date < B);
+    if (!exp.length) return out;
+    for (const [k, amt] of Object.entries(state.budgets)) {
+      const rel = exp.filter((t) => k === "total" || t.cat === k);
+      if (!rel.length) continue;
+      const after = spent(a, b, k === "total" ? null : k), before = after - rel.reduce((x, t) => x + t.amount, 0);
+      const label = k === "total" ? "總預算" : `「${k}」預算`;
+      if (before < amt && after >= amt) out.push(`🚨 ${label}已超支 ${money(after - amt)}（${money(after)} / ${money(amt)}）`);
+      else if (before < amt * .8 && after >= amt * .8) out.push(`⚠️ ${label}已用 ${Math.round(after / amt * 100)}%，剩 ${money(amt - after)}`);
+    }
+    return out;
+  }
+  function summaryCard(title, a, b) {
+    const list = inRange(a, b), e = sum(list, "expense"), i = sum(list, "income");
+    let h = `<div class="t">${esc(title)}</div>
+      <div class="row"><span>支出</span><b class="num expense">${money(e)}</b></div>
+      <div class="row"><span>收入</span><b class="num income">${money(i)}</b></div>
+      <div class="row"><span>結餘</span><b class="num">${i - e < 0 ? "-" : "+"}${money(Math.abs(i - e))}</b></div>`;
+    const by = {}; for (const t of list) if (t.kind === "expense") by[t.cat] = (by[t.cat] || 0) + t.amount;
+    const top = Object.entries(by).sort((x, y) => y[1] - x[1]).slice(0, 4);
+    if (top.length) { h += `<hr>`; for (const [n, v] of top) h += `<div class="row"><span>${catOf(n).icon} ${esc(n)}</span><span class="num">${money(v)}・${Math.round(v / e * 100)}%</span></div>`; }
+    else h += `<div class="err">這段期間還沒有紀錄。</div>`;
+    return h;
+  }
+
+  const HELP = "📒 使用說明\n\n記一筆：午餐 120、計程車250、昨天 晚餐 300、10/3 電影 350、+50000 薪水、耳機 1.2k、咖啡 65 #餐飲（一次多行可記多筆）\n\n查詢：今天｜本週｜本月｜明細\n預算：預算｜預算 20000｜預算 餐飲 6000\n復原：刪除剛剛記的那筆\n\n真正的 LINE 版還有每日提醒、月報與網頁登入連結。";
+
+  function send(raw) {
+    const text = raw.trim();
+    if (!text) return;
+    push({ type: "me", text });
+    const words = text.normalize("NFKC").split(/\s+/), name = CMD[words[0].toLowerCase()];
+    const hasAmount = new RegExp(AMOUNT.source, "i").test(text.normalize("NFKC"));
+    const t = todayDate();
+    if (name && (words.length === 1 || name === "budget" || name === "undo" || !hasAmount)) command(name, words.slice(1), t);
+    else {
+      const ok = [], errs = [];
+      for (const line of text.split("\n")) { if (!line.trim()) continue; const r = parseEntry(line, t); if (typeof r === "string") errs.push(`「${line.trim().slice(0, 30)}」：${r}`); else ok.push(r); }
+      if (!ok.length) { push({ type: "bot", text: `🤔 ${errs.length === 1 ? errs[0] : "看不懂這則訊息"}\n記帳請傳「內容 金額」，例如「午餐 120」。` }); setQuick(MAIN_QUICK); }
+      else {
+        const txns = ok.map(resolve);
+        state.txns.push(...txns);
+        push({ type: "card", html: recordedCard(txns, errs) });
+        const q = [];
+        if (txns.length === 1) {
+          const x = txns[0];
+          for (const c of CATS.filter((c) => c.kind === x.kind && c.name !== x.cat).slice(0, 5)) q.push({ label: `${c.icon}${c.name}`, run: () => { x.cat = c.name; push({ type: "card", html: recordedCard([x], []) }); refresh(); } });
+        }
+        q.push({ label: "↩️ 復原", run: () => { const ids = new Set(txns.map((x) => x.id)); state.txns = state.txns.filter((x) => !ids.has(x.id)); push({ type: "bot", text: `↩️ 已刪除：${txns.map((x) => `${x.note || x.cat} ${money(x.amount)}`).join("、")}` }); setQuick(MAIN_QUICK); refresh(); } });
+        q.push("本月");
+        setQuick(q);
+      }
+    }
+    refresh();
+  }
+
+  function command(name, args, t) {
+    const [a, b] = monthBounds(t);
+    if (name === "help") push({ type: "bot", text: HELP });
+    else if (name === "today") push({ type: "card", html: summaryCard("📅 今天", t, addDays(t, 1)) });
+    else if (name === "week") { const s = addDays(t, -((t.getDay() + 6) % 7)); push({ type: "card", html: summaryCard("🗓️ 本週", s, addDays(s, 7)) }); }
+    else if (name === "month") push({ type: "card", html: summaryCard(`📊 本月（${t.getMonth() + 1} 月）`, a, b) });
+    else if (name === "recent") {
+      const r = [...state.txns].sort((x, y) => (y.date + y.id).localeCompare(x.date + x.id, "en", { numeric: true })).slice(0, 8);
+      push({ type: "bot", text: r.length ? "🧾 最近紀錄\n" + r.map((x) => `${md(x.date)} ${catOf(x.cat).icon}${x.note || x.cat} ${x.kind === "expense" ? "-" : "+"}${money(x.amount)}`).join("\n") : "還沒有任何紀錄。" });
+    } else if (name === "budget") {
+      if (!args.length) {
+        const rows = budgetRows(a, b);
+        push({ type: "card", html: `<div class="t">💰 本月預算</div>` + (rows.length ? rows.map((r) => `<div class="row"><span>${r.icon} ${esc(r.name)}</span><span class="num">${status(r.ratio)[1]} ${Math.round(r.ratio * 100)}%</span></div>`).join("") : `<div class="err">還沒設定預算，傳「預算 20000」試試。</div>`) });
+      } else {
+        const amt = Number(args[args.length - 1].replace(/,/g, ""));
+        const catName = args.slice(0, -1).join(" ").replace(/^#/, "");
+        const c = catName && CATS.find((x) => x.kind === "expense" && x.name === catName);
+        if (!Number.isInteger(amt) || amt < 0) push({ type: "bot", text: "格式：「預算 20000」或「預算 餐飲 6000」（金額 0 代表取消）" });
+        else if (catName && !c) push({ type: "bot", text: `找不到支出分類「${catName}」。` });
+        else {
+          const key = c ? c.name : "total";
+          if (amt === 0) delete state.budgets[key]; else state.budgets[key] = amt;
+          push({ type: "bot", text: amt === 0 ? "已取消預算。" : `已設定每月${c ? `「${c.name}」` : "總"}預算 ${money(amt)}。本月已花 ${money(spent(a, b, c ? c.name : null))}。` });
+        }
+      }
+    } else if (name === "undo") {
+      const last = state.txns.reduce((m, x) => (!m || x.id > m.id ? x : m), null);
+      if (last) { state.txns = state.txns.filter((x) => x !== last); push({ type: "bot", text: `↩️ 已刪除：${last.note || last.cat} ${money(last.amount)}` }); }
+      else push({ type: "bot", text: "沒有可以復原的紀錄。" });
+    } else if (name === "categories") {
+      push({ type: "bot", text: `支出分類：\n${CATS.filter((c) => c.kind === "expense").map((c) => c.icon + c.name).join("、")}\n\n收入分類：\n${CATS.filter((c) => c.kind === "income").map((c) => c.icon + c.name).join("、")}` });
+    } else if (name === "web") push({ type: "bot", text: "真正的 LINE 版會在這裡給你一個 10 分鐘有效的網頁登入連結。示範版的報表就在右邊。" });
+    setQuick(MAIN_QUICK);
+  }
+
+  /* ---------- 報表 ---------- */
+  const $report = document.getElementById("report"), $tip = document.getElementById("tip");
+  function niceMax(v) { if (v <= 0) return 100; const p = 10 ** Math.floor(Math.log10(v)); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= v) return m * p; return 10 * p; }
+  const compact = (n) => n >= 10000 ? (n / 10000).toLocaleString("zh-TW", { maximumFractionDigits: 1 }) + "萬" : n >= 1000 ? (n / 1000).toLocaleString("zh-TW", { maximumFractionDigits: 1 }) + "千" : String(n);
+
+  function columns(el, rows) {
+    const draw = () => {
+      const W = Math.max(240, Math.floor(el.clientWidth)), H = 170, L = 38, R = 6, T = 8, B = 20;
+      const max = niceMax(Math.max(0, ...rows.map((r) => r.v))), pw = W - L - R, ph = H - T - B, band = pw / rows.length;
+      const bw = Math.max(2, Math.min(16, band * .68)), y = (v) => T + ph - v / max * ph, every = Math.max(5, Math.ceil(26 / band));
+      let s = "";
+      for (let i = 1; i <= 4; i++) { const v = max / 4 * i; s += `<line class="g" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${compact(v)}</text>`; }
+      rows.forEach((r, i) => {
+        const x = L + band * i;
+        s += `<rect class="band" data-i="${i}" x="${x}" y="${T}" width="${band}" height="${ph}" opacity="0"/>`;
+        if (r.v) { const top = y(r.v), bx = x + (band - bw) / 2, rad = Math.min(4, bw / 2, T + ph - top); s += `<path fill="var(--series)" d="M${bx},${T + ph}V${top + rad}Q${bx},${top} ${bx + rad},${top}H${bx + bw - rad}Q${bx + bw},${top} ${bx + bw},${top + rad}V${T + ph}Z"/>`; }
+        if (i % every === 0) s += `<text x="${x + band / 2}" y="${H - 5}" text-anchor="middle">${r.l}</text>`;
+        s += `<rect class="hit" data-i="${i}" x="${x}" y="${T}" width="${band}" height="${ph + B}"/>`;
+      });
+      s += `<line x1="${L}" x2="${W - R}" y1="${T + ph}" y2="${T + ph}" stroke="var(--muted)" stroke-opacity=".5"/>`;
+      el.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="本月每日支出直條圖">${s}</svg>`;
+      el.querySelectorAll(".hit").forEach((h) => {
+        const i = +h.dataset.i, bandEl = el.querySelector(`.band[data-i="${i}"]`);
+        const mv = (e) => { bandEl.setAttribute("opacity", "1"); $tip.innerHTML = `<div style="color:var(--muted);font-size:12px">${rows[i].t}</div><b class="num">${money(rows[i].v)}</b>`; $tip.hidden = false; const w = $tip.offsetWidth; $tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, e.clientX + 12)) + "px"; $tip.style.top = Math.max(8, e.clientY - 52) + "px"; };
+        h.addEventListener("pointermove", mv); h.addEventListener("pointerdown", mv);
+        h.addEventListener("pointerleave", () => { bandEl.setAttribute("opacity", "0"); $tip.hidden = true; });
+      });
+    };
+    let w = 0;
+    new ResizeObserver(() => { const nw = Math.floor(el.clientWidth); if (nw && nw !== w) { w = nw; draw(); } }).observe(el);
+  }
+
+  function renderReport() {
+    const t = todayDate(), [a, b] = monthBounds(t), list = inRange(a, b);
+    const e = sum(list, "expense"), inc = sum(list, "income");
+    const pa = new Date(a.getFullYear(), a.getMonth() - 1, 1), pe = spent(pa, a);
+    const days = (b - a) / 864e5, elapsed = t.getDate();
+    const by = {}; for (const x of list) if (x.kind === "expense") { by[x.cat] = by[x.cat] || { v: 0, n: 0 }; by[x.cat].v += x.amount; by[x.cat].n++; }
+    const rank = Object.entries(by).sort((x, y) => y[1].v - x[1].v);
+    const budgets = budgetRows(a, b);
+    const recent = [...list].sort((x, y) => y.date.localeCompare(x.date) || y.id - x.id).slice(0, 8);
+    $report.innerHTML = `
+      <section class="panel section">
+        <h2>${t.getFullYear()} 年 ${t.getMonth() + 1} 月<small>${md(iso(a))} – ${md(iso(addDays(b, -1)))}</small></h2>
+        <div class="stats">
+          <div class="stat"><div class="l">支出</div><div class="v expense">${money(e)}</div><div class="d">${pe ? `比上月${e >= pe ? "多" : "少"} ${money(Math.abs(e - pe))}` : "上月無紀錄"}</div></div>
+          <div class="stat"><div class="l">收入</div><div class="v income">${money(inc)}</div><div class="d">${list.length} 筆紀錄</div></div>
+          <div class="stat"><div class="l">結餘</div><div class="v">${inc - e < 0 ? "-" : ""}${money(Math.abs(inc - e))}</div><div class="d">預估月支出 <span class="num">${money(e / elapsed * days)}</span></div></div>
+        </div>
+      </section>
+      <section class="panel section">
+        <h2>預算<small>傳「預算 餐飲 6000」調整</small></h2>
+        ${budgets.length ? budgets.map((r) => { const [c, l] = status(r.ratio); return `<div class="budget"><div class="top"><b>${r.icon} ${esc(r.name)}</b><span class="pill">${l} ${Math.round(r.ratio * 100)}%</span></div><div class="meter"><span style="width:${Math.min(100, r.ratio * 100)}%;background:${c}"></span></div><div class="sub"><span class="num">${money(r.spent)} / ${money(r.budget)}</span><span>${r.budget - r.spent >= 0 ? `剩 ${money(r.budget - r.spent)}` : `超支 ${money(r.spent - r.budget)}`}</span></div></div>`; }).join("") : `<div class="empty">還沒設定預算。</div>`}
+      </section>
+      <div class="two">
+        <section class="panel section"><h2>支出分類</h2>${rank.length ? `<div class="rank">${rank.map(([n, o]) => `<div class="rank-row"><span class="n">${catOf(n).icon} ${esc(n)} <small style="color:var(--muted)">· ${o.n} 筆</small></span><span class="a num">${money(o.v)}<small>${Math.round(o.v / e * 100)}%</small></span><div class="track"><span style="width:${o.v / e * 100}%"></span></div></div>`).join("")}</div>` : `<div class="empty">本月還沒有支出。</div>`}</section>
+        <section class="panel section"><h2>每日支出<small>滑過長條看金額</small></h2><div class="chart" id="daily"></div></section>
+      </div>
+      <section class="panel section"><h2>本月明細<small>最近 8 筆</small></h2><div class="list">${recent.length ? recent.map((x) => `<div class="txn"><span class="e">${catOf(x.cat).icon}</span><span class="m"><div>${esc(x.note || x.cat)}</div><small>${md(x.date)} · ${esc(x.cat)}</small></span><span class="num ${x.kind}">${x.kind === "expense" ? "-" : "+"}${money(x.amount)}</span><button type="button" class="del" data-id="${x.id}" aria-label="刪除 ${esc(x.note || x.cat)}">✕</button></div>`).join("") : `<div class="empty">本月還沒有紀錄，在左邊傳「午餐 120」試試。</div>`}</div></section>`;
+    const rows = [];
+    for (let d = new Date(a); d < b; d = addDays(d, 1)) { const s = iso(d); rows.push({ l: String(d.getDate()), t: `${md(s)}（${"日一二三四五六"[d.getDay()]}）`, v: list.filter((x) => x.kind === "expense" && x.date === s).reduce((m, x) => m + x.amount, 0) }); }
+    columns(document.getElementById("daily"), rows);
+    $report.querySelectorAll(".del").forEach((btn) => btn.addEventListener("click", () => { state.txns = state.txns.filter((x) => x.id !== +btn.dataset.id); refresh(); }));
+  }
+
+  function refresh() { save(); renderChat(); renderReport(); }
+
+  /* ---------- 啟動 ---------- */
+  load();
+  if (!state.chat.length) {
+    state.chat.push({ type: "bot", text: "嗨！我是記帳本機器人 📒\n直接傳「午餐 120」就能記一筆，傳「本月」看統計，傳「說明」看所有用法。\n\n右邊已經放了兩個多月的示範資料。" });
+  }
+  setQuick(["午餐 120", "昨天 計程車250", "+3000 獎金", "本月", "預算", "說明"]);
+  document.getElementById("text").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); document.getElementById("send").requestSubmit(); } });
+  document.getElementById("send").addEventListener("submit", (e) => { e.preventDefault(); const i = document.getElementById("text"); send(i.value); i.value = ""; i.focus(); });
+  const box = document.getElementById("reset-box");
+  function resetButton() {
+    box.innerHTML = `<button type="button" id="reset">重設示範資料</button>`;
+    box.querySelector("#reset").addEventListener("click", () => {
+      box.innerHTML = `<span class="confirm">清掉你記的內容並恢復示範資料？<button type="button" id="yes">重設</button><button type="button" id="no">取消</button></span>`;
+      box.querySelector("#yes").addEventListener("click", () => { try { localStorage.removeItem(KEY); } catch (_) {} load(); state.chat.push({ type: "bot", text: "已恢復示範資料。" }); refresh(); resetButton(); });
+      box.querySelector("#no").addEventListener("click", resetButton);
+    });
+  }
+  resetButton();
+  refresh();
+  addEventListener("scroll", () => { $tip.hidden = true; }, { passive: true });
+})();
+</script>
