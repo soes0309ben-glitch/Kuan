@@ -1,0 +1,5 @@
+node_modules/
+# 簽章金鑰絕對不要進 git
+*.jks
+*.keystore
+keystore.properties

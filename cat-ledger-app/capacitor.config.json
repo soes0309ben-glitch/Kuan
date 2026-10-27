@@ -1,0 +1,8 @@
+{
+  "appId": "com.kuan.catledger",
+  "appName": "隨手記帳本",
+  "webDir": "www",
+  "backgroundColor": "#fff3ee",
+  "android": { "backgroundColor": "#fff3ee" },
+  "ios": { "backgroundColor": "#fff3ee", "contentInset": "never" }
+}

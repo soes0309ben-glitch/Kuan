@@ -1,0 +1,51 @@
+# 打包「隨手記帳本」Android 上架檔（.aab）與測試安裝檔（.apk）
+# 在 GitHub 的 Actions 分頁按「Run workflow」就會執行；完成後到該次執行的 Artifacts 下載。
+# 需要先在 Settings → Secrets and variables → Actions 設定這 4 個 Secrets（產生方式見 cat-ledger-app/README.md）：
+#   ANDROID_KEYSTORE_BASE64、ANDROID_KEYSTORE_PASSWORD、ANDROID_KEY_ALIAS、ANDROID_KEY_PASSWORD
+name: 隨手記帳本 Android
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cat-ledger-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cat-ledger-app/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npx cap sync android
+      - name: 還原簽章金鑰
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::還沒有設定 ANDROID_KEYSTORE_BASE64，請照 cat-ledger-app/README.md 建立上傳金鑰並加到 Secrets"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+      - name: 打包
+        working-directory: cat-ledger-app/android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew --no-daemon bundleRelease assembleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cat-ledger-android
+          path: |
+            cat-ledger-app/android/app/build/outputs/bundle/release/app-release.aab
+            cat-ledger-app/android/app/build/outputs/apk/release/app-release.apk
